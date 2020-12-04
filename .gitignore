@@ -1,0 +1,16 @@
+.DS_Store
+*.m~
+*.sh~
+*.txt~
+*.tex~
+
+__pycache__/
+
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.synctex.gz
+*.tex
