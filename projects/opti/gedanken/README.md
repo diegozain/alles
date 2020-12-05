@@ -8,7 +8,7 @@ Two (or more) processes that are sensitive to the same parameters in different w
 
 This way, both processes complement each other during the inversion.
 
-__This script is an example of joint inversion.__
+__These scripts are an example of joint inversion.__
 
 ## The processes
 

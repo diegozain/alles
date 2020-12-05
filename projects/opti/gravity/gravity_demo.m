@@ -10,6 +10,10 @@ addpath('src/')
 % ..............................................................................
 max_iter=200;
 % ..............................................................................
+fprintf('\n     given gravimetry data on the x and z direction\n     only at surface receivers,\n     recover density.')
+
+fprintf('\n\n         receivers are shown in the last plot as solid dots\n')
+% ..............................................................................
 % gravity
 dx=0.1;
 dz=0.1;
@@ -43,7 +47,11 @@ simple_figure()
 % make column
 rho = rho(:);
 % ..............................................................................
+% 
 % fwd gravity
+% 
+% ..............................................................................
+fprintf('\n\n         *-*-* computing synthetic data *-*-*\n')
 % ..............................................................................
 % gravity x,z
 [ux,uz] = g_fwd(Lx,Lz,rho);
@@ -58,6 +66,7 @@ fancy_imagesc(ux.',x,z)
 ylabel('Depth (m)')
 xlabel('Length (m)')
 title('Component x of gravity' )
+simple_figure()
 subplot(2,1,2)
 fancy_imagesc(uz.',x,z)
 xlabel('Length (m)')
@@ -105,7 +114,7 @@ plot(rx,d_x,'r.-','markersize',20)
 plot(rx,d_z,'k.-','markersize',20)
 hold off
 axis tight
-legend({'d_x','d_z'})
+legend({'\Delta u_x','\Delta u_z'})
 xlabel('Length (m)')
 title('Data' )
 simple_figure()
@@ -118,7 +127,11 @@ Jxt=(M*Lx).';
 rho_ = ones(nx,nz);
 rho_ = rho_(:);
 % ..............................................................................
+% 
 % inversion
+% 
+% ..............................................................................
+fprintf('\n\n\n     inversion is gonna happen now and will go for %i iterations\n',max_iter)
 % ..............................................................................
 for ii=1:max_iter
   % fwd model 
@@ -157,15 +170,23 @@ for ii=1:max_iter
   [step_x,step_z] = g_pica(d_x,d_z,e_x,e_z,M,Lx,Lz,rho_,drho,k);
   % update
   rho_ = rho_ .* exp( -rho_.*(step_z*g_z) );
+  
+  if mod(ii,fix(0.3*max_iter))==0
+    fprintf('\n just finished iteration #%i',ii);
+  end
 end
+fprintf('\n\n')
 rho_=reshape(rho_,[nx,nz]);
 % ..............................................................................
 mini = min([min(rho(:)) min(rho_(:))]);
 maxi = max([max(rho(:)) max(rho_(:))]);
 % ..............................................................................
-figure;
+figure('Renderer', 'painters', 'Position', [10 10 500 600]);
 subplot(2,1,1)
+hold on;
 fancy_imagesc(reshape(rho,[nx,nz]).',x,z)
+plot(rx,zeros(size(rx)),'k.','markersize',15);axis ij
+hold off;
 caxis([mini maxi])
 axis image
 ylabel('Depth (m)')
@@ -180,6 +201,5 @@ axis image
 xlabel('Length (m)')
 ylabel('Depth (m)')
 title('Recovered density')
-
 simple_figure()
 % ..............................................................................
