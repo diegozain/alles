@@ -9,32 +9,26 @@ clc
 prompt = '\n   do you want an average or mono frequency beamforming? (a or m): ';
 ave_mono = input(prompt,'s');
 % ..............................................................................
-% data bandpass
+% synthetic parameters
 % ..............................................................................
-% below 0.1 Hz is microseismic energy.
-% but actually, nothing coherent comes 
-% out until 1 Hz.
-% above 5 Hz is noise energy.
-f_high= 5; % Hz
-f_low = 1; % Hz
+vo = 4; % Km/s
+fo = 2; % Hz
+wo = 2*pi*fo;
 % ..............................................................................
 % beamforming parameters
 % ..............................................................................
-% individual frequency
-fo = 2; % Hz
 % frequency range
-f_low_ = 1; % Hz
-f_high_= 3.5; % Hz
-fo_ = linspace(f_low_,f_high_,10);
+f_low_ = 0.5; % Hz
+f_high_= 5; % Hz
+fo_ = linspace(f_low_,f_high_,100);
 % velocity range
-v_min = 2; % Km/s
+v_min = 2.5; % Km/s
 v_max = 8; % Km/s
 v = linspace(v_min,v_max,50);
 % angle range
 theta = linspace(0,2*pi,100);
 % ..............................................................................
 path_data = '../../../data/dylan-array/';
-name_data = 'array_data_example.mat';
 name_locs = 'stationCoordinatesYX_in_km.txt';
 % ..............................................................................
 receivers = load(strcat(path_data,name_locs));
@@ -44,43 +38,40 @@ r(:,2) = receivers(:,1);
 nr = length(r(:,1));
 clear receivers
 % ..............................................................................
-arr = load(strcat(path_data,name_data));
-d = arr.dta;
-d = d';
-% d is ( nt x nr ) matrix
-[nt,nr] = size(d);
+sources = zeros(nr,2);
 
-% sample rate is 200[Hz]
+% sources(:,1) = -70;
+% sources(:,2) = r(:,2);
+
+sources(:,2) = -70;
+sources(:,1) = r(:,1);
+% ..............................................................................
+% sample rate will be 200 Hz
+nt = 7200;
 fs = 200;
 fny = fs/2;
 dt = 1/fs;
 T = (nt-1)*dt;
 t = 0:dt:T;
+t = t.';
 % ..............................................................................
-figure;
-hold on
-for i=1:nr
-plot(t,d(:,i) + (i-1)*0.2)
+% synth data
+% ..............................................................................
+% wavelet
+wvlet = @(to) ( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
+d = zeros(nt,nr);
+
+for ir = 1:nr
+ to_ = norm(sources(ir,:)-r(ir,:))/vo;
+ d(:,ir) = wvlet(to_);
 end
-hold off
-axis tight
-xlabel('Time (s)')
-ylabel('Amplitude')
-title('Raw data')
-simple_figure();
-% ..............................................................................
-% detrend and demean
-d = detrend(d,1);
-d = d-repmat(mean(d,1),nt,1);
-% ..............................................................................
-% filter
-d = filt_gauss(d,dt,f_low,f_high,10);
 % ..............................................................................
 figure('Renderer', 'painters', 'Position', [10 10 400 700]);
 subplot(211)
 hold on
-for i_=1:nr
-plot(r(i_,1),r(i_,2),'.','markersize',40)
+for ir=1:nr
+ plot(r(ir,1),r(ir,2),'.','markersize',40)
+% plot(sources(ir,1),sources(ir,2),'rp','markersize',10,'MarkerFaceColor','red')
 end
 hold off
 grid on
@@ -95,40 +86,29 @@ simple_figure();
 subplot(212)
 hold on
 for i=1:nr
-plot(t,d(:,i) + (i-1)*0.2)
+plot(t,d(:,i) + (i-1)*2)
 end
 hold off
 axis tight
 axis square
 xlabel('Time (s)')
 set(gca,'yticklabel',[])
-title('Filtered data')
+title('Data')
 simple_figure();
 % ..............................................................................
 % frequency domain
 [d_,f,df] = fourier_rt(d,dt);
-
-figure;
-% plot(f,sum(abs(d_),2));
-h=fill(f(1:binning(f,10)),sum(abs(d_(1:binning(f,10),:)),2),[0,0,0]);
-set(h,'EdgeColor',[0,0,0]);
-axis tight
-xlabel('Frequency (Hz)')
-ylabel('Power')
-set(gca,'yticklabel',[])
-title('Filtered data')
-simple_figure();
 % ..............................................................................
 % 
 %       beamforming velocity vs angle
 % 
 % ..............................................................................
 if strcmp(ave_mono,'m')
-    % individual frequency
-    b = beamformer_(fo,r,d_,f,v,theta);
+ % individual frequency
+ b = beamformer_(fo,r,d_,f,v,theta);
 elseif strcmp(ave_mono,'a')
-    % average of an array of frequencies
-    b = beamformer_thetav(fo_,r,d_,f,v,theta);
+ % % average of an array of frequencies
+ b = beamformer_thetav(fo_,r,d_,f,v,theta);
 end
 % ..............................................................................
 b=abs(b).^2;
@@ -169,11 +149,11 @@ sy = linspace(-slow_max,slow_max,50);
 [sX,sY] = meshgrid(sx,sy);
 % ..............................................................................
 if strcmp(ave_mono,'m')
-    % individual frequency
-    b = beamformer(fo,r,d_,f,sX,sY);
+ % individual frequency
+ b = beamformer(fo,r,d_,f,sX,sY);
 elseif strcmp(ave_mono,'a')
-    % average of frequencies
-    b = beamformer_sxsy(fo_,r,d_,f,sX,sY);
+ % average of frequencies
+ b = beamformer_sxsy(fo_,r,d_,f,sX,sY);
 end
 % ..............................................................................
 b=abs(b).^2;
@@ -190,6 +170,5 @@ simple_figure();
 % ..............................................................................
 % plot like haney
 b = beamformer(fo,r,d_,f,sX,sY);
-wo= 2*pi*fo;
 beamPlot( b, sX, sY, slow_max, wo );
 % ..............................................................................

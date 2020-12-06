@@ -24,11 +24,6 @@ b = zeros( size(sX) );
 %
 ifo = binning(f,fo);
 
-% % we don't want all data, 
-% % just rows of frequency fo
-% %
-% d_ = d_(ifo,:);
-
 % now beamform loop on receivers 
 % because dylan hasn't taught me
 % matrix algorithm for beamforming :(
