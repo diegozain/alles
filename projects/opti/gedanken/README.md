@@ -29,3 +29,17 @@ This is done with gradient descent, where the gradients are computed using the a
 
 * ```optimize_[dc,w].m``` perform inversions on just one process.
 * ```optimize_joint.m``` performs the joint inversion of both processes together.
+
+---
+
+This is just from the ```dc``` inversion,
+
+[![](../pics/gedanken_dc.png)](./)
+
+This is just from the ```w``` inversion,
+
+[![](../pics/gedanken_w.png)](./)
+
+This is from the ```joint``` inversion. Note how the optimization path towards the solution is greatly improved when compared to the other two.
+
+[![](../pics/gedanken_wdc.png)](./)

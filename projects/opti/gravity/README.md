@@ -7,3 +7,9 @@ September 2020 @ Colorado School of Mines
 Gravity is dependent on density. By measuring the gravity field, it is possible to solve for (invert) density.
 
 __This script is an example of density inversion at depth, using gravity gradient data on _x_ and _z_ acquired only at surface receivers.__
+
+---
+
+Below is an example of the true and recovered density. The colormap is the same for both pictures.
+
+[![](../pics/gravity_inversion.png)](./)

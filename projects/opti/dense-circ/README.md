@@ -36,3 +36,9 @@ The role of these objective functions is:
 1. Minimize their distance to 2m
 
 __The contraction-expansion-minimization strategy helps the nodes to find their most compact form.__
+
+---
+
+Below is the output of 19 people gathering in an (approximate) optimal sense while keeping 2m distance.
+
+[![](../pics/covid_19-people.png)](./)

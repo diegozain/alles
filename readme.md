@@ -50,7 +50,7 @@ All small projects that need a place to live - but are not part of a large proje
 	
 * Cloud computing
 
- * Slurm
+	* Slurm
 	* AWS
 
 Some are written in Matlab, some use Python packages.

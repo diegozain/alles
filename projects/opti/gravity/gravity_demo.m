@@ -22,6 +22,7 @@ z = (0:dz:3).';
 nx = numel(x);
 nz = numel(z);
 % build geometry dependent linear operators
+fprintf('\n\n         ~-~-~ building linear operators ~-~-~\n')
 [Lx,Lz] = g_L(x,z);
 % ..............................................................................
 % true density
@@ -51,9 +52,8 @@ rho = rho(:);
 % fwd gravity
 % 
 % ..............................................................................
-fprintf('\n\n         *-*-* computing synthetic data *-*-*\n')
-% ..............................................................................
 % gravity x,z
+fprintf('\n\n         *-*-* computing synthetic data *-*-*\n')
 [ux,uz] = g_fwd(Lx,Lz,rho);
 % ..............................................................................
 % see grav field
@@ -181,10 +181,11 @@ rho_=reshape(rho_,[nx,nz]);
 mini = min([min(rho(:)) min(rho_(:))]);
 maxi = max([max(rho(:)) max(rho_(:))]);
 % ..............................................................................
-figure('Renderer', 'painters', 'Position', [10 10 500 600]);
+figure('Renderer', 'painters', 'Position', [10 10 500 400]);
 subplot(2,1,1)
 hold on;
 fancy_imagesc(reshape(rho,[nx,nz]).',x,z)
+colorbar('off')
 plot(rx,zeros(size(rx)),'k.','markersize',15);axis ij
 hold off;
 caxis([mini maxi])
@@ -196,6 +197,7 @@ simple_figure()
 
 subplot(2,1,2)
 fancy_imagesc(rho_.',x,z)
+colorbar('off')
 caxis([mini maxi])
 axis image
 xlabel('Length (m)')
