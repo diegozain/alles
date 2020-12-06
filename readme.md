@@ -1,5 +1,7 @@
 # alles
 
+[![](gallery/pdes/wave_2d.png)](./)
+
 * Go to ```/gallery``` to see nice pictures.
 * Go to ```/projects``` to run projects.
 
@@ -59,5 +61,8 @@ Most are proof of concept by example.
 
 __Not all are perfect but they all work.__
 
+---
 
+[![](gallery/wave-proc/stft.png)](./)
 
+[![](gallery/opti/xgrad-a-b.png)](./)
