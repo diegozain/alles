@@ -2,14 +2,14 @@
 diego domenzain
 September 2020 @ Colorado School of Mines
 
-For some reason Github does not link to symbolic links properly in their webpage. So here is a dump of the pics.
+For some reason Github does not like symbolic links in their webpage. So here is a dump of the pics.
 
 ---
 
 * Optimization
 
 	* Gedanken of joint inversion
-	[![](opti/gedanken.png)](./)
+	[![](../projects/opti/pics/gedanken.png)](./)
 	* Gravity inversion
 	[![](../projects/opti/pics/gravity_inversion.png)](./)
 	* Cross-gradient inversion
@@ -36,9 +36,11 @@ For some reason Github does not link to symbolic links properly in their webpage
 
 	* Wave-advection
 	[![](../projects/pdes/pics/wave_2d_material.png)](./)
+	
 	[![](../projects/pdes/pics/wave_2d.png)](./)
 	* Heat equation
 	[![](../projects/pdes/pics/heat_2d_material.png)](./)
+	
 	[![](../projects/pdes/pics/heat_2d.png)](./)
 	* Korteweg De Vries
 	[![](../projects/pdes/pics/korteweg.png)](./)
