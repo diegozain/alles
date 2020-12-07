@@ -12,4 +12,6 @@ __This script is an example of a velocity vs angle semblance plot from field dat
 
 The data is from a passive seismic arrray.
 
+Looking at the semblance, most of the energy comes from the south-west (approx 4 radians).
+
 [![](../pics/beamform_velo-angle.png)](./)

@@ -28,6 +28,7 @@ All small projects that need a place to live - but are not part of a large proje
 * Graph theory algorithms
 
 	* Spanning trees
+	* Dijkstra algorithm
 
 * Partial differential equations
 
