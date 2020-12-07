@@ -7,3 +7,7 @@ September 2020 @ Colorado School of Mines
 Find the frequencies that make up a signal at each time.
 
 __This script is an example of finding the STFT of a signal.__
+
+---
+
+[![](../pics/stft.png)](./)
