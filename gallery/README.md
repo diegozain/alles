@@ -2,7 +2,7 @@
 diego domenzain
 September 2020 @ Colorado School of Mines
 
-For some reason Github does not like symbolic links in their webpage. So here is a dump of the pics.
+For some reason, _Github_ does not like symbolic links in their webpage. So here is a dump of the pics.
 
 ---
 
@@ -63,6 +63,7 @@ For some reason Github does not like symbolic links in their webpage. So here is
 #### Hyperbolic and linear semblance
 #### Beamforming (to find direction of signal)
 [![](../projects/wave-proc/pics/beamform_data.png)](./)[![](../projects/wave-proc/pics/beamform_velo-angle.png)](./)
+### Seismic beachball
 	
 ## Cloud computing
 

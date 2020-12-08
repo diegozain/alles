@@ -16,10 +16,11 @@ Here, they are called _dc_ and _w_. They do not represent any physical system. H
 
 Both _dc_ and _w_ are governed by a matrix equation, a source term, and a measuring operator:
 
-Lu = s
-d = Mu
+_Lu = s_
 
-where L is a differential operator as a function of the physical parameters p, u is the physical quantity (e.g. heat, electric potential, etc), s is the source term, M is the measuring operator, and d is the data.
+_d = Mu_
+
+where _L_ is a differential operator as a function of the physical parameters _p_, _u_ is the physical quantity (e.g. heat, electric potential, etc), _s_ is the source term, _M_ is the measuring operator, and _d_ is the data.
 
 ## The inversion
 

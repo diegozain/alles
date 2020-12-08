@@ -50,6 +50,7 @@ All small projects that need a place to live - but are not part of a large proje
 	* STFT
 	* Hyperbolic and linear semblance
 	* Beamforming (to find direction of signal)
+	* Seismic beachball
 	
 * Cloud computing
 
