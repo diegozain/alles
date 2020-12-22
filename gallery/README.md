@@ -32,7 +32,7 @@ For some reason, _Github_ does not like symbolic links in their webpage. So here
 
 #### Spanning trees
 #### Dijkstra algorithm
-[![](../projects/graph-alg/pics/dijkstra-10nodes.png)](../projects/graph-alg/pics/dijkstra/)
+[![](../projects/graph-alg/pics/dijkstra-10nodes.png)](../projects/graph-alg/dijkstra/)
 
 ## Partial differential equations
 
