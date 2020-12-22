@@ -51,7 +51,7 @@ def exp_imp(x, x_samples, y_samples, gau_pro, xi=0.01):
         ei[sigma == 0.0] = 0.0
     return ei.ravel()
 # ------------------------------------------------------------------------------
-def update_x(acq_fnc, x_samples, y_samples, gau_pro, bounds, n_restarts=1e+1):
+def update_x(acq_fnc, x_samples, y_samples, gau_pro, bounds, n_restarts=5e+3):
     '''
     Proposes the next sampling point by optimizing the acq_fnc function.
     

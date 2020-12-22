@@ -4,7 +4,7 @@ September 2020 @ Colorado School of Mines
 
 ## Beamforming for velocity and direction estimation
 
-Find the direction and velocity of an assumed planar wave from time-domain data of an array of receivers.
+Find the direction and velocity of an assumed planar wave from time-domain data on a receiver array.
 
 __This script is an example of a velocity vs angle semblance plot from field data of a receiver array.__
 

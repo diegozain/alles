@@ -6,6 +6,28 @@ from fancy_figure import fancy_figure
 sys.path.append('src/')
 from bayesian_opti import *
 # ------------------------------------------------------------------------------
+#
+#
+# this is a script that shows the method with an example.
+# 
+# in most cases, we cannot evaluate the objective function 
+# inside the bayesian optimization scheme.
+# 
+# if that is the case, you should use the function:
+# 
+#     x = optimize_baye(x,y,bounds)
+# 
+# y are the values of the objective function
+# x are the parameters that were used to compute each value of y
+# bounds are the bounds for each parameter
+#
+# x is of size samples by parameters
+# y is of size samples by one
+# bounds is of size parameters by two ( two because of [min, max])
+# 
+#
+#
+# ------------------------------------------------------------------------------
 np.random.seed(seed=0)
 size=[6,4]
 # ------------------------------------------------------------------------------
@@ -50,7 +72,7 @@ x_samples = np.random.uniform(-5, 5, size=(n_init, 2))
 y_samples = obj_fnc(x_samples)
 # ------------------------------------------------------------------------------
 # iterations
-n_iter = 20
+n_iter = 5
 bounds = np.array([[-5, 5],[-5, 5]])
 # ------------------------------------------------------------------------------
 x_samples,y_samples = optimize_baye_(x_samples,y_samples,obj_fnc,bounds,n_iter)

@@ -4,12 +4,14 @@ September 2020 @ Colorado School of Mines
 
 Suppose you have an objective function with many hyper-parameters. 
 
-__how do you find the best hyper-parameters?__
+__How do you find the best hyper-parameters?__
 
 You _sample_ the objective function many times with different hyper-parameters.
 You then use Gaussian Kernels to _grow_ in value an approximate of the objective function at these hyper-parameter locations.
 
-In yellow are the initial samples, in blue the true minimum, in green the solution path, in red the recovered minimum. 
+---
+
+The initial samples are in yellow, true minimum in blue the , the solution path in green, the recovered minimum in red. 
 
 _True_ and _Approximate_ are the true and recovered objective functions respectively.
 
