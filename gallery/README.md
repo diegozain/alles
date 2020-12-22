@@ -9,17 +9,19 @@ For some reason, _Github_ does not like symbolic links in their webpage. So here
 ## Optimization
 
 #### Gedanken of joint inversion
-[![](../projects/opti/pics/gedanken.png)](./)
+[![](../projects/opti/pics/gedanken.png)](../projects/opti/gedanken/)
 #### Gravity inversion
-[![](../projects/opti/pics/gravity_inversion.png)](./)
+[![](../projects/opti/pics/gravity_inversion.png)](../projects/opti/gravity/)
 #### Cross-gradient inversion
-[![](../projects/opti/pics/xgrad-a-b.png)](./)
+[![](../projects/opti/pics/xgrad-a-b.png)](../projects/opti/xgrad/)
 #### Logistic regression
 #### Snow slip
 #### Dense circle packing
-[![](../projects/opti/pics/covid_19-people.png)](./)
+[![](../projects/opti/pics/covid_19-people.png)](../projects/opti/dense-circ/)
 #### Markowitz portfolio
 #### Decision trees & Random forests
+#### Bayesian optimization
+[![](../projects/opti/pics/bayes-opti-ex.png)](../projects/opti/baye-opti/)
 
 ## Dimensionality reduction
 
