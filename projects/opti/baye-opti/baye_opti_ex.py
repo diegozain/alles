@@ -7,6 +7,7 @@ sys.path.append('src/')
 from bayesian_opti import *
 # ------------------------------------------------------------------------------
 np.random.seed(seed=0)
+size=[6,4]
 # ------------------------------------------------------------------------------
 # 
 # 
@@ -51,10 +52,6 @@ y_samples = obj_fnc(x_samples)
 # iterations
 n_iter = 20
 bounds = np.array([[-5, 5],[-5, 5]])
-
-print(x_samples)
-print(y_samples)
-print(bounds)
 # ------------------------------------------------------------------------------
 x_samples,y_samples = optimize_baye_(x_samples,y_samples,obj_fnc,bounds,n_iter)
 # ------------------------------------------------------------------------------
@@ -213,6 +210,7 @@ holdon='on'
 ).plotter()
 
 fancy_figure(
+figsize=size,
 ax_=ax[1],
 extent=extents_,
 data=-y_approx,

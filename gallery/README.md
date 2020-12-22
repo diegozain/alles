@@ -32,39 +32,39 @@ For some reason, _Github_ does not like symbolic links in their webpage. So here
 
 #### Spanning trees
 #### Dijkstra algorithm
-[![](../projects/graph-alg/pics/dijkstra-10nodes.png)](./)
+[![](../projects/graph-alg/pics/dijkstra-10nodes.png)](../projects/graph-alg/pics/dijkstra/)
 
 ## Partial differential equations
 
 #### Wave-advection
-[![](../projects/pdes/pics/wave_2d_material.png)](./)
+[![](../projects/pdes/pics/wave_2d_material.png)](../projects/pdes/wave-adv/)
 	
-[![](../projects/pdes/pics/wave_2d.png)](./)
+[![](../projects/pdes/pics/wave_2d.png)](../projects/pdes/wave-adv/)
 #### Heat equation
-[![](../projects/pdes/pics/heat_2d_material.png)](./)
+[![](../projects/pdes/pics/heat_2d_material.png)](../projects/pdes/heat/)
 	
-[![](../projects/pdes/pics/heat_2d.png)](./)
+[![](../projects/pdes/pics/heat_2d.png)](../projects/pdes/heat/)
 #### Korteweg De Vries
-[![](../projects/pdes/pics/korteweg.png)](./)
+[![](../projects/pdes/pics/korteweg.png)](../projects/pdes/korteweg/)
 #### Eikonal solver
-[![](../projects/pdes/pics/eikonal_2d.png)](./)
+[![](../projects/pdes/pics/eikonal_2d.png)](../projects/pdes/eikonal/)
 
 ## Squeezing and expanding matrices
 
 #### Compressed sensing
 #### Matrix completion
 #### Pixelating pics (for face-recognition-free profile pics)
-[![](../projects/sque-exp/pics/pixelate_mini.png)](./)
+[![](../projects/sque-exp/pics/pixelate_mini.png)](../projects/sque-exp/pixelate/)
 
 ## Wave processing
 
 #### MASW
 #### FTAN
 #### STFT
-[![](../projects/wave-proc/pics/stft.png)](./)
+[![](../projects/wave-proc/pics/stft.png)](../projects/wave-proc/stft/)
 #### Hyperbolic and linear semblance
 #### Beamforming (to find direction of signal)
-[![](../projects/wave-proc/pics/beamform_data.png)](./)[![](../projects/wave-proc/pics/beamform_velo-angle.png)](./)
+[![](../projects/wave-proc/pics/beamform_data.png)](../projects/wave-proc/beamforming/)[![](../projects/wave-proc/pics/beamform_velo-angle.png)](../projects/wave-proc/beamforming/)
 ### Seismic beachball
 	
 ## Cloud computing
