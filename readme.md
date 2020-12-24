@@ -1,6 +1,6 @@
 # alles
 
-[![](projects/pdes/pics/eikonal-funny.png)](./)
+[![](projects/pdes/pics/eikonal-funny.png)](gallery/)
 
 * Go to ```/gallery``` to see nice pictures.
 * Go to ```/projects``` to run projects.
@@ -75,4 +75,4 @@ __Not all are perfect but they all work.__
 
 ---
 
-![](projects/graph-alg/pics/dijkstra-10nodes.png)
+[![](projects/graph-alg/pics/dijkstra-10nodes.png)](gallery/)

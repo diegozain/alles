@@ -4,6 +4,8 @@ September 2020 @ Colorado School of Mines
 
 For some reason, _Github_ does not like symbolic links in their webpage. So here is a dump of the pics.
 
+Each image links to its project.
+
 ---
 
 ## Optimization
