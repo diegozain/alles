@@ -5,6 +5,10 @@
 * Go to ```/gallery``` to see nice pictures.
 * Go to ```/projects``` to run projects.
 
+If running Matlab projects, please set paths first by running the script:
+
+```dir_paths.m```
+
 ---
 
 All small projects that need a place to live - but are not part of a large project - live here.
@@ -56,6 +60,12 @@ All small projects that need a place to live - but are not part of a large proje
 
 	* Slurm
 	* AWS
+	
+* Deep learning
+	
+	* pic2pic: smooth to rough squares
+	
+---
 
 Some are written in Matlab, some use Python packages.
 Some were written by me, some are a collage of stuff taken from the iternet.

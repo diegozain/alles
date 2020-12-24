@@ -72,6 +72,7 @@ For some reason, _Github_ does not like symbolic links in their webpage. So here
 #### Slurm
 #### AWS
 
+## Deep learning
 
-
-
+#### pic2pic: smooth to rough squares
+[![](../projects/deep-learning/pics/pic2pic_idea.png)](../projects/deep-learning/pic2pic/)
