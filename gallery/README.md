@@ -76,5 +76,14 @@ Each image links to its project.
 
 ## Deep learning
 
-#### pic2pic: smooth to rough squares
+#### pic2pic
+
+Ideal case:
 [![](../projects/deep-learning/pics/pic2pic_idea.png)](../projects/deep-learning/pic2pic/)
+
+In practice:
+[![](../projects/deep-learning/pics/pic2pic_true-.png)](../projects/deep-learning/pic2pic/)
+
+[![](../projects/deep-learning/pics/pic2pic_obse-.png)](../projects/deep-learning/pic2pic/)
+
+[![](../projects/deep-learning/pics/pic2pic_reco-.png)](../projects/deep-learning/pic2pic/)
