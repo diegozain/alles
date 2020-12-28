@@ -51,7 +51,9 @@ We build 4! = 24 matrices.
 
 * ```ml_gan.py``` loads data, optimizes, and saves the __GAN__ model.
 
-* ```ml_journey.py``` plots the journey through the _learning machine_.
+* ```ml_journey.py``` plots the journey of one sample through the _learning machine_.
+
+* ```ml_predict.py``` computes and saves all outputs of the training and testing set.
 
 * ```ml_visualize.py``` plots the true, observed, and recovered pictures.
 

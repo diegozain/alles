@@ -85,11 +85,16 @@ for idx in range(0,n_tests):
 # 
 # 
 # ------------------------------------------------------------------------------
+# recovered output of the training data
 np.save(path_outi+'y_reco',y_reco)
+# recovered output outside of the training data
 np.save(path_outi+'y_test',y_test)
 
+# input of the training data
 np.save(path_outi+'x_train',x_train.squeeze())
+# true output of the training data
 np.save(path_outi+'y_train',y_train.squeeze())
+# input outside the training data
 np.save(path_outi+'x_test',x_test.squeeze())
 # ------------------------------------------------------------------------------
 #               load only one sample

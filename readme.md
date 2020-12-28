@@ -2,7 +2,7 @@
 
 [![](projects/pdes/pics/eikonal-funny.png)](gallery/)
 
-* Go to ```/gallery``` to see nice pictures.
+* Go to ```/gallery``` to see nice pictures ([link](gallery/)).
 * Go to ```/projects``` to run projects.
 
 If running Matlab projects, please set paths first by running the script:
@@ -63,7 +63,7 @@ All small projects that need a place to live - but are not part of a large proje
 	
 * Deep learning
 	
-	* pic2pic: smooth to rough squares
+	* pic2pic. Smooth to rough squares
 	
 ---
 

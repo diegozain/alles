@@ -11,8 +11,10 @@ np.random.seed(51)
 x_train_ = 'b_mini_'
 y_train_ = 'b_mini'
 # ------------------------------------------------------------------------------
+# for alles
 path_data = '../../../data/pic2pic/'
 path_outi = '../../../data/pic2pic/'
+# for google-colab
 path_data = '/content/'
 path_outi = '/content/'
 # ------------------------------------------------------------------------------
@@ -44,9 +46,6 @@ y_train = np.expand_dims(y_train, axis=-1)
 #                       optimization parameters
 # 
 # ------------------------------------------------------------------------------
-nfx=3
-nfy=3
-
 n_epoch = 24
 n_iter = 250
 

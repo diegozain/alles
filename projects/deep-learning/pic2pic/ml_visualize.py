@@ -15,7 +15,10 @@ from fancy_figure import fancy_figure
 #
 #
 # ------------------------------------------------------------------------------
+# for alles
 path_outi = '../../../data/pic2pic/output/'
+# # for google-colab
+# path_outi = '/content/'
 # ------------------------------------------------------------------------------
 accu = np.load(path_outi+'accu'+'.npy')
 loss = np.load(path_outi+'loss'+'.npy')

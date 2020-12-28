@@ -11,8 +11,10 @@ np.random.seed(51)
 x_train_ = 'b_mini_'
 y_train_ = 'b_mini'
 # ------------------------------------------------------------------------------
+# for alles
 path_data = '../../../data/pic2pic/'
 path_outi = '../../../data/pic2pic/'
+# for google-colab
 path_data = '/content/'
 path_outi = '/content/'
 # ------------------------------------------------------------------------------
