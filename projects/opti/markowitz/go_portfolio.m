@@ -41,9 +41,6 @@ xlabel('Time (month)')
 ylabel('Stock value')
 simple_figure()
 % ------------------------------------------------------------------------------
-% total number of iterations
-niter= 500;
-% ------------------------------------------------------------------------------
 S = cov(d);
 r = mean(d,1);
 r = r.';
@@ -69,6 +66,8 @@ ylabel('Weight value')
 simple_figure()
 % ------------------------------------------------------------------------------
 %{
+% total number of iterations
+niter= 500;
 [w,W,E,steps_] = markowitz_(d,rho_,miu_,niter);
 
 E1=w.'*S*w;

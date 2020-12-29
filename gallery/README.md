@@ -21,6 +21,9 @@ Each image links to its project.
 #### Dense circle packing
 [![](../projects/opti/pics/covid_19-people.png)](../projects/opti/dense-circ/)
 #### Markowitz portfolio
+[![](../pics/markowitz-ex.png)](./)
+[![](../projects/opti/pics/markowitz-ex.png)](../projects/opti/markowitz/)
+
 #### Decision trees & Random forests
 #### Bayesian optimization
 [![](../projects/opti/pics/bayes-opti-ex.png)](../projects/opti/baye-opti/)

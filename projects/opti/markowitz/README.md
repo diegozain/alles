@@ -14,7 +14,7 @@ f(w) = w.' S w - l1*(r.'w - rho) - l2*(e.'w - mu)
 
 ```
 
-where ```w``` is a vector of weights, ```S``` is the covariance matrix of the time-series stock values, ```r``` is a vector of the expected returns of the stock values, ```rho``` is the target expected return, ```e``` is a vector of just ones, and ```mu``` is the wanted value for the sum of values of ```w``` (usually ```mu=1```).
+where ```w``` is a vector of weights, ```S``` is the covariance matrix of the time-series stock values, ```r``` is a vector of the expected returns of the stock values, ```rho``` is the target expected return, ```e``` is a vector of just ones, and ```mu``` is the available quantity for investment.
 
 ```w.' S w``` is the variance of the portfolio return.
 
@@ -31,5 +31,7 @@ This transforms to a matrix problem of the form,
 where the task is to find ```w, l1``` and ```l2```. However, we are really only interested in ```w```.
 
 ---
+
+This is assuming ```rho = 50``` and ```mu = 1```. Note the short position on asset No. 2.
 
 [![](../pics/markowitz-ex.png)](./)
