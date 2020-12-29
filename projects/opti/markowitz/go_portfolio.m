@@ -25,8 +25,21 @@ d = [-0.091   0.019  -0.118;
 0.178   0.038  -0.079;
 0.071   0.073   0.029];
 % ------------------------------------------------------------------------------
+% expected return
 rho_ = 50;
-miu_ = 1e+3;
+% how much should the weights sum to?
+miu_ = 1;
+% ------------------------------------------------------------------------------
+[nt,nstock] = size(d);
+t=1:nt;
+
+figure;
+subplot(121)
+plot(t,d)
+axis tight
+xlabel('Time (month)')
+ylabel('Stock value')
+simple_figure()
 % ------------------------------------------------------------------------------
 % total number of iterations
 niter= 500;
@@ -40,11 +53,11 @@ e_= ones(ns,1);
 [w,betas] = markowitz__(d,rho_,miu_);
 
 E1=w.'*S*w;
-E2=(r.'*w-rho_)^2;
-E3=(e_.'*w-miu_)^2;
-fprintf('  using classic Lagrange multipliers, the objective functions give:\n   risk       %2.2d \n   return     %2.2d \n   sum to one %2.2d\n\n',E1,E2,E3)
+E2=r.'*w-rho_;
+E3=e_.'*w-miu_;
+fprintf('  using classic Lagrange multipliers, the objective functions give:\n   risk (should be small)      %2.2d \n   return (should be zero)     %2.2d \n   sum to one (should be zero) %2.2d\n\n',E1,E2,E3)
 % ------------------------------------------------------------------------------
-figure;
+subplot(122)
 hold on
 for is=1:ns
  plot(is,w(is),'.','markersize',40)
@@ -52,15 +65,16 @@ end
 hold off
 axis tight
 xlabel('Asset #')
-ylabel('Value of weights')
+ylabel('Weight value')
 simple_figure()
 % ------------------------------------------------------------------------------
+%{
 [w,W,E,steps_] = markowitz_(d,rho_,miu_,niter);
 
 E1=w.'*S*w;
-E2=(r.'*w-rho_)^2;
-E3=(e_.'*w-miu_)^2;
-fprintf('  using regularized gradient descent, the objective functions give:\n   risk       %2.2d \n   return     %2.2d \n   sum to one %2.2d\n\n',E1,E2,E3)
+E2=r.'*w-rho_;
+E3=e_.'*w-miu_;
+fprintf('  using classic Lagrange multipliers, the objective functions give:\n   risk (should be small)      %2.2d \n   return (should be zero)     %2.2d \n   sum to one (should be zero) %2.2d\n\n',E1,E2,E3)
 % ------------------------------------------------------------------------------
 figure;
 plot(1:numel(E),log10(E),'.-','markersize',10)
