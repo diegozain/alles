@@ -31,7 +31,7 @@ Each image links to its project.
 ## Dimensionality reduction
 
 #### Self-organizing maps
-[![](../projects/dim-redu/pics/self-org-synth.png)](../projects/dim-redu/self-org/)
+[![](../projects/dim-redu/pics/self-org-zodiac.png)](../projects/dim-redu/self-org/)
 #### t-SNE
 
 ## Graph theory algorithms
