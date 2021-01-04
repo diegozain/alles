@@ -1,5 +1,8 @@
 # alles
 
+diego domenzain
+2020
+
 [![](projects/pdes/pics/eikonal-funny.png)](gallery/)
 
 * Go to ```/gallery``` to see nice pictures ([link](gallery/)).
