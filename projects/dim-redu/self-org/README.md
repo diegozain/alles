@@ -15,7 +15,7 @@ __These scripts are examples of self-organizing maps.__
   * Columns are the questions, rows are people.
   * Interesting trends:
     * Persons 1, 9, and 14 were the oldest ladies in the group.
-    * Persons 2, 3, and 8 (all dudes) were officemates.
+    * Persons 2, 3, and 8 were officemates (all dudes).
     * Persons 5, 6, 7, and 11 were the most boring in the group by far (ladies and dudes).
     * Persons 10, 12, and 13 were international students (all dudes).
     
