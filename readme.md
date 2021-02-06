@@ -16,47 +16,47 @@ If running Matlab projects, please set paths first by running the script:
 
 All small projects that need a place to live - but are not part of a large project - live here.
 
-* Optimization
+* Optimization 
 
-	* Gedanken of joint inversion
-	* Gravity inversion
-	* Cross-gradient inversion
+	* [Gedanken of joint inversion](projects/opti/gedanken/)
+	* [Gravity inversion](../projects/opti/gravity/)
+	* [Cross-gradient inversion](../projects/opti/xgrad/)
 	* Logistic regression
 	* Snow slip
-	* Dense circle packing
-	* Markowitz portfolio
+	* [Dense circle packing](../projects/opti/dense-circ/)
+	* [Markowitz portfolio](../projects/opti/markowitz/)
 	* Decision trees & Random forests
 
 * Dimensionality reduction
 
-	* Self-organizing maps
+	* [Self-organizing maps](../projects/dim-redu/self-org/)
 	* t-SNE
 
 * Graph theory algorithms
 
 	* Spanning trees
-	* Dijkstra algorithm
+	* [Dijkstra algorithm](../projects/graph-alg/dijkstra/)
 
 * Partial differential equations
 
-	* Wave-advection
-	* Heat equation
-	* Korteweg De Vries
-	* Eikonal solver
+	* [Wave-advection](../projects/pdes/wave-adv/)
+	* [Heat equation](../projects/pdes/heat/)
+	* [Korteweg De Vries](../projects/pdes/korteweg/)
+	* [Eikonal solver](../projects/pdes/eikonal/)
 
 * Squeezing and expanding matrices
 
 	* Compressed sensing
 	* Matrix completion
-	* Pixelating pics (for face-recognition-free profile pics)
+	* [Pixelating pics](../projects/sque-exp/pixelate/) (for face-recognition-free profile pics)
 
 * Wave processing
 
 	* MASW
 	* FTAN
-	* STFT
+	* [STFT](../projects/wave-proc/stft/)
 	* Hyperbolic and linear semblance
-	* Beamforming (to find direction of signal)
+	* [Beamforming](../projects/wave-proc/beamforming/) (to find direction of signal)
 	* Seismic beachball
 	
 * Cloud computing
@@ -66,7 +66,7 @@ All small projects that need a place to live - but are not part of a large proje
 	
 * Deep learning
 	
-	* pic2pic. Smooth to rough squares
+	* [pic2pic](../projects/deep-learning/pic2pic/). Smooth to rough squares
 	
 ---
 

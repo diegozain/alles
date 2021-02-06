@@ -19,3 +19,5 @@ __pycache__/
 *.h5
 *.npy
 *.txt
+
+test/
