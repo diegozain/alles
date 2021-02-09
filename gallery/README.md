@@ -51,7 +51,7 @@ Each image links to its project.
 	
 [![](../projects/pdes/pics/heat_2d.png)](../projects/pdes/heat/)
 #### Korteweg De Vries
-[![](../projects/pdes/pics/korteweg.png)](../projects/pdes/korteweg/)
+[![](../projects/pdes/pics/korteweg_.png)](../projects/pdes/korteweg/)
 #### Eikonal solver
 [![](../projects/pdes/pics/eikonal_2d.png)](../projects/pdes/eikonal/)
 

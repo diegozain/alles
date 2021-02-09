@@ -57,6 +57,12 @@ simple_figure()
 [Dx,~] = Dx_Dz(nx,3);
 Dx = Dx(1:nx,1:nx);
 Dx = Dx/dx;
+[Dx_v,~]=Dx_Dz_v(nx,3);
+[Dx_s,~]=Dx_Dz_s(nx,3);
+Dx_v = Dx_v(1:nx,1:nx);
+Dx_v = Dx_v/dx;
+Dx_s = Dx_s(1:nx,1:nx);
+Dx_s = Dx_s/dx;
 % - make periodic boundary conditions!
 % Dx(1,1:2)=Dx(2,2:3);
 % Dx(1,3)=0;
@@ -73,19 +79,19 @@ ep_=1./ep;
 for it=1:(nt-1)
 % - v 
 % runge kuttas
-k1 = mu_.*(Dx*u(:,it));
-k2 = mu_.*(Dx*(u(:,it)+(dt/2)*k1));
-k3 = mu_.*(Dx*(u(:,it)+(dt/2)*k2));
-k4 = mu_.*(Dx*(u(:,it)+dt*k3));
+k1 = mu_.*(Dx_s*u(:,it));
+k2 = mu_.*(Dx_s*(u(:,it)+(dt/2)*k1));
+k3 = mu_.*(Dx_s*(u(:,it)+(dt/2)*k2));
+k4 = mu_.*(Dx_s*(u(:,it)+dt*k3));
 
 v(:,it+1) = v(:,it) + (dt/6)*(k1+2*k2+2*k3+k4);
 
 % - u
 % runge kuttas
-k1 = ep_.*(Dx*v(:,it+1));
-k2 = ep_.*(Dx*(v(:,it+1)+(dt/2)*k1));
-k3 = ep_.*(Dx*(v(:,it+1)+(dt/2)*k2));
-k4 = ep_.*(Dx*(v(:,it+1)+dt*k3));
+k1 = ep_.*(Dx_v*v(:,it+1));
+k2 = ep_.*(Dx_v*(v(:,it+1)+(dt/2)*k1));
+k3 = ep_.*(Dx_v*(v(:,it+1)+(dt/2)*k2));
+k4 = ep_.*(Dx_v*(v(:,it+1)+dt*k3));
 
 u(:,it+1) = u(:,it) + (dt/6)*(k1+2*k2+2*k3+k4);
 end
