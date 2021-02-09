@@ -26,13 +26,9 @@ inv(s) = [lam+2*mu lam        0]
          [0         0        mu]
          [lam       lam+2*mu  0]
 ```
+
+__P-SV wave propagation in heterogeneous media: Velocity-stress finite-difference method__. Jean Virieux, *Geophysics* 1986.
+
 ---
 
-Note how in both examples the wave is not propagated in a homogeneous way. 
-
-This is because we use variable coefficients in space.
-
-[![](../pics/wave_1d.png)](./)
-
-[![](../pics/wave_2d.png)](./)
-
+[![](../pics/elastic_2d_.png)](./)
