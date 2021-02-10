@@ -40,6 +40,7 @@ All small projects that need a place to live - but are not part of a large proje
 * Partial differential equations
 
 	* [Wave-advection](projects/pdes/wave-adv/)
+	* [Elastic SV 2D](projects/pdes/elastic/)
 	* [Heat equation](projects/pdes/heat/)
 	* [Korteweg De Vries](projects/pdes/korteweg/)
 	* [Eikonal solver](projects/pdes/eikonal/)

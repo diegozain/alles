@@ -26,16 +26,16 @@ close all
 % mu  = rho.*vs^2;
 % ------------------------------------------------------------------------------
 % --- pde parameters
-lam_= [1e6 ; 4e7]/1e7; % [1; 2];
-mu_ = [1e7 ; 3e8]/1e7; % [2; 4];
-rho_= [1.7e3 ; 2e3]/1e3; % [3; 6];
+lam_= [1; 1]; % [1.0163e+10 1.0163e+10]; % [1e6 ; 4e7]/1e7; % [1; 2];
+mu_ = [1; 1]; % [1.0165e+10 1.0165e+10]; % [1e7 ; 3e8]/1e7; % [2; 4];
+rho_= [1; 1]; % [2800 2800]; % [1.7e3 ; 2e3]/1e3; % [3; 6];
 
 % lam_=flip(lam_);
 mu_=flip(mu_);
 % rho_=flip(rho_);
 % --- spatial constraints
-X=2;
-Z=2;
+X=4;
+Z=4;
 T=15;
 % --- source parameters
 to = 4;
@@ -69,8 +69,8 @@ courant_factor = 0.9;
 dt = 1/(vel_max * sqrt((1/dx^2)+(1/dz^2)));
 dt = courant_factor * dt
 % --- discretization
-x=(-X:dx:X).';
-z=(-X:dz:Z).';
+x=(0:dx:X).';
+z=(0:dz:Z).';
 t=(0:dt:T).';
 nx=numel(x);
 nz=numel(z);
@@ -157,14 +157,17 @@ for it=1:nt
   % 2nd order
   ix=2:nx;
   % dx(sxx)
-  dxsxx_dzsxz(:,ix)=(sxx(:,ix)-sxx(:,ix-1))/dx;
+  dxsxx(:,ix)=(sxx(:,ix)-sxx(:,ix-1))/dx;
   % dx(sxz)
-  dxsxz_dzszz(:,ix)=(sxz(:,ix)-sxz(:,ix-1))/dx;
+  dxsxz(:,ix)=(sxz(:,ix)-sxz(:,ix-1))/dx;
   iz=2:nz;
   % dz(sxz)
-  dxsxx_dzsxz(iz,:)=dxsxx_dzsxz(iz,:) + (sxz(iz,:)-sxz(iz-1,:))/dz;
+  dzsxz(iz,:)=(sxz(iz,:)-sxz(iz-1,:))/dz;
   % dz(szz)
-  dxsxz_dzszz(iz,:)=dxsxz_dzszz(iz,:) + (szz(iz,:)-szz(iz-1,:))/dz;
+  dzszz(iz,:)=(szz(iz,:)-szz(iz-1,:))/dz;
+  
+  dxsxx_dzsxz = dxsxx+dzsxz;
+  dxsxz_dzszz = dxsxz+dzszz;
 
   % - velocity source 
   dxsxx_dzsxz(isrc) = dxsxx_dzsxz(isrc) + fx(it);
