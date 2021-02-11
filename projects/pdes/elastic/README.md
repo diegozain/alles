@@ -10,6 +10,8 @@ September 2020 @ Colorado School of Mines
 
 __These scripts are an example of solving the 2d wave equation with variable coefficients.__
 
+The equations to be solved are as follows,
+
 ```matlab
 two-dimensional elastic SV wave
 
@@ -39,8 +41,8 @@ lam = (vp.^2 - 2*vs.^2).*rho = rho.*(vp.^2 - 2*vs.^2)
 
 ## References
 
-1. __P-SV wave propagation in heterogeneous media: Velocity-stress finite-difference method__. Jean Virieux, *Geophysics* 1986.
-1. __A variational formulation of a stabilized unsplit convolutional perfectly matched layer for the isotropic or anisotropic seismic wave equation__. Roland Martin, Dimitri Komatitsch, and Stephen D. Gedney, *Computer Modeling in Engineering and Sciences*, 2008.
+1. [__P-SV wave propagation in heterogeneous media: Velocity-stress finite-difference method__](https://library.seg.org/doi/abs/10.1190/1.1442147). Jean Virieux, *Geophysics* 1986.
+1. [__A variational formulation of a stabilized unsplit convolutional perfectly matched layer for the isotropic or anisotropic seismic wave equation__](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.725.5041&rep=rep1&type=pdf). Roland Martin, Dimitri Komatitsch, and Stephen D. Gedney, *Computer Modeling in Engineering and Sciences*, 2008.
 
 ## Inspiration
 
@@ -56,7 +58,7 @@ The _Fortran_ CPML implementation of Dimitri is modified to account for heteroge
 elasticSV2d_order2_pml.m
 ```
 
-This Fortran code (as far as I know) is the engine of the famous __specfem2d__.
+This Fortran code (as far as I know) is the basis of the famous [__specfem2d__](https://github.com/geodynamics/specfem2d).
 
 ---
 
