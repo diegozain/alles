@@ -34,9 +34,9 @@ close all
 % 
 % ------------------------------------------------------------------------------
 % --- pde parameters
-lam_= [1; 1]; % [1.0163e+10 1.0163e+10]; % [1e6 ; 4e7]/1e7; % [1; 2];
-mu_ = [1; 1]; % [1.0165e+10 1.0165e+10]; % [1e7 ; 3e8]/1e7; % [2; 4];
-rho_= [1; 1]; % [2800 2800]; % [1.7e3 ; 2e3]/1e3; % [3; 6];
+lam_= [2; 5]; % [1.0163e+10 1.0163e+10]; % [1e6 ; 4e7]/1e7; % [1; 2];
+mu_ = [1.5; 3]; % [1.0165e+10 1.0165e+10]; % [1e7 ; 3e8]/1e7; % [2; 4];
+rho_= [1; 8]; % [2800 2800]; % [1.7e3 ; 2e3]/1e3; % [3; 6];
 
 % lam_=flip(lam_);
 % mu_=flip(mu_);
@@ -91,15 +91,22 @@ lam=lam_(1)*ones(nz,nx);
 mu =mu_(1)*ones(nz,nx);
 rho=rho_(1)*ones(nz,nx);
 
-lam(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = lam_(2);
-mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
-rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = rho_(2);
+% % -- box in the middle
+% lam(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = lam_(2);
+% mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
+% rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = rho_(2);
+
+% -- two layers
+lam(fix(nz*(2/3)):nz,:) = lam_(2);
+mu(fix(nz*(2/3)):nz,:) = mu_(2);
+rho(fix(nz*(2/3)):nz,:) = rho_(2);
 
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);
 
+% ------------------------------------------------------------------------------
 figure;
-subplot(131)
+subplot(331)
 fancy_imagesc(lam,x,z)
 colormap(rainbow2(1))
 colorbar off
@@ -110,7 +117,7 @@ set(gca,'ytick',[])
 title('Lame #1')
 simple_figure()
 
-subplot(132)
+subplot(333)
 fancy_imagesc(mu,x,z)
 colormap(rainbow2(1))
 colorbar off
@@ -121,7 +128,7 @@ set(gca,'ytick',[])
 title('Lame #2')
 simple_figure()
 
-subplot(133)
+subplot(335)
 fancy_imagesc(rho,x,z)
 colormap(rainbow2(1))
 colorbar off
@@ -130,6 +137,28 @@ colorbar off
 set(gca,'xtick',[])
 set(gca,'ytick',[])
 title('Density')
+simple_figure()
+
+subplot(337)
+fancy_imagesc(vp,x,z)
+colormap(rainbow2(1))
+colorbar off
+% xlabel('Length')
+% ylabel('Depth')
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+title('P velocity')
+simple_figure()
+
+subplot(339)
+fancy_imagesc(vs,x,z)
+colormap(rainbow2(1))
+colorbar off
+% xlabel('Length')
+% ylabel('Depth')
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+title('S velocity')
 simple_figure()
 % ------------------------------------------------------------------------------
 % -- init pml
@@ -171,31 +200,19 @@ sxz=zeros(nz,nx);
 vz_=zeros(nz,nx,nt);
 % ------------------------------------------------------------------------------
 % -- init PML
-d_x = zeros(nx,1);
-d_x_half = zeros(nx,1);
-alpha_x = zeros(nx,1);
-alpha_x_half = zeros(nx,1);
-a_x = zeros(nx,1);
-a_x_half = zeros(nx,1);
-b_x = zeros(nx,1);
-b_x_half = zeros(nx,1);
-% K_x = ones(nx,1);
-K_x = zeros(nx,1);
-% K_x_half = ones(nx,1);
-K_x_half = zeros(nx,1);
+a_x = zeros(nz,nx);
+a_x_half = zeros(nz,nx);
+b_x = zeros(nz,nx);
+b_x_half = zeros(nz,nx);
+K_x = zeros(nz,nx);
+K_x_half = zeros(nz,nx);
 
-d_z = zeros(nz,1);
-d_z_half = zeros(nz,1);
-alpha_z = zeros(nz,1);
-alpha_z_half = zeros(nz,1);
-a_z = zeros(nz,1);
-a_z_half = zeros(nz,1);
-b_z = zeros(nz,1);
-b_z_half = zeros(nz,1);
-% K_z = ones(nz,1);
-K_z = zeros(nz,1);
-% K_z_half = ones(nz,1);
-K_z_half = zeros(nz,1);
+a_z = zeros(nz,nx);
+a_z_half = zeros(nz,nx);
+b_z = zeros(nz,nx);
+b_z_half = zeros(nz,nx);
+K_z = zeros(nz,nx);
+K_z_half = zeros(nz,nx);
 % ------------------------------------------------------------------------------
 %
 %
@@ -217,67 +234,61 @@ K_z_half = zeros(nz,1);
 % -------------
 xoriginleft = thickness_PML_x;
 xoriginright= (nx-1)*dx - thickness_PML_x;
+for iz=1:nz
 for ix=1:nx
+  
+  d0_x = - (n_power_pml + 1) * vp(iz,ix) * log(Rcoef) / (2 * thickness_PML_x); 
   
   xval = dx * (ix-1);
   
   % -- left edge
-  d0_x = - (n_power_pml + 1) * vp(1,ix) * log(Rcoef) / (2 * thickness_PML_x); 
   % damping profile at the grid points
   abscissa_in_PML = xoriginleft - xval;
   if (abscissa_in_PML >= 0)
     abscissa_normalized = abscissa_in_PML / thickness_PML_x;
-    d_x(ix) = d0_x * abscissa_normalized^n_power_pml;
-    K_x(ix) = 1 + (k_max_pml - 1) * abscissa_normalized^n_power_pml;
-    alpha_x(ix) = alpha_max_pml * (1 - abscissa_normalized);
+    d_x = d0_x * abscissa_normalized^n_power_pml;
+    K_x(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized^n_power_pml;
+    alpha_x = alpha_max_pml * (1 - abscissa_normalized);
   end
   % damping profile at half the grid points
   abscissa_in_PML = xoriginleft - (xval + dx/2);
   if (abscissa_in_PML >= 0)
     abscissa_normalized = abscissa_in_PML / thickness_PML_x;
-    d_x_half(ix) = d0_x * abscissa_normalized^n_power_pml;
-    K_x_half(ix) = 1 + (k_max_pml - 1) * abscissa_normalized^n_power_pml;
-    alpha_x_half(ix) = alpha_max_pml * (1 - abscissa_normalized);
+    d_x_half = d0_x * abscissa_normalized^n_power_pml;
+    K_x_half(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized^n_power_pml;
+    alpha_x_half = alpha_max_pml * (1 - abscissa_normalized);
   end
   
   % - right edge
-  d0_x = - (n_power_pml + 1) * vp(nz,ix) * log(Rcoef) / (2 * thickness_PML_x);
   % damping profile at the grid points
   abscissa_in_PML = xval - xoriginright;
   if (abscissa_in_PML >= 0)
     abscissa_normalized = abscissa_in_PML / thickness_PML_x;
-    d_x(ix) = d0_x * abscissa_normalized^n_power_pml;
-    K_x(ix) = 1 + (k_max_pml - 1) * abscissa_normalized^n_power_pml;
-    alpha_x(ix) = alpha_max_pml * (1 - abscissa_normalized);
+    d_x = d0_x * abscissa_normalized^n_power_pml;
+    K_x(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized^n_power_pml;
+    alpha_x = alpha_max_pml * (1 - abscissa_normalized);
   end
   % damping profile at half the grid points
   abscissa_in_PML = xval + dx/2 - xoriginright;
   if (abscissa_in_PML >= 0)
     abscissa_normalized = abscissa_in_PML / thickness_PML_x;
-    d_x_half(ix) = d0_x * abscissa_normalized^n_power_pml;
-    K_x_half(ix) = 1 + (k_max_pml - 1) * abscissa_normalized^n_power_pml;
-    alpha_x_half(ix) = alpha_max_pml * (1 - abscissa_normalized);
+    d_x_half = d0_x * abscissa_normalized^n_power_pml;
+    K_x_half(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized^n_power_pml;
+    alpha_x_half = alpha_max_pml * (1 - abscissa_normalized);
   end
-  
-  % % just in case, for -5 at the end
-  % if (alpha_x(ix) < 0) 
-  %   alpha_x(ix) = 0;
-  % end
-  % if (alpha_x_half(ix) < 0) 
-  %   alpha_x_half(ix) = 0;
-  % end
 
-  % just in case, for -5 at the end
-  b_x(ix) = exp(- ((d_x(ix)/(K_x(ix))) + alpha_x(ix)) * dt);
-  b_x_half(ix) = exp(- ((d_x_half(ix)/(K_x_half(ix))) + alpha_x_half(ix)) * dt);
+  % 
+  b_x(iz,ix) = exp(- ((d_x/(K_x(iz,ix))) + alpha_x) * dt);
+  b_x_half(iz,ix) = exp(- ((d_x_half/(K_x_half(iz,ix))) + alpha_x_half) * dt);
 
   % this to avoid division by zero outside the PML
-  if (abs(d_x(ix)) > 1e-6) 
-    a_x(ix) = d_x(ix)*(b_x(ix) - 1)/(K_x(ix)*(d_x(ix) + K_x(ix) * alpha_x(ix)));
+  if (abs(d_x) > 1e-6) 
+    a_x(iz,ix) = d_x*(b_x(iz,ix) - 1)/(K_x(iz,ix)*(d_x + K_x(iz,ix) * alpha_x));
   end
-  if (abs(d_x_half(ix)) > 1e-6) 
-    a_x_half(ix) = d_x_half(ix) * (b_x_half(ix) - 1) / (K_x_half(ix) * (d_x_half(ix) + K_x_half(ix) * alpha_x_half(ix)));
+  if (abs(d_x_half) > 1e-6) 
+    a_x_half(iz,ix) = d_x_half * (b_x_half(iz,ix) - 1) / (K_x_half(iz,ix) * (d_x_half + K_x_half(iz,ix) * alpha_x_half));
   end
+end
 end
 
 % -------------
@@ -285,76 +296,79 @@ end
 % -------------
 zoriginbottom = thickness_PML_z;
 zorigintop = (nz-1)*dz - thickness_PML_z;
-for iz = 1:nz
+for ix=1:nx
+for iz=1:nz
+  
+  d0_z = - (n_power_pml + 1) * vp(iz,nx) * log(Rcoef) / (2 * thickness_PML_z);
   
   zval = dz * (iz-1);
 
   % -- bottom edge
-  d0_z = - (n_power_pml + 1) * vp(iz,nx) * log(Rcoef) / (2 * thickness_PML_z); %
   % damping profile at the grid points
   abscissa_in_PML = zoriginbottom - zval;
   if (abscissa_in_PML >= 0)
     abscissa_normalized = abscissa_in_PML / thickness_PML_z;
-    d_z(iz) = d0_z * abscissa_normalized.^n_power_pml;
-    K_z(iz) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
-    alpha_z(iz) = alpha_max_pml * (1 - abscissa_normalized);
+    d_z = d0_z * abscissa_normalized.^n_power_pml;
+    K_z(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
+    alpha_z = alpha_max_pml * (1 - abscissa_normalized);
   end
 
   % damping profile at half the grid points
   abscissa_in_PML = zoriginbottom - (zval + dz/2);
   if (abscissa_in_PML >= 0)
     abscissa_normalized = abscissa_in_PML / thickness_PML_z;
-    d_z_half(iz) = d0_z * abscissa_normalized.^n_power_pml;
-    K_z_half(iz) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
-    alpha_z_half(iz) = alpha_max_pml * (1 - abscissa_normalized);
+    d_z_half = d0_z * abscissa_normalized.^n_power_pml;
+    K_z_half(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
+    alpha_z_half = alpha_max_pml * (1 - abscissa_normalized);
   end
 
   % -- top edge
-  d0_z = - (n_power_pml + 1) * vp(iz,1) * log(Rcoef) / (2 * thickness_PML_z); %
   % damping profile at the grid points
   abscissa_in_PML = zval - zorigintop;
   if (abscissa_in_PML >= 0)
     abscissa_normalized = abscissa_in_PML / thickness_PML_z;
-    d_z(iz) = d0_z * abscissa_normalized.^n_power_pml;
-    K_z(iz) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
-    alpha_z(iz) = alpha_max_pml * (1 - abscissa_normalized);
+    d_z = d0_z * abscissa_normalized.^n_power_pml;
+    K_z(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
+    alpha_z = alpha_max_pml * (1 - abscissa_normalized);
   end
 
   % damping profile at half the grid points
   abscissa_in_PML = zval + dz/2 - zorigintop;
   if (abscissa_in_PML >= 0)
     abscissa_normalized = abscissa_in_PML / thickness_PML_z;
-    d_z_half(iz) = d0_z * abscissa_normalized.^n_power_pml;
-    K_z_half(iz) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
-    alpha_z_half(iz) = alpha_max_pml * (1 - abscissa_normalized);
+    d_z_half = d0_z * abscissa_normalized.^n_power_pml;
+    K_z_half(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
+    alpha_z_half = alpha_max_pml * (1 - abscissa_normalized);
   end
 
   % just in case, for -5 at the end
-  b_z(iz) = exp(- ((d_z(iz) / (K_z(iz))) + alpha_z(iz)) * dt);
-  b_z_half(iz) = exp(- ((d_z_half(iz)/(K_z_half(iz))) + alpha_z_half(iz)) * dt);
+  b_z(iz,ix) = exp(- ((d_z / (K_z(iz,ix))) + alpha_z) * dt);
+  b_z_half(iz,ix) = exp(- ((d_z_half/(K_z_half(iz,ix))) + alpha_z_half) * dt);
 
   % this to avoid division by zero outside the PML
-  if (abs(d_z(iz)) > 1e-6) 
-    a_z(iz) = d_z(iz)*(b_z(iz) - 1)/(K_z(iz)*(d_z(iz) + K_z(iz)*alpha_z(iz)));
+  if (abs(d_z) > 1e-6) 
+    a_z(iz,ix) = d_z*(b_z(iz,ix) - 1)/(K_z(iz,ix)*(d_z + K_z(iz,ix)*alpha_z));
   end
-  if (abs(d_z_half(iz)) > 1e-6) 
-    a_z_half(iz) = d_z_half(iz) * (b_z_half(iz) - 1) / (K_z_half(iz) * (d_z_half(iz) + K_z_half(iz) * alpha_z_half(iz)));
+  if (abs(d_z_half) > 1e-6) 
+    a_z_half(iz,ix) = d_z_half * (b_z_half(iz,ix) - 1) / (K_z_half(iz,ix) * (d_z_half + K_z_half(iz,ix) * alpha_z_half));
   end
 end
-b_x((n_points_pml+1):(nx-n_points_pml-1)) = 0;
-a_x((n_points_pml+1):(nx-n_points_pml-1)) = 0;
-K_x((n_points_pml+1):(nx-n_points_pml-1)) = 1;
-b_x_half((n_points_pml+1):(nx-n_points_pml-1)) = 0;
-a_x_half((n_points_pml+1):(nx-n_points_pml-1)) = 0;
-K_x_half((n_points_pml+1):(nx-n_points_pml-1)) = 1;
+end
+
+b_x(:,(n_points_pml+2):(nx-n_points_pml-1)) = 0;
+% a_x(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
+K_x(:,(n_points_pml+2):(nx-n_points_pml-1)) = 1;
+% b_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
+a_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
+K_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 1;
 
 
-b_z((n_points_pml+1):(nz-n_points_pml-1)) = 0;
-a_z((n_points_pml+1):(nz-n_points_pml-1)) = 0;
-K_z((n_points_pml+1):(nz-n_points_pml-1)) = 1;
-b_z_half((n_points_pml+1):(nz-n_points_pml-1)) = 0;
-a_z_half((n_points_pml+1):(nz-n_points_pml-1)) = 0;
-K_z_half((n_points_pml+1):(nz-n_points_pml-1)) = 1;
+b_z((n_points_pml+2):(nz-n_points_pml-1),:) = 0;
+% a_z((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
+K_z((n_points_pml+2):(nz-n_points_pml-1),:) = 1;
+% b_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
+a_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
+K_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 1;
 % ------------------------------------------------------------------------------
 % 
 % 
@@ -404,11 +418,11 @@ for it=1:nt
   value_dvx_dx = (vx(iz,ix+1) - vx(iz,ix)) / dx;
   value_dvz_dz = (vz(iz,ix) - vz(iz-1,ix)) / dz;
   
-  memory_dvx_dx(iz,ix) = repmat(b_x_half(ix).',nz-1,1).*memory_dvx_dx(iz,ix) + repmat(a_x_half(ix).',nz-1,1).*value_dvx_dx;
-  memory_dvz_dz(iz,ix) = repmat(b_z(iz),1,nx-1).*memory_dvz_dz(iz,ix) + repmat(a_z(iz),1,nx-1).*value_dvz_dz;
+  memory_dvx_dx(iz,ix) = b_x_half(iz,ix).*memory_dvx_dx(iz,ix) + a_x_half(iz,ix).*value_dvx_dx;
+  memory_dvz_dz(iz,ix) = b_z(iz,ix).*memory_dvz_dz(iz,ix) + a_z(iz,ix).*value_dvz_dz;
   
-  value_dvx_dx = (value_dvx_dx./repmat(K_x_half(ix).',nz-1,1)) + memory_dvx_dx(iz,ix);
-  value_dvz_dz = (value_dvz_dz./repmat(K_z(iz),1,nx-1)) + memory_dvz_dz(iz,ix);
+  value_dvx_dx = (value_dvx_dx./K_x_half(iz,ix)) + memory_dvx_dx(iz,ix);
+  value_dvz_dz = (value_dvz_dz./K_z(iz,ix)) + memory_dvz_dz(iz,ix);
   % ----------------------------------------------------------------------------
   % -- update sxx and szz
   sxx(iz,ix) = sxx(iz,ix) + (lam2mu_half_x.*value_dvx_dx + lam_half_x.*value_dvz_dz)*dt;
@@ -425,11 +439,11 @@ for it=1:nt
   value_dvz_dx = (vz(iz,ix) - vz(iz,ix-1)) / dx;
   value_dvx_dz = (vx(iz+1,ix) - vx(iz,ix)) / dz;
   
-  memory_dvz_dx(iz,ix) = repmat(b_x(ix).',nz-1,1).*memory_dvz_dx(iz,ix) + repmat(a_x(ix).',nz-1,1).*value_dvz_dx;
-  memory_dvx_dz(iz,ix) = repmat(b_z_half(iz),1,nx-1).* memory_dvx_dz(iz,ix) + repmat(a_z_half(iz),1,nx-1).* value_dvx_dz;
+  memory_dvz_dx(iz,ix) = b_x(iz,ix).*memory_dvz_dx(iz,ix) + a_x(iz,ix).*value_dvz_dx;
+  memory_dvx_dz(iz,ix) = b_z_half(iz,ix).* memory_dvx_dz(iz,ix) + a_z_half(iz,ix).* value_dvx_dz;
   
-  value_dvz_dx = (value_dvz_dx./repmat(K_x(ix).',nz-1,1)) + memory_dvz_dx(iz,ix);
-  value_dvx_dz = (value_dvx_dz./repmat(K_z_half(iz),1,nx-1)) + memory_dvx_dz(iz,ix);
+  value_dvz_dx = (value_dvz_dx./K_x(iz,ix)) + memory_dvz_dx(iz,ix);
+  value_dvx_dz = (value_dvx_dz./K_z_half(iz,ix)) + memory_dvx_dz(iz,ix);
   % ----------------------------------------------------------------------------
   % -- update stress xz
   sxz(iz,ix) = sxz(iz,ix) + mu_half_z.*(value_dvz_dx + value_dvx_dz)*dt;
@@ -444,11 +458,11 @@ for it=1:nt
   value_dsxx_dx = (sxx(iz,ix) - sxx(iz,ix-1)) / dx;
   value_dsxz_dz = (sxz(iz,ix) - sxz(iz-1,ix)) / dz;
   
-  memory_dsxx_dx(iz,ix) = repmat(b_x(ix).',nz-1,1).*memory_dsxx_dx(iz,ix) + repmat(a_x(ix).',nz-1,1).*value_dsxx_dx;
-  memory_dsxz_dz(iz,ix) = repmat(b_z(iz),1,nx-1).*memory_dsxz_dz(iz,ix) + repmat(a_z(iz),1,nx-1).*value_dsxz_dz;
+  memory_dsxx_dx(iz,ix) = b_x(iz,ix).*memory_dsxx_dx(iz,ix) + a_x(iz,ix).*value_dsxx_dx;
+  memory_dsxz_dz(iz,ix) = b_z(iz,ix).*memory_dsxz_dz(iz,ix) + a_z(iz,ix).*value_dsxz_dz;
   
-  value_dsxx_dx = (value_dsxx_dx./repmat(K_x(ix).',nz-1,1)) + memory_dsxx_dx(iz,ix);
-  value_dsxz_dz = (value_dsxz_dz./repmat(K_z(iz),1,nx-1)) + memory_dsxz_dz(iz,ix);
+  value_dsxx_dx = (value_dsxx_dx./K_x(iz,ix)) + memory_dsxx_dx(iz,ix);
+  value_dsxz_dz = (value_dsxz_dz./K_z(iz,ix)) + memory_dsxz_dz(iz,ix);
   % ----------------------------------------------------------------------------
   % -- update velocity vx
   vx(iz,ix) = vx(iz,ix) + (value_dsxx_dx+value_dsxz_dz)*dt./rho(iz,ix);
@@ -463,11 +477,11 @@ for it=1:nt
   value_dsxz_dx = (sxz(iz,ix+1) - sxz(iz,ix)) / dx;
   value_dszz_dz = (szz(iz+1,ix) - szz(iz,ix)) / dz;
   
-  memory_dsxz_dx(iz,ix) = (repmat(b_x_half(ix).',nz-1,1).*memory_dsxz_dx(iz,ix)) + (repmat(a_x_half(ix).',nz-1,1).*value_dsxz_dx);
-  memory_dszz_dz(iz,ix) = (repmat(b_z_half(iz),1,nx-1).*memory_dszz_dz(iz,ix)) + (repmat(a_z_half(iz),1,nx-1).*value_dszz_dz);
+  memory_dsxz_dx(iz,ix) = (b_x_half(iz,ix).*memory_dsxz_dx(iz,ix)) + (a_x_half(iz,ix).*value_dsxz_dx);
+  memory_dszz_dz(iz,ix) = (b_z_half(iz,ix).*memory_dszz_dz(iz,ix)) + (a_z_half(iz,ix).*value_dszz_dz);
   
-  value_dsxz_dx = (value_dsxz_dx./repmat(K_x_half(ix).',nz-1,1)) + memory_dsxz_dx(iz,ix);
-  value_dszz_dz = (value_dszz_dz./repmat(K_z_half(iz),1,nx-1)) + memory_dszz_dz(iz,ix);
+  value_dsxz_dx = (value_dsxz_dx./K_x_half(iz,ix)) + memory_dsxz_dx(iz,ix);
+  value_dszz_dz = (value_dszz_dz./K_z_half(iz,ix)) + memory_dszz_dz(iz,ix);
   % ----------------------------------------------------------------------------
   % -- update velocity vz
   vz(iz,ix) = vz(iz,ix) + (value_dsxz_dx + value_dszz_dz)*dt ./ rho_half_x_half_z;
@@ -648,3 +662,4 @@ colorbar off
 title('Velocity z')
 simple_figure()
 % ------------------------------------------------------------------------------
+%}

@@ -46,6 +46,8 @@ Each image links to its project.
 [![](../projects/pdes/pics/wave_2d_material.png)](../projects/pdes/wave-adv/)
 	
 [![](../projects/pdes/pics/wave_2d.png)](../projects/pdes/wave-adv/)
+#### Elastic SV wave equation (with CPML)
+[![](../projects/pdes/pics/elastic_2d.png)](../projects/pdes/elastic/)
 #### Heat equation
 [![](../projects/pdes/pics/heat_2d_material.png)](../projects/pdes/heat/)
 	

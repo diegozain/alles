@@ -4,6 +4,8 @@ September 2020 @ Colorado School of Mines
 
 ## Discretization of the 2D elastic SV wave equation
 
+[![](../pics/elastic_2d_.png)](./)
+
 2D elastic SV wave propagation (without intrinsic attenuation) is a function of the _Lamé parameters_ and the _density_. Both parameters control the wave speed.
 
 __These scripts are an example of solving the 2d wave equation with variable coefficients.__
@@ -37,8 +39,8 @@ lam = (vp.^2 - 2*vs.^2).*rho = rho.*(vp.^2 - 2*vs.^2)
 
 ## References
 
-* __P-SV wave propagation in heterogeneous media: Velocity-stress finite-difference method__. Jean Virieux, *Geophysics* 1986.
-* __A variational formulation of a stabilized unsplit convolutional perfectly matched layer for the isotropic or anisotropic seismic wave equation__. Roland Martin, Dimitri Komatitsch, and Stephen D. Gedney, *Computer Modeling in Engineering and Sciences*, 2008.
+1. __P-SV wave propagation in heterogeneous media: Velocity-stress finite-difference method__. Jean Virieux, *Geophysics* 1986.
+1. __A variational formulation of a stabilized unsplit convolutional perfectly matched layer for the isotropic or anisotropic seismic wave equation__. Roland Martin, Dimitri Komatitsch, and Stephen D. Gedney, *Computer Modeling in Engineering and Sciences*, 2008.
 
 ## Inspiration
 
@@ -48,10 +50,16 @@ lam = (vp.^2 - 2*vs.^2).*rho = rho.*(vp.^2 - 2*vs.^2)
 
 All these codes are good, but __Dimitri's__ code is extremely cool. It's *out-of-control* cool. Also comes with a cool [document](http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf).
 
-The _Fortran_ CPML implementation of Dimitri is implemented here in _Matlab_ in the script ```elasticSV2d_order2_pml.m```.
+The _Fortran_ CPML implementation of Dimitri is modified to account for heterogeneous media and implemented here in _Matlab_ in the script,
 
-The Fortran code (as far as I know) is the engine of the famous _specfem2d_.
+```
+elasticSV2d_order2_pml.m
+```
+
+This Fortran code (as far as I know) is the engine of the famous __specfem2d__.
 
 ---
+
+This picture shows off the power of the CPML absorbing boundary conditions.
 
 [![](../pics/elastic_2d.png)](./)
