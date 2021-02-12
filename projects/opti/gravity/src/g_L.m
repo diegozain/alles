@@ -24,21 +24,24 @@ X = repmat(x,[1,nz]);
 Z = repmat(z,[1,nx]).';
 
 for ix = 1:nx;
-  for iz = 1:nz;
-    Xi = X-x( ix );
-    Zi = Z-z( iz );
-    R = sqrt(Xi.^2 + Zi.^2);
-    R( ix,iz ) = 1;
+	for iz = 1:nz;
+		Xi = X-x( ix );
+		Zi = Z-z( iz );
+		R = sqrt(Xi.^2 + Zi.^2);
+		% this accounts for R(ix,iz) = 0 (dont want no NaN below)
+		R( ix,iz ) = 1;
+		
+		% abs because there are no gravity dipoles
+		Lzi = abs(Zi)./(R.^3);
+		Lxi = abs(Xi)./(R.^3);
 
-    Lzi = abs(Zi)./(R.^3);
-    Lxi = abs(Xi)./(R.^3);
+		p = ij2p([ix,iz],nx);
+		Lz(p,:) = (dx*dz)*Lzi(:).';
+		Lx(p,:) = (dx*dz)*Lxi(:).';
 
-    p = ij2p([ix,iz],nx);
-    Lz(p,:) = (dx*dz)*Lzi(:).';
-    Lx(p,:) = (dx*dz)*Lxi(:).';
-	
-	Lz(p,p)=0;Lx(p,p)=0;
-  end
+		% this accounts for R(ix,iz) = 0, we still want zero there (but no NaN)
+		Lz(p,p)=0;
+		Lx(p,p)=0;
+	end
 end
-
 end

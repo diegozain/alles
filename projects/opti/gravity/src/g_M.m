@@ -19,7 +19,7 @@ function M = g_M(x,z,r)
 % ir = binning(x,r);
 % M = [sparse(ir,ir,ones(nd,1)) , sparse(nd,nu-nd)];
 % --
-% harder version but better.
+% harder version but better. (this code does this version)
 % r has to be an (nd by 2) matrix:
 % first column are positive receivers, second are negative receivers.
 % entries have to be in index coordinate, example:
@@ -29,6 +29,7 @@ function M = g_M(x,z,r)
 % analogous for iz_pos,ix_neg,iz_neg.
 % then ir_pos = sub2ind([nx,nz],ix_pos,iz_pos)
 % and r=[ir_pos ir_neg].
+% ------------------------------------------------------------------------------
 nx = numel(x);
 nz = numel(z);
 nd = size(r,1);
