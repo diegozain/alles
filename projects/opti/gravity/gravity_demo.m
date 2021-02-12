@@ -8,7 +8,7 @@ addpath('src/')
 % fall 2017
 % Boise State University
 % ..............................................................................
-niter=200;
+niter=700;
 % ..............................................................................
 fprintf('\n     given gravimetry data on the x and z direction\n     only at surface receivers,\n     recover density.')
 
@@ -30,7 +30,8 @@ fprintf('\n\n         ~-~-~ building linear operators ~-~-~\n')
 % bg
 rho = ones(nx,nz);
 % box
-rho(fix(nx*0.4):fix(nx*0.6),fix(nz*0.6):fix(nz*0.8)) = 3.5;
+rho(fix(nx*0.3):fix(nx*0.5),fix(nz*0.6):fix(nz*0.8)) = 3.5;
+rho(fix(nx*0.7):fix(nx*0.8),fix(nz*0.4):fix(nz*0.9)) = 2;
 % % smooth blob
 % x_ = linspace(-1,1,nx);
 % z_ = linspace(-1,1,nz);
@@ -75,7 +76,8 @@ title('Component z of gravity' )
 simple_figure()
 % ..............................................................................
 % make column
-ux=ux(:);uz=uz(:);
+ux=ux(:);
+uz=uz(:);
 % ..............................................................................
 % receivers
 % ..............................................................................
@@ -85,21 +87,58 @@ ux=ux(:);uz=uz(:);
 % 
 % receivers placed every drx in length,
 % and at rz_pos and rz_neg in depth.
+%
+% receivers are placed in the domain with coordinates [rx_ rz_].
+% 
+% both rx_ and rz_ have the "positive" and "negative" receiver coordinates.
+% both rx_ and rz_ consist of two columns: positive and negative.
+% each row of rx_ and rz_ make up a receiver "pair".
+% ..............................................................................
+% drx = 0.5; % m
+% rz_pos = 0.1; % m
+% rz_neg = 0.6; % m
+% % - rx
+% rx = 1:drx:(x(nx)-1);
+% rx_ = binning(x,rx);
+% rx_pos_ = rx_;
+% rx_neg_ = rx_;
+% rx_ = [rx_pos_ rx_neg_];
+% % -rz
+% rz_pos_ = binning(z,rz_pos);
+% rz_pos_ = repmat(rz_pos_,[numel(rx),1]);
+% rz_neg_ = binning(z,rz_neg);
+% rz_neg_ = repmat(rz_neg_,[numel(rx),1]);
+% rz_= [rz_pos_ rz_neg_];
+% ..............................................................................
 drx = 0.5; % m
 rz_pos = 0.1; % m
 rz_neg = 0.6; % m
 % - rx
 rx = 1:drx:(x(nx)-1);
-rx_ = binning(x,rx);
-rx_pos_ = rx_;
-rx_neg_ = rx_;
-rx_ = [rx_pos_ rx_neg_];
+nr = numel(rx);
+rx__ = binning(x,rx);
+
+rx_pos_ = rx__;
+rx_neg_ = rx__;
+rx_= [rx_pos_ rx_neg_];
 % -rz
-rz_pos_ = binning(z,rz_pos);
-rz_pos_ = repmat(rz_pos_,[numel(rx),1]);
-rz_neg_ = binning(z,rz_neg);
-rz_neg_ = repmat(rz_neg_,[numel(rx),1]);
+rz_pos__ = binning(z,rz_pos);
+rz_neg__ = binning(z,rz_neg);
+
+rz_pos_ = repmat(rz_pos__,[nr,1]);
+rz_neg_ = repmat(rz_neg__,[nr,1]);
 rz_= [rz_pos_ rz_neg_];
+% - rx + rz
+for i_=1:(nr-1)
+  rx_pos_ = repmat(rx__(i_),[nr-i_,1]);
+  rx_neg_ = rx__((i_+1):nr);
+  rx_= [rx_ ; rx_pos_ rx_neg_];
+  
+  rz_pos_ = repmat(rz_pos__,[nr-i_,1]);
+  rz_neg_ = repmat(rz_neg__,[nr-i_,1]);
+  rz_= [rz_ ; rz_pos_ rz_neg_];
+end
+% ..............................................................................
 % - rx and rz together
 r_ = cat(3,rx_,rz_);
 nd = size(r_,1);
@@ -111,7 +150,7 @@ end
 % ..............................................................................
 figure;
 hold on
-plot(x(rx_(:,1)),z(rz_(:,1)),'b.','markersize',20)
+plot(x(rx_(:,1)),z(rz_(:,1)),'b.','markersize',30)
 plot(x(rx_(:,2)),z(rz_(:,2)),'r.','markersize',20)
 hold off
 legend({'Positive','Negative'})
@@ -132,8 +171,8 @@ d_x = M*ux;
 % see data
 figure;
 hold on
-plot(rx,d_x,'r.-','markersize',20)
-plot(rx,d_z,'k.-','markersize',20)
+plot(d_x,'r.-','markersize',20)
+plot(d_z,'k.-','markersize',20)
 hold off
 axis tight
 legend({'\Delta u_x','\Delta u_z'})
@@ -146,8 +185,22 @@ Jzt=(M*Lz).';
 Jxt=(M*Lx).';
 % ..............................................................................
 % initial guess
+% - homogeneous background
 rho_ = ones(nx,nz);
 rho_ = rho_(:);
+% - contrast of shapes
+[Dx,Dz] = Dx_Dz(nx,nz);
+rho_=Dz*rho(:);
+rho_(rho_==1.25) = 2;
+rho_(rho_==-1.25) = 2;
+rho_(rho_==0.5) = 3.5;
+rho_(rho_==-0.5) = 3.5;
+rho_(rho_==0) = 1;
+rho_=reshape(rho_,nx,nz);
+ax = 0.9*dx;
+az = 0.9*dz;
+rho_ = image_gaussian_pad(rho_,az,ax,'LOW_PASS',10,50);
+rho_=rho_(:);
 % ..............................................................................
 % 
 % inversion
@@ -187,29 +240,30 @@ for ii=1:niter
   g_x = g_x/max(abs(g_x(:)));
 
   % kk-filter (smooth gradients)
-  ax = 0.8*dx; az = 0.8*dz;
+  ax = 0.9*dx;
+  az = 0.9*dz;
   g_z=reshape(g_z,[nx,nz]);
-  [g_z, ~ , ~] = image_gaussian(g_z,az,ax,'LOW_PASS');
+  g_z = image_gaussian_pad(g_z,az,ax,'LOW_PASS',10,50);
   
-  ax = 0.5*dx; az = 0.5*dz;
+  ax = 0.9*dx;
+  az = 0.9*dz;
   g_x=reshape(g_x,[nx,nz]);
-  [g_x, ~ , ~] = image_gaussian(g_x,az,ax,'LOW_PASS');
+  g_x = image_gaussian_pad(g_x,az,ax,'LOW_PASS',10,50);
   
   g_z=g_z(:)/max(abs(g_z(:)));
   g_x=g_x(:)/max(abs(g_x(:)));
+  
+  g_x=g_x+g_z;
+  g_z=g_x;
 
   % step size
-  k=0.01;
+  k=5e-2; % 1e-1
   drho = k*g_z;
   [step_x,step_z] = g_pica(d_x,d_z,e_x,e_z,M,Lx,Lz,rho_,drho,k);
   % update (noun)
-  update = step_z*g_z;
-  % if mod(ii,2) == 1
-  %   update = step_z*g_z;
-  % else
-  %   update = step_x*g_x;
-  % end
-  % update = 0.5*(step_x*g_x + step_z*g_z); % does not work 
+  % update = step_z*g_z;
+  % update = step_x*g_x;
+  update = 0.5*(step_x*g_x + step_z*g_z);
   % update (verb)
   rho_ = rho_ .* exp( -rho_.*update );
   
@@ -240,7 +294,7 @@ subplot(2,1,1)
 hold on;
 fancy_imagesc(reshape(rho,[nx,nz]).',x,z)
 colorbar('off')
-plot(x(rx_(:,1)),z(rz_(:,1)),'k.','markersize',15)
+plot(x(rx_(:,1)),z(rz_(:,1)),'k.','markersize',25)
 plot(x(rx_(:,2)),z(rz_(:,2)),'w.','markersize',15);axis ij
 % plot(rx,zeros(size(rx)),'k.','markersize',15);axis ij
 hold off;

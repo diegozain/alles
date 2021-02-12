@@ -6,7 +6,7 @@ September 2020 @ Colorado School of Mines
 
 Gravity is dependent on density. By measuring the gravity field, it is possible to solve for (invert) density.
 
-__This script is an example of density inversion at depth, using gravity gradient data on _x_ and _z_ acquired only at surface receivers.__
+__This script is an example of density inversion at depth, jointly using gravity gradient data on x and z.__
 
 ```matlab
 the gravity field u = (ux,uy,uz) at point ro is given by,
@@ -45,6 +45,8 @@ where e_x is the residual ( e_x = d_x - d_x_observed ). t is for transposed.
 The inversion itself is different than that of Yaoguo's,
 * We do not use "depth weighting" because it is not necessary.
 * We explicitly write the gradients.
+
+Depth resolution *is* an issue nonetheless. 
 
 ---
 

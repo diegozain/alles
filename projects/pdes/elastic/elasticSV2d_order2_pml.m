@@ -33,14 +33,19 @@ close all
 % but in Matlab.
 % 
 % ------------------------------------------------------------------------------
+% - air at 20◦C and 1 atm (101.325 kPa): 
+% lam=1.4e+5 Kg/m/s^2
+% mu = 0
+% rho= 1.2041 Kg/m^3
+% - some rock
+% lam= 1.0163e+10
+% mu = 1.0165e+10
+% rho= 1.7e3
+% ------------------------------------------------------------------------------
 % --- pde parameters
-lam_= [2; 5]; % [1.0163e+10 1.0163e+10]; % [1e6 ; 4e7]/1e7; % [1; 2];
-mu_ = [1.5; 3]; % [1.0165e+10 1.0165e+10]; % [1e7 ; 3e8]/1e7; % [2; 4];
-rho_= [1; 8]; % [2800 2800]; % [1.7e3 ; 2e3]/1e3; % [3; 6];
-
-% lam_=flip(lam_);
-% mu_=flip(mu_);
-% rho_=flip(rho_);
+lam_= [2; 5];
+mu_ = [2; 4];
+rho_= [3; 6];
 % --- spatial constraints
 X=3;
 Z=2.5;
@@ -59,7 +64,7 @@ vp_min = min(vp);
 vs_max = max(vs);
 vp_max = max(vp);
 
-if vs==0
+if vs_min==0
   vel_min = vp_min;
 else
   vel_min = min([vs_min,vp_min]);
@@ -97,9 +102,9 @@ rho=rho_(1)*ones(nz,nx);
 % rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = rho_(2);
 
 % -- two layers
-lam(fix(nz*(2/3)):nz,:) = lam_(2);
-mu(fix(nz*(2/3)):nz,:) = mu_(2);
-rho(fix(nz*(2/3)):nz,:) = rho_(2);
+lam(fix(nz*(1/3)):nz,:) = lam_(2);
+mu(fix(nz*(1/3)):nz,:) = mu_(2);
+rho(fix(nz*(1/3)):nz,:) = rho_(2);
 
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);
@@ -174,7 +179,8 @@ Rcoef = 1e-3; % 1e-3
 % -- source function
 % src_xz = [(x(end)+x(1))/2 , (z(end)+z(1))*(1/2)];
 % src_xz = [(x(end)+x(1))/2 , z(60)];
-src_xz = [x(fix(nx*0.5)) , z(fix(nz*0.5))];
+% src_xz = [x(fix(nx*0.5)) , z(fix(nz*0.5))];
+src_xz = [x(fix(nx*0.5)) , z(fix(nz*(1/3))-1)];
 src_ix = binning(x,src_xz(1));
 src_iz = binning(z,src_xz(2));
 isrc = sub2ind([nz,nx],src_iz,src_ix);
