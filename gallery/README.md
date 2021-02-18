@@ -63,6 +63,7 @@ Each image links to its project.
 #### Matrix completion
 #### Pixelating pics (for face-recognition-free profile pics)
 [![](../projects/sque-exp/pics/pixelate_mini.png)](../projects/sque-exp/pixelate/)
+#### Haar wavelet compression
 
 ## Wave processing
 

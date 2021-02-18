@@ -50,6 +50,7 @@ All small projects that need a place to live - but are not part of a large proje
 	* Compressed sensing
 	* Matrix completion
 	* [Pixelating pics](projects/sque-exp/pixelate/) (for face-recognition-free profile pics)
+	* [Haar wavelet compression](projects/sque-exp/haar/)
 
 * Wave processing
 

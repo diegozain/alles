@@ -33,19 +33,23 @@ close all
 % but in Matlab.
 % 
 % ------------------------------------------------------------------------------
-% - air at 20◦C and 1 atm (101.325 kPa): 
-% lam=1.4e+5 Kg/m/s^2
+% - air at 20C and 1 atm (101.325 kPa): 
+% lam= 1.4e+5 Kg/m/s^2
 % mu = 0
 % rho= 1.2041 Kg/m^3
 % - some rock
 % lam= 1.0163e+10
 % mu = 1.0165e+10
-% rho= 1.7e3
+% rho= 1.7e+3
 % ------------------------------------------------------------------------------
 % --- pde parameters
 lam_= [2; 5];
-mu_ = [2; 4];
-rho_= [3; 6];
+mu_ = [3; 9];
+rho_= [1; 6];
+
+% lam_= [1e+5; 1e+9];
+% mu_ = [0; 1e+10];
+% rho_= [1; 2e+3];
 % --- spatial constraints
 X=3;
 Z=2.5;
@@ -64,12 +68,18 @@ vp_min = min(vp);
 vs_max = max(vs);
 vp_max = max(vp);
 
-if vs_min==0
-  vel_min = vp_min;
-else
-  vel_min = min([vs_min,vp_min]);
-end
-vel_max = max([vs_max,vp_max]);
+% % taking min/max of vs AND vp
+% if vs_min==0
+%   vel_min = vp_min;
+% else
+%   vel_min = min([vs_min,vp_min]);
+% end
+% vel_max = max([vs_max,vp_max]);
+
+% Virieux, 1987 says this is not necessary,
+% and only vp is relevant.
+vel_min = vp_min;
+vel_max = vp_max;
 
 fmax = 2.2*fo;
 % - space
@@ -96,19 +106,18 @@ lam=lam_(1)*ones(nz,nx);
 mu =mu_(1)*ones(nz,nx);
 rho=rho_(1)*ones(nz,nx);
 
-% % -- box in the middle
-% lam(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = lam_(2);
-% mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
-% rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = rho_(2);
+% -- box in the middle
+lam(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= lam_(2);
+mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
+rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= rho_(2);
 
-% -- two layers
-lam(fix(nz*(1/3)):nz,:) = lam_(2);
-mu(fix(nz*(1/3)):nz,:) = mu_(2);
-rho(fix(nz*(1/3)):nz,:) = rho_(2);
+% % -- two layers
+% lam(fix(nz*(1/3)):nz,:)= lam_(2);
+% mu(fix(nz*(1/3)):nz,:) = mu_(2);
+% rho(fix(nz*(1/3)):nz,:)= rho_(2);
 
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);
-
 % ------------------------------------------------------------------------------
 figure;
 subplot(331)
@@ -176,15 +185,37 @@ thickness_PML_x = n_points_pml * dx;
 thickness_PML_z = n_points_pml * dz;
 Rcoef = 1e-3; % 1e-3
 % ------------------------------------------------------------------------------
+% -- expand everything to pml
+% lam, mu, rho, vp, vs, x, z, nx, nz
+lam= [repmat(lam(:,1),1,n_points_pml), lam , repmat(lam(:,nx),1,n_points_pml)];
+lam= [repmat(lam(1,:),n_points_pml,1); lam ; repmat(lam(nz,:),n_points_pml,1)];
+mu = [repmat(mu(:,1),1,n_points_pml), mu , repmat(mu(:,nx),1,n_points_pml)];
+mu = [repmat(mu(1,:),n_points_pml,1); mu ; repmat(mu(nz,:),n_points_pml,1)];
+rho= [repmat(rho(:,1),1,n_points_pml), rho , repmat(rho(:,nx),1,n_points_pml)];
+rho= [repmat(rho(1,:),n_points_pml,1); rho ; repmat(rho(nz,:),n_points_pml,1)];
+vp = sqrt((lam + 2*mu)./rho);
+vs = sqrt(mu./rho);
+
+x = [x; (dx*(1:n_points_pml)+x(nx)).' ];
+z = [z; (dz*(1:n_points_pml)+z(nz)).' ];
+
+nx = nx+n_points_pml;
+nz = nz+n_points_pml;
+% ------------------------------------------------------------------------------
 % -- source function
+
+% - source location (real coordinates)
 % src_xz = [(x(end)+x(1))/2 , (z(end)+z(1))*(1/2)];
 % src_xz = [(x(end)+x(1))/2 , z(60)];
-% src_xz = [x(fix(nx*0.5)) , z(fix(nz*0.5))];
-src_xz = [x(fix(nx*0.5)) , z(fix(nz*(1/3))-1)];
+src_xz = [x(fix(nx*0.5)) , z(fix(nz*0.5))];
+% src_xz = [x(fix(nx*0.5)) , z(fix(nz*(1/3)) - 1)];
+
+% - source location (index coordinates)
 src_ix = binning(x,src_xz(1));
 src_iz = binning(z,src_xz(2));
 isrc = sub2ind([nz,nx],src_iz,src_ix);
 
+% - sources in x and z
 fx=zeros(nt,1);
 fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
 
@@ -196,13 +227,17 @@ title('Source f_z')
 simple_figure()
 % ------------------------------------------------------------------------------
 % -- init fields
+
+% - particle velocity
 vx = zeros(nz,nx);
 vz = zeros(nz,nx);
 
+% - stress
 sxx=zeros(nz,nx);
 szz=zeros(nz,nx);
 sxz=zeros(nz,nx);
 
+% - wavefield recorder
 vz_=zeros(nz,nx,nt);
 % ------------------------------------------------------------------------------
 % -- init PML
@@ -362,17 +397,17 @@ end
 end
 
 b_x(:,(n_points_pml+2):(nx-n_points_pml-1)) = 0;
-% a_x(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
+a_x(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
 K_x(:,(n_points_pml+2):(nx-n_points_pml-1)) = 1;
-% b_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
+b_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
 a_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
 K_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 1;
 
 
 b_z((n_points_pml+2):(nz-n_points_pml-1),:) = 0;
-% a_z((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
+a_z((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
 K_z((n_points_pml+2):(nz-n_points_pml-1),:) = 1;
-% b_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
+b_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
 a_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
 K_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 1;
 % ------------------------------------------------------------------------------
