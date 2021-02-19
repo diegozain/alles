@@ -72,11 +72,11 @@ All small projects that need a place to live - but are not part of a large proje
 	
 ---
 
-Some are written in Matlab, some use Python packages.
-Some were written by me, some are a collage of stuff taken from the iternet.
+Some are written in Matlab, some in C, some use Python packages.
+Some were written by me, some I found in books (as exercises), some are a collage of stuff taken from the internet.
 Most are proof of concept by example. 
 
-__Not all are perfect but they all work.__
+__Not all are perfect but they all work. They are toy examples.__
 
 ---
 

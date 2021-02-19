@@ -1,6 +1,15 @@
 clear
 close all
 % ------------------------------------------------------------------------------
+% 
+% visualize the results from the c code haar-test.
+% 
+% the only fancy thing this script does is build the matrices for the 
+% Haar basis. Builds both the blocky and the weird one.
+% 
+% please only input basis of size equal to a power of 2.
+% 
+% ------------------------------------------------------------------------------
 dt= 1e-2;
 t = (0:dt:1).';
 nt= numel(t);
@@ -81,8 +90,7 @@ xlabel('Base #')
 title('Haar weird base')
 simple_figure()
 % ------------------------------------------------------------------------------
-
-
+% visualize the functions in both basis. they should be identical.
 a = haar_basis * a;
 b = haar_basis_* b;
 
