@@ -64,6 +64,7 @@ Each image links to its project.
 #### Pixelating pics (for face-recognition-free profile pics)
 [![](../projects/sque-exp/pics/pixelate_mini.png)](../projects/sque-exp/pixelate/)
 #### Haar wavelet compression
+[![](../projects/sque-exp/pics/haar1d.png)](../projects/sque-exp/haar/)
 
 ## Wave processing
 

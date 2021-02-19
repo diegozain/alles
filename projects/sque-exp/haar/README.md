@@ -28,7 +28,11 @@ haar_see.m
 ```
 This script has hard-coded the values printed by the executable ```haar-test```.
 
-It displays the elements of the *blocky* Haar basis, the *weird* Haar basis, the function in the *blocky* basis, and the same function in the *weird* basis.
+It displays,
+1. the elements of the *blocky* Haar basis,
+2. the *weird* Haar basis,
+3. the function in the *blocky* basis,
+4. and the same function in the *weird* basis.
 
 [![](../pics/haar1d.png)](./)
 
