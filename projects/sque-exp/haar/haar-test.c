@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "../../../src/c/array.h"
 #include "../../../src/c/haar.h"
-
+// -----------------------------------------------------------------------------
 static void test_vector(int n)
 {
  double *v;
@@ -25,7 +25,7 @@ static void test_vector(int n)
  
  free_vector(v);
 }
-
+// -----------------------------------------------------------------------------
 static void test_matrix(int m, int n)
 {
  double **a;
@@ -50,7 +50,7 @@ static void test_matrix(int m, int n)
  
  free_matrix(a);
 }
-// -------------------------------------------------------------------------- //
+// -----------------------------------------------------------------------------
 int main(void)
 {
  test_vector(8);   // test an 8-vector

@@ -10,7 +10,7 @@ __These scripts are examples of the Haar wavelet decomposition.__
 
 This whole project is from [this great](https://userpages.umbc.edu/~rostamia/cbook/) book.
 
-## Haar transform (no pics)
+## Haar transform (no pics, just see basis elements)
 
 In the terminal:
 
@@ -19,8 +19,18 @@ make
 make clean
 ./haar-test
 ```
+This prints the coefficients in the *blocky* Haar basis, and the found  coefficients in the *weird* Haar basis.
 
-This should convince you the Haar transform code is good.
+To convince you the Haar transform code is good, visualize it with Matlab running the script,
+
+```matlab
+haar_see.m
+```
+This script has hard-coded the values printed by the executable ```haar-test```.
+
+It displays the elements of the *blocky* Haar basis, the *weird* Haar basis, the function in the *blocky* basis, and the same function in the *weird* basis.
+
+[![](../pics/haar1d.png)](./)
 
 ## Haar transform on pictures
 
