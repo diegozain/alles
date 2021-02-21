@@ -59,6 +59,10 @@ lam_= [2; 2];
 mu_ = [3; 3];
 rho_= [6; 6];
 
+% lam_= [2; 5];
+% mu_ = [0; 9];
+% rho_= [1; 6];
+
 % lam_= [1e+5; 1e+9];
 % mu_ = [0; 1e+10];
 % rho_= [1; 2e+3];
@@ -189,11 +193,12 @@ simple_figure()
 % ------------------------------------------------------------------------------
 % -- source function (real coordinates)
 
-% - source location 
+% - source location (real coordinates)
 % src_xz = [(x(end)+x(1))/2 , (z(end)+z(1))*(1/2)];
 % src_xz = [(x(end)+x(1))/2 , z(60)];
-src_xz = [x(fix(nx*0.5)) , z(fix(nz*0.5))];
-% src_xz = [x(fix(nx*0.5)) , z(fix(nz*(1/3)) - 1)];
+% src_xz = [x(fix(nx*0.5)) , z(fix(nz*0.5))];
+% src_xz = [x(fix(nx*0.5)) , z(20)]; 
+src_xz = [x(fix(nx*0.7)) , z(1)]; 
 
 % - source location (index coordinates)
 src_ix = binning(x,src_xz(1));
@@ -220,27 +225,38 @@ thickness_PML_x = n_points_pml * dx;
 thickness_PML_z = n_points_pml * dz;
 Rcoef = 1e-3; % 1e-3
 % ------------------------------------------------------------------------------
-% -- expand everything to pml
+% -- free surface ghost nodes
+n_ghost = 10;
+% ------------------------------------------------------------------------------
+% -- expand everything to pml & free surface
 % lam, mu, rho, vp, vs, x, z, nx, nz
+
+% x axis
 lam= [repmat(lam(:,1),1,n_points_pml), lam , repmat(lam(:,nx),1,n_points_pml)];
-lam= [repmat(lam(1,:),n_points_pml,1); lam ; repmat(lam(nz,:),n_points_pml,1)];
+% z axis
+lam= [repmat(lam(1,:),n_ghost,1); lam ; repmat(lam(nz,:),n_points_pml,1)];
+% x axis
 mu = [repmat(mu(:,1),1,n_points_pml), mu , repmat(mu(:,nx),1,n_points_pml)];
-mu = [repmat(mu(1,:),n_points_pml,1); mu ; repmat(mu(nz,:),n_points_pml,1)];
+% z axis
+mu = [repmat(mu(1,:),n_ghost,1); mu ; repmat(mu(nz,:),n_points_pml,1)];
+% x axis
 rho= [repmat(rho(:,1),1,n_points_pml), rho , repmat(rho(:,nx),1,n_points_pml)];
-rho= [repmat(rho(1,:),n_points_pml,1); rho ; repmat(rho(nz,:),n_points_pml,1)];
-vp = sqrt((lam + 2*mu)./rho);
-vs = sqrt(mu./rho);
+% z axis
+rho= [repmat(rho(1,:),n_ghost,1); rho ; repmat(rho(nz,:),n_points_pml,1)];
 
 x = [x; (dx*(1:2*n_points_pml)+x(nx)).' ];
-z = [z; (dz*(1:2*n_points_pml)+z(nz)).' ];
+z = [z; (dz*(1:(n_points_pml+n_ghost))+z(nz)).' ];
 
 nx = nx+2*n_points_pml;
-nz = nz+2*n_points_pml;
+nz = nz + n_points_pml + n_ghost;
+
+vp = sqrt((lam + 2*mu)./rho);
+vs = sqrt(mu./rho);
 % ------------------------------------------------------------------------------
-% -- source function new index because of pml
+% -- source function new index because of pml & free surface
 % - source location (index coordinates)
 src_ix = src_ix+n_points_pml;
-src_iz = src_iz+n_points_pml;
+src_iz = src_iz+n_ghost;
 % ------------------------------------------------------------------------------
 % -- init fields
 
@@ -354,10 +370,9 @@ end
 zoriginbottom = thickness_PML_z;
 zorigintop = (nz-1)*dz - thickness_PML_z;
 for ix=1:nx
-for iz=1:nz
+for iz=2:nz
   
   d0_z = - (n_power_pml + 1) * vp(iz,nx) * log(Rcoef) / (2 * thickness_PML_z);
-  
   zval = dz * (iz-1);
 
   % -- bottom edge
@@ -388,7 +403,7 @@ for iz=1:nz
     K_z(iz,ix) = 1 + (k_max_pml - 1) * abscissa_normalized.^n_power_pml;
     alpha_z = alpha_max_pml * (1 - abscissa_normalized);
   end
-
+  
   % damping profile at half the grid points
   abscissa_in_PML = zval + dz/2 - zorigintop;
   if (abscissa_in_PML >= 0)
@@ -422,12 +437,12 @@ b_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
 a_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 0;
 K_x_half(:,(n_points_pml+1):(nx-n_points_pml-1)) = 1;
 
-b_z((n_points_pml+2):(nz-n_points_pml-1),:) = 0;
-a_z((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
-K_z((n_points_pml+2):(nz-n_points_pml-1),:) = 1;
-b_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
-a_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 0;
-K_z_half((n_points_pml+1):(nz-n_points_pml-1),:) = 1;
+b_z(1:(nz-n_points_pml-1),:) = 0;
+a_z(1:(nz-n_points_pml-1),:) = 0;
+K_z(1:(nz-n_points_pml-1),:) = 1;
+b_z_half(1:(nz-n_points_pml-1),:) = 0;
+a_z_half(1:(nz-n_points_pml-1),:) = 0;
+K_z_half(1:(nz-n_points_pml-1),:) = 1;
 % ------------------------------------------------------------------------------
 % 
 % 
@@ -467,7 +482,7 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   % compute dvx and dvz,
   % for sxx and szz
-  iz=2:nz;
+  iz=(2+n_ghost):nz; % 3:nz
   ix=1:(nx-1);
   % interpolate at the right location in the staggered grid cell
   lam_half_x= 0.5 * (lam(iz,ix+1) + lam(iz,ix));
@@ -488,9 +503,28 @@ for it=1:nt
   
   szz(iz,ix) = szz(iz,ix) + (lam_half_x.*value_dvx_dx + lam2mu_half_x.*value_dvz_dz)*dt;
   % ----------------------------------------------------------------------------
+  % -- free surface explicit conditions
+  iz = n_ghost+1;
+  ix=1:(nx-1);
+  i_ghost = 1:n_ghost;
+  % -- boundary condition on sxx and szz
+  % interpolate at the right location in the staggered grid cell
+  lam_half_x= 0.5 * (lam(iz,ix+1) + lam(iz,ix));
+  mu_half_x = 0.5 * (mu(iz,ix+1) + mu(iz,ix));
+  lam2mu_half_x = lam_half_x + 2*mu_half_x;
+  value_dvx_dx = (vx(iz,ix+1) - vx(iz,ix)) / dx;
+  memory_dvx_dx(iz,ix) = b_x_half(iz,ix).*memory_dvx_dx(iz,ix) + a_x_half(iz,ix).*value_dvx_dx;
+  value_dvx_dx = (value_dvx_dx./K_x_half(iz,ix)) + memory_dvx_dx(iz,ix);
+
+  sxx(iz,ix) = sxx(iz,ix) + 4*(( (lam_half_x.*mu_half_x + mu_half_x.^2) ./ lam2mu_half_x ) .* value_dvx_dx)*dt;
+  szz(iz,ix) = 0;
+  
+  szz(iz-i_ghost,ix)= -szz(iz+i_ghost,ix);
+  sxx(iz-i_ghost,ix)= -sxx(iz+i_ghost,ix);
+  % ----------------------------------------------------------------------------
   % compute dvx and dvz,
   % for sxz
-  iz=1:(nz-1);
+  iz=(2+n_ghost):(nz-1); % 3:(nz-1)
   ix=2:nx;
   % interpolate at the right location in the staggered grid cell
   mu_half_z = 0.5 * (mu(iz+1,ix) + mu(iz,ix));
@@ -506,6 +540,15 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   % -- update stress xz
   sxz(iz,ix) = sxz(iz,ix) + mu_half_z.*(value_dvz_dx + value_dvx_dz)*dt;
+  % ----------------------------------------------------------------------------
+  % -- free surface explicit conditions
+  iz=n_ghost+1;
+  ix=1:nx;
+  i_ghost = 1:(n_ghost+1);
+  % -- boundary condition on stress xz
+  sxz(iz-i_ghost+1,ix)  = -sxz(iz+i_ghost,ix);
+  % sxz(iz,ix)  = -sxz(iz+1,ix-1);
+  % sxz(iz-1,ix)= -sxz(iz+2,ix-1);
   % ----------------------------------------------------------------------------
   %  compute velocity and update memory variables for C-PML
   % ----------------------------------------------------------------------------
@@ -555,15 +598,19 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   %  wrap up dirichlet bc on edges
   % ----------------------------------------------------------------------------
+  % -- left and right edge
   vx(:,1) = 0;
   vx(:,nx)= 0;
-
+  
+  % -- top and bottom edge
   vx(1,:) = 0;
   vx(nz,:)= 0;
-
+  
+  % -- left and right edge
   vz(:,1) = 0;
   vz(:,nx)= 0;
-
+  
+  % -- top and bottom edge
   vz(1,:) = 0;
   vz(nz,:)= 0;
   % ----------------------------------------------------------------------------
@@ -587,8 +634,8 @@ fancy_imagesc(vz_(:,:,binning(t,t1)),x,z)
 colormap(rainbow2(1))
 caxis([vz_min vz_max])
 hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'w.','markersize',40)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
 hold off
 colorbar off
 % xlabel('Length')
@@ -603,8 +650,8 @@ fancy_imagesc(vz_(:,:,binning(t,t2)),x,z)
 colormap(rainbow2(1))
 caxis([vz_min vz_max])
 hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'w.','markersize',40)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
 hold off
 colorbar off
 % xlabel('Length')
@@ -620,8 +667,8 @@ fancy_imagesc(vz_(:,:,binning(t,t3)),x,z)
 colormap(rainbow2(1))
 caxis([vz_min vz_max]);
 hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'w.','markersize',40)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
 hold off
 colorbar off
 % xlabel('Length')
@@ -650,8 +697,8 @@ subplot(331)
 fancy_imagesc(sxx,x,z)
 colormap(rainbow2(1))
 hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'w.','markersize',40)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
 hold off
 colorbar off
 % xlabel('Length')
@@ -665,8 +712,8 @@ subplot(333)
 fancy_imagesc(szz,x,z)
 colormap(rainbow2(1))
 hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'w.','markersize',40)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
 hold off
 colorbar off
 % xlabel('Length')
@@ -680,8 +727,8 @@ subplot(335)
 fancy_imagesc(sxz,x,z)
 colormap(rainbow2(1))
 hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'w.','markersize',40)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
 hold off
 colorbar off
 % xlabel('Length')
@@ -695,8 +742,8 @@ subplot(337)
 fancy_imagesc(vx,x,z)
 colormap(rainbow2(1))
 hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'w.','markersize',40)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
 hold off
 colorbar off
 % xlabel('Length')
@@ -710,8 +757,8 @@ subplot(339)
 fancy_imagesc(vz,x,z)
 colormap(rainbow2(1))
 hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_points_pml,'w.','markersize',40)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
 hold off
 colorbar off
 % xlabel('Length')
