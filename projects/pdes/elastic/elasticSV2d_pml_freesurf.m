@@ -30,7 +30,7 @@ close all
 % 
 % https://github.com/geodynamics/seismic_cpml/blob/master/seismic_CPML_2D_isotropic_second_order.f90,
 % 
-% but in Matlab.
+% but in Matlab & with free surface boundary conditions at the top.
 % 
 % ------------------------------------------------------------------------------
 % - air at 20C and 1 atm (101.325 kPa): 
@@ -194,11 +194,7 @@ simple_figure()
 % -- source function (real coordinates)
 
 % - source location (real coordinates)
-% src_xz = [(x(end)+x(1))/2 , (z(end)+z(1))*(1/2)];
-% src_xz = [(x(end)+x(1))/2 , z(60)];
-% src_xz = [x(fix(nx*0.5)) , z(fix(nz*0.5))];
-% src_xz = [x(fix(nx*0.5)) , z(20)]; 
-src_xz = [x(fix(nx*0.7)) , z(1)]; 
+src_xz = [x(fix(nx*0.5)) , z(1)]; 
 
 % - source location (index coordinates)
 src_ix = binning(x,src_xz(1));
@@ -554,7 +550,7 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   % compute dsxx and dsxz,
   % for vx
-  iz=2:nz;
+  iz=(2+n_ghost):nz;
   ix=2:nx;
   % interpolate at the right location in the staggered grid cell
   value_dsxx_dx = (sxx(iz,ix) - sxx(iz,ix-1)) / dx;
@@ -569,9 +565,16 @@ for it=1:nt
   % -- update velocity vx
   vx(iz,ix) = vx(iz,ix) + (value_dsxx_dx+value_dsxz_dz)*dt./rho(iz,ix);
   % ----------------------------------------------------------------------------
+  % -- free surface explicit conditions
+  iz=n_ghost+2;
+  ix=1:nx;
+  i_ghost = 1:(n_ghost+1);
+  % -- boundary condition on velocity vx
+  vx(iz-i_ghost,ix)  = 0;
+  % ----------------------------------------------------------------------------
   % compute dsxz and dszz,
   % for vz
-  iz = 1:(nz-1);
+  iz = (1+n_ghost):(nz-1);
   ix = 1:(nx-1);
   % interpolate at the right location in the staggered grid cell
   rho_half_x_half_z = 0.25 * (rho(iz,ix) + rho(iz,ix+1) + rho(iz+1,ix+1) + rho(iz+1,ix));
@@ -588,6 +591,13 @@ for it=1:nt
   % -- update velocity vz
   vz(iz,ix) = vz(iz,ix) + (value_dsxz_dx + value_dszz_dz)*dt ./ rho_half_x_half_z;
   % ----------------------------------------------------------------------------
+  % -- free surface explicit conditions
+  iz=n_ghost+2;
+  ix=1:nx;
+  i_ghost = 1:n_ghost;
+  % -- boundary condition on velocity vz
+  vz(iz-i_ghost-1,ix)  = 0;
+  % ----------------------------------------------------------------------------
   %  source update
   % ----------------------------------------------------------------------------
   % interpolate density at the right location in the staggered grid cell
@@ -603,7 +613,7 @@ for it=1:nt
   vx(:,nx)= 0;
   
   % -- top and bottom edge
-  vx(1,:) = 0;
+  % vx(1,:) = 0;
   vx(nz,:)= 0;
   
   % -- left and right edge
@@ -611,7 +621,7 @@ for it=1:nt
   vz(:,nx)= 0;
   
   % -- top and bottom edge
-  vz(1,:) = 0;
+  % vz(1,:) = 0;
   vz(nz,:)= 0;
   % ----------------------------------------------------------------------------
   %  store wavefield
@@ -620,8 +630,8 @@ for it=1:nt
 end
 toc;
 % ------------------------------------------------------------------------------
-vz_min = min(vz_(:))*0.5;
-vz_max = max(vz_(:))*0.5;
+vz_min = min(vz_(:))*0.2;
+vz_max = max(vz_(:))*0.2;
 
 t1=to*1.25;
 t2=to*1.65;
