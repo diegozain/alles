@@ -4,7 +4,7 @@ September 2020 @ Colorado School of Mines
 
 ## Discretization of the 2D elastic SV wave equation
 
-[![](../pics/elastic_2d_.png)](./)
+[![](../pics/elastic_2d_data_2layers.png)](./)
 
 2D elastic SV wave propagation (without intrinsic attenuation) is a function of the _Lamé parameters_ and the _density_. Both parameters control the wave speed.
 

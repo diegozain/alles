@@ -55,9 +55,13 @@ close all
 % mu_ = [3; 9];
 % rho_= [1; 6];
 
-lam_= [2; 2];
-mu_ = [3; 3];
-rho_= [6; 6];
+lam_= [5; 2];
+mu_ = [9; 3];
+rho_= [6; 1];
+
+% lam_= [2; 2];
+% mu_ = [3; 3];
+% rho_= [6; 6];
 
 % lam_= [2; 5];
 % mu_ = [0; 9];
@@ -69,10 +73,10 @@ rho_= [6; 6];
 % --- spatial constraints
 X=3;
 Z=2.5;
-T=5;
+T=2;
 % --- source parameters
-to = 2;
-fo = 1.0;
+to = 0.5;
+fo = 3;
 wo = 2*pi*fo;
 % ------------------------------------------------------------------------------
 % --- stability
@@ -102,7 +106,7 @@ fmax = 2.2*fo;
 l_min = vel_min / fmax;
 no_p_wa = 10; % 10 50
 dx = l_min/no_p_wa;
-dx=min([0.1; dx])
+dx=min([0.1; dx]);
 dz = dx;
 % - time
 courant_factor = 0.9;
@@ -127,24 +131,24 @@ lam=lam_(1)*ones(nz,nx);
 mu =mu_(1)*ones(nz,nx);
 rho=rho_(1)*ones(nz,nx);
 
-% -- box in the middle
-lam(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= lam_(2);
-mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
-rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= rho_(2);
+% % -- box in the middle
+% lam(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= lam_(2);
+% mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
+% rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= rho_(2);
 
-% % -- two layers
-% lam(fix(nz*(1/3)):nz,:)= lam_(2);
-% mu(fix(nz*(1/3)):nz,:) = mu_(2);
-% rho(fix(nz*(1/3)):nz,:)= rho_(2);
+% -- two layers
+lam(fix(nz*(1/5)):nz,:)= lam_(2);
+mu(fix(nz*(1/5)):nz,:) = mu_(2);
+rho(fix(nz*(1/5)):nz,:)= rho_(2);
 
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);
 % ------------------------------------------------------------------------------
 figure;
-subplot(331)
+subplot(231)
 fancy_imagesc(lam,x,z)
 colormap(rainbow2(1))
-colorbar off
+% colorbar off
 % xlabel('Length')
 % ylabel('Depth')
 set(gca,'xtick',[])
@@ -152,10 +156,10 @@ set(gca,'ytick',[])
 title('Lame #1')
 simple_figure()
 
-subplot(333)
+subplot(232)
 fancy_imagesc(mu,x,z)
 colormap(rainbow2(1))
-colorbar off
+% colorbar off
 % xlabel('Length')
 % ylabel('Depth')
 set(gca,'xtick',[])
@@ -163,10 +167,10 @@ set(gca,'ytick',[])
 title('Lame #2')
 simple_figure()
 
-subplot(335)
+subplot(233)
 fancy_imagesc(rho,x,z)
 colormap(rainbow2(1))
-colorbar off
+% colorbar off
 % xlabel('Length')
 % ylabel('Depth')
 set(gca,'xtick',[])
@@ -174,10 +178,10 @@ set(gca,'ytick',[])
 title('Density')
 simple_figure()
 
-subplot(337)
+subplot(234)
 fancy_imagesc(vp,x,z)
 colormap(rainbow2(1))
-colorbar off
+% colorbar off
 % xlabel('Length')
 % ylabel('Depth')
 set(gca,'xtick',[])
@@ -185,10 +189,10 @@ set(gca,'ytick',[])
 title('P velocity')
 simple_figure()
 
-subplot(339)
+subplot(236)
 fancy_imagesc(vs,x,z)
 colormap(rainbow2(1))
-colorbar off
+% colorbar off
 % xlabel('Length')
 % ylabel('Depth')
 set(gca,'xtick',[])
@@ -206,13 +210,6 @@ src_iz = binning(z,src_xz(2));
 % - sources in x and z
 fx=zeros(nt,1);
 fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
-
-figure;
-plot(t,fz)
-xlabel('Time')
-ylabel('Amplitude')
-title('Source f_z')
-simple_figure()
 % ------------------------------------------------------------------------------
 % -- init pml
 n_points_pml= 10;
@@ -633,8 +630,8 @@ for it=1:nt
 end
 toc;
 % ------------------------------------------------------------------------------
-vz_min = min(vz_(:))*0.2;
-vz_max = max(vz_(:))*0.2;
+vz_min = min(vz_(:))*0.03;
+vz_max = max(vz_(:))*0.03;
 
 t1=to*1.25;
 t2=to*1.65;
@@ -642,7 +639,7 @@ t3=to*2.25;
 
 figure;
 
-subplot(231)
+subplot(2,3,1)
 fancy_imagesc(vz_(:,:,binning(t,t1)),x,z)
 colormap(rainbow2(1))
 caxis([vz_min vz_max])
@@ -658,7 +655,7 @@ set(gca,'ytick',[])
 % title('First')
 simple_figure()
 
-subplot(232)
+subplot(2,3,2)
 fancy_imagesc(vz_(:,:,binning(t,t2)),x,z)
 colormap(rainbow2(1))
 caxis([vz_min vz_max])
@@ -675,7 +672,7 @@ title('Wavefield snapshots')
 % title('Middle')
 simple_figure()
 
-subplot(233)
+subplot(2,3,3)
 fancy_imagesc(vz_(:,:,binning(t,t3)),x,z)
 colormap(rainbow2(1))
 caxis([vz_min vz_max]);
@@ -705,8 +702,20 @@ title('Source')
 simple_figure()
 % ------------------------------------------------------------------------------
 figure;
+fancy_imagesc(squeeze(vz_(n_ghost+2,:,:)).',x,t);
+axis normal;
+colorbar off
+caxis(1e-1*[vz_min vz_max])
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+% ylabel('Time')
+% xlabel('Length')
+title('Data')
+simple_figure()
+% ------------------------------------------------------------------------------
+figure;
 
-subplot(331)
+subplot(231)
 fancy_imagesc(sxx,x,z)
 colormap(rainbow2(1))
 hold on
@@ -716,12 +725,12 @@ hold off
 colorbar off
 % xlabel('Length')
 % ylabel('Depth')
-% set(gca,'xtick',[])
-% set(gca,'ytick',[])
+set(gca,'xtick',[])
+set(gca,'ytick',[])
 title('Stress xx')
 simple_figure()
 
-subplot(333)
+subplot(232)
 fancy_imagesc(szz,x,z)
 colormap(rainbow2(1))
 hold on
@@ -731,12 +740,12 @@ hold off
 colorbar off
 % xlabel('Length')
 % ylabel('Depth')
-% set(gca,'xtick',[])
-% set(gca,'ytick',[])
+set(gca,'xtick',[])
+set(gca,'ytick',[])
 title('Stress zz')
 simple_figure()
 
-subplot(335)
+subplot(233)
 fancy_imagesc(sxz,x,z)
 colormap(rainbow2(1))
 hold on
@@ -746,12 +755,12 @@ hold off
 colorbar off
 % xlabel('Length')
 % ylabel('Depth')
-% set(gca,'xtick',[])
-% set(gca,'ytick',[])
+set(gca,'xtick',[])
+set(gca,'ytick',[])
 title('Stress xz')
 simple_figure()
 
-subplot(337)
+subplot(234)
 fancy_imagesc(vx,x,z)
 colormap(rainbow2(1))
 hold on
@@ -761,12 +770,12 @@ hold off
 colorbar off
 % xlabel('Length')
 % ylabel('Depth')
-% set(gca,'xtick',[])
-% set(gca,'ytick',[])
+set(gca,'xtick',[])
+set(gca,'ytick',[])
 title('Velocity x')
 simple_figure()
 
-subplot(339)
+subplot(236)
 fancy_imagesc(vz,x,z)
 colormap(rainbow2(1))
 hold on
@@ -776,8 +785,8 @@ hold off
 colorbar off
 % xlabel('Length')
 % ylabel('Depth')
-% set(gca,'xtick',[])
-% set(gca,'ytick',[])
+set(gca,'xtick',[])
+set(gca,'ytick',[])
 title('Velocity z')
 simple_figure()
 % ------------------------------------------------------------------------------
