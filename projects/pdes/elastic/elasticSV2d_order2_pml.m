@@ -103,7 +103,10 @@ dz = dx;
 % - time
 courant_factor = 0.9;
 dt = 1/(vel_max * sqrt((1/dx^2)+(1/dz^2)));
-dt = courant_factor * dt
+dt = courant_factor * dt;
+% ------------------------------------------------------------------------------
+fprintf('\n  space discretization = %2.2d\n',dx)
+fprintf('  time  discretization = %2.2d\n',dt)
 % ------------------------------------------------------------------------------
 % --- discretization
 x=(0:dx:X).';
