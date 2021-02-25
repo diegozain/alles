@@ -50,7 +50,7 @@ lam = (vp.^2 - 2*vs.^2).*rho = rho.*(vp.^2 - 2*vs.^2)
 * [Nienke Blom](https://github.com/Phlos/fd2d-adjoint), __Matlab__ sponge BC. Utrecht Uni + ETH, NL+CH. *Earthquake Seismic FWI*.
 * [Jan Thorbecke](https://github.com/JanThorbecke/OpenSource/tree/master/fdelmodc), __C__ sponge BC. TU-Delft, NL. *Interferometry and Marchenko*.
 * [Dimitri Komatitsch](https://github.com/geodynamics/seismic_cpml/blob/master/seismic_CPML_2D_isotropic_second_order.f90), __Fortran__ CPML BC. Inria, FR. *Visco-poro-acoustic-elastic 3D, 2D, isotropic and anisotropic suite of codes*.
-* [Daniel Koehn](https://github.com/daniel-koehn/DENISE-Black-Edition), __C__. Christian-Albrechts-University Kiel, DE. *Elastic FWI for all the Germans*.
+* [Daniel Koehn](https://github.com/daniel-koehn/DENISE-Black-Edition), __C__ CPML & free surface BC. Christian-Albrechts-University Kiel, DE. *Elastic FWI solver for all the Germans*.
 
 All these codes are good, but __Dimitri's__ code is extremely cool. It's *out-of-control* cool. Also comes with a cool [document](http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf).
 
