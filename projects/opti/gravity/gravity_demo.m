@@ -113,6 +113,7 @@ uz=uz(:);
 drx = 0.5; % m
 rz_pos = 0.1; % m
 rz_neg = 0.6; % m
+
 % - rx
 rx = 1:drx:(x(nx)-1);
 nr = numel(rx);
@@ -121,13 +122,15 @@ rx__ = binning(x,rx);
 rx_pos_ = rx__;
 rx_neg_ = rx__;
 rx_= [rx_pos_ rx_neg_];
-% -rz
+
+% - rz
 rz_pos__ = binning(z,rz_pos);
 rz_neg__ = binning(z,rz_neg);
 
 rz_pos_ = repmat(rz_pos__,[nr,1]);
 rz_neg_ = repmat(rz_neg__,[nr,1]);
 rz_= [rz_pos_ rz_neg_];
+
 % - rx + rz
 for i_=1:(nr-1)
   rx_pos_ = repmat(rx__(i_),[nr-i_,1]);
@@ -200,6 +203,7 @@ rho_=reshape(rho_,nx,nz);
 ax = 0.9*dx;
 az = 0.9*dz;
 rho_ = image_gaussian_pad(rho_,az,ax,'LOW_PASS',10,50);
+rho_ini = rho_;
 rho_=rho_(:);
 % ..............................................................................
 % 
@@ -286,11 +290,12 @@ plot((1:niter),Ex,'b.-','markersize',15);
 plot((1:niter),Ez,'r.-','markersize',15);
 hold off;
 legend({'x','z'})
+xlabel('Iteration #')
 title('Objective function values')
 simple_figure()
 % ..............................................................................
 figure('Renderer', 'painters', 'Position', [10 10 500 400]);
-subplot(2,1,1)
+subplot(3,1,1)
 hold on;
 fancy_imagesc(reshape(rho,[nx,nz]).',x,z)
 colorbar('off')
@@ -300,18 +305,34 @@ plot(x(rx_(:,2)),z(rz_(:,2)),'w.','markersize',15);axis ij
 hold off;
 caxis([mini maxi])
 axis image
-ylabel('Depth (m)')
-xlabel('Length (m)')
+% ylabel('Depth (m)')
+% xlabel('Length (m)')
+set(gca,'xtick',[])
+set(gca,'ytick',[])
 title('True density')
 simple_figure()
 
-subplot(2,1,2)
+subplot(3,1,2)
+fancy_imagesc(rho_ini.',x,z)
+colorbar('off')
+caxis([mini maxi])
+axis image
+% xlabel('Length (m)')
+% ylabel('Depth (m)')
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+title('Initial density')
+simple_figure()
+
+subplot(3,1,3)
 fancy_imagesc(rho_.',x,z)
 colorbar('off')
 caxis([mini maxi])
 axis image
-xlabel('Length (m)')
-ylabel('Depth (m)')
+% xlabel('Length (m)')
+% ylabel('Depth (m)')
+set(gca,'xtick',[])
+set(gca,'ytick',[])
 title('Recovered density')
 simple_figure()
 % ..............................................................................

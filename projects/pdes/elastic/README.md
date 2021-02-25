@@ -72,8 +72,12 @@ Inspired by [Daniel Koehn's](https://macau.uni-kiel.de/receive/diss_mods_0000678
 
 This picture shows off the power of the CPML absorbing boundary conditions.
 
+Note that the wavefield expresses the integral in time of the source function. This happens because the grid is staggered.
+
 [![](../pics/elastic_2d.png)](./)
 
 This picture shows off the power of the free surface conditions.
+
+Here the source function is differeniated in time before it enters the solver. As a result, the wavefield expresses the true source wavelet.
 
 [![](../pics/elastic_2d_free_surface.png)](./)

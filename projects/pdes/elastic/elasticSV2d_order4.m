@@ -128,13 +128,12 @@ isrc = sub2ind([nz,nx],src_iz,src_ix);
 
 fx=zeros(nt,1);
 fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
-
-figure;
-plot(t,fz)
-xlabel('Time')
-ylabel('Amplitude')
-title('Source f_z')
-simple_figure()
+% NOTE: the staggered fd scheme actually outputs integral(f,dt)!!!
+%       so, if you want an output source f, you need to input dt_(f,dt)
+fx_=fx;
+fz_=fz;
+fx= dtu(fx,dt);
+fz= dtu(fz,dt);
 % ------------------------------------------------------------------------------
 % -- init
 vx = zeros(nz,nx);

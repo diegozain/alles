@@ -55,13 +55,13 @@ close all
 % mu_ = [3; 9];
 % rho_= [1; 6];
 
-lam_= [5; 2];
-mu_ = [9; 3];
-rho_= [6; 1];
+% lam_= [5; 2];
+% mu_ = [9; 3];
+% rho_= [6; 1];
 
-% lam_= [2; 2];
-% mu_ = [3; 3];
-% rho_= [6; 6];
+lam_= [2; 2];
+mu_ = [3; 3];
+rho_= [6; 6];
 
 % lam_= [2; 5];
 % mu_ = [0; 9];
@@ -73,7 +73,7 @@ rho_= [6; 1];
 % --- spatial constraints
 X=3;
 Z=2.5;
-T=2;
+T=3;
 % --- source parameters
 to = 0.5;
 fo = 3;
@@ -200,6 +200,21 @@ set(gca,'ytick',[])
 title('S velocity')
 simple_figure()
 % ------------------------------------------------------------------------------
+figure;
+subplot(121)
+fancy_imagesc(vp/fo,x,z)
+xlabel('Length')
+ylabel('Depth')
+title('P wavelength')
+simple_figure()
+
+subplot(122)
+fancy_imagesc(vs/fo,x,z)
+xlabel('Length')
+% ylabel('Depth')
+title('S wavelength')
+simple_figure()
+% ------------------------------------------------------------------------------
 % -- source function (real coordinates)
 src_xz = [x(fix(nx*0.5)) , z(1)]; 
 
@@ -210,9 +225,15 @@ src_iz = binning(z,src_xz(2));
 % - sources in x and z
 fx=zeros(nt,1);
 fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
+% NOTE: the staggered fd scheme actually outputs integral(f,dt)!!!
+%       so, if you want an output source f, you need to input dt_(f,dt)
+fx_=fx;
+fz_=fz;
+fx= dtu(fx,dt);
+fz= dtu(fz,dt);
 % ------------------------------------------------------------------------------
 % -- init pml
-n_points_pml= 10;
+n_points_pml= 20;
 n_power_pml = 2; % 2
 k_max_pml = 2; % 1 80
 alpha_max_pml = 2*pi*(fo/2); % *1
@@ -629,20 +650,28 @@ for it=1:nt
   vz_(:,:,it) = vz;
 end
 toc;
+% the data 
+d = squeeze(vz_(n_ghost+2,:,:)).';
 % ------------------------------------------------------------------------------
-vz_min = min(vz_(:))*0.03;
-vz_max = max(vz_(:))*0.03;
+vz_min = min(vz_(:));
+vz_max = max(vz_(:));
+vz_min = max([abs(vz_min) vz_max]);
+vz_min = vz_min*0.03;
 
-t1=to*1.25;
-t2=to*1.65;
-t3=to*2.25;
+% t1=to*1.25;
+% t2=to*1.65;
+% t3=to*2.25;
+
+t1=to*2.25;
+t2=to*3;
+t3=to*5;
 
 figure;
 
 subplot(2,3,1)
 fancy_imagesc(vz_(:,:,binning(t,t1)),x,z)
 colormap(rainbow2(1))
-caxis([vz_min vz_max])
+caxis([-vz_min vz_min])
 hold on
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
@@ -658,7 +687,7 @@ simple_figure()
 subplot(2,3,2)
 fancy_imagesc(vz_(:,:,binning(t,t2)),x,z)
 colormap(rainbow2(1))
-caxis([vz_min vz_max])
+caxis([-vz_min vz_min])
 hold on
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
@@ -675,7 +704,7 @@ simple_figure()
 subplot(2,3,3)
 fancy_imagesc(vz_(:,:,binning(t,t3)),x,z)
 colormap(rainbow2(1))
-caxis([vz_min vz_max]);
+caxis([-vz_min vz_min]);
 hold on
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
@@ -690,10 +719,10 @@ simple_figure()
 
 subplot(2,3,[4 5 6])
 hold on
-plot(t,fz,'k','linewidth',2)
-plot(t1*ones(3,1),linspace(min(fz),max(fz),3),'linewidth',3)
-plot(t2*ones(3,1),linspace(min(fz),max(fz),3),'linewidth',3)
-plot(t3*ones(3,1),linspace(min(fz),max(fz),3),'linewidth',3)
+plot(t,fz_,'k','linewidth',2)
+plot(t1*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
+plot(t2*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
+plot(t3*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
 hold off
 axis tight
 set(gca,'ytick',[])
@@ -702,10 +731,10 @@ title('Source')
 simple_figure()
 % ------------------------------------------------------------------------------
 figure;
-fancy_imagesc(squeeze(vz_(n_ghost+2,:,:)).',x,t);
+fancy_imagesc(d,x,t);
 axis normal;
 colorbar off
-caxis(1e-1*[vz_min vz_max])
+caxis(1e-1*[-vz_min vz_min])
 set(gca,'xtick',[])
 set(gca,'ytick',[])
 % ylabel('Time')
