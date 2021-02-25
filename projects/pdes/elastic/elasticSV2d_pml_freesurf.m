@@ -229,8 +229,8 @@ fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
 %       so, if you want an output source f, you need to input dt_(f,dt)
 fx_=fx;
 fz_=fz;
-fx= dtu(fx,dt);
-fz= dtu(fz,dt);
+fx= differentiate_line(fx,dt);
+fz= differentiate_line(fz,dt);
 % ------------------------------------------------------------------------------
 % -- init pml
 n_points_pml= 20;

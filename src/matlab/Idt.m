@@ -86,9 +86,9 @@ end
 % -- b values
 % this one is like a staggered triangular matrix on nt-1 points.
 % ** nt odd ***
-% so the number of entries is: (sum of first nt/2 odd numbers)
+% the number of entries is: (sum of first nt/2 odd numbers)
 % ** nt ** even
-% so the number of entries is: (sum of first nt/2-1 even numbers)
+% the number of entries is: (sum of first nt/2 - 1 even numbers)
 if mod(nt,2)==1
  nb = floor(nt*0.5)^2;
 elseif mod(nt,2)==0
@@ -114,3 +114,10 @@ V = [Va;Vb];
 
 Idt_ = sparse(I,J,V,nt,nt);
 end
+
+% % test
+% t=linspace(0,2*pi,100).';dt=t(2)-t(1);nt=numel(t);y_sin=sin(t);y_cos=cos(t);
+% Idt_ = Idt(nt,dt);
+% y_sin_=Idt_*y_sin;y_cos_=Idt_*y_cos;
+% figure;hold on;plot(t,y_cos);plot(t,-y_sin_)
+% figure;hold on;plot(t,y_sin);plot(t,y_cos_) 
