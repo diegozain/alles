@@ -3,6 +3,8 @@
 diego domenzain
 2020
 
+__All small projects that need a place to live - but are not part of a large project - live here.__
+
 [![](projects/pdes/pics/eikonal-funny.png)](gallery/)
 
 * Go to ```/gallery``` to see nice pictures ([link](gallery/)).
@@ -14,7 +16,7 @@ If running Matlab projects, please set paths first by running the script:
 
 ---
 
-All small projects that need a place to live - but are not part of a large project - live here.
+## Content
 
 * Optimization 
 
@@ -72,7 +74,8 @@ All small projects that need a place to live - but are not part of a large proje
 	
 ---
 
-Some are written in Matlab, some in C, some use Python packages.
+Some are written in Matlab, some in C, some in Julia, some use Python packages.
+
 Some were written by me, some I found in books (as exercises), some are a collage of stuff taken from the internet.
 Most are proof of concept by example. 
 

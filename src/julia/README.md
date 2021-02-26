@@ -51,7 +51,7 @@ Let's run the functions ```differentiate_cube.jl``` and ```integrate_cube.jl```.
 
 They both act on a cube matrix, and they both do so by reference.
 
-*Matlab* (at least my version) __cannot pass by reference__. I checked with these same functions and looked at the task monitor. At least an extra copy of the cube was stored.
+*Matlab* __cannot pass by reference__ (at least my version). I checked with these same functions and looked at the task monitor. At least an extra copy of the cube was stored.
 
 *Julia* __can pass by reference__, but is about __4 times slower__ than *Matlab*.
 
@@ -80,7 +80,7 @@ v=rand(nz,nx,nt);
 # remove the tic toc functions in julia.
 t1=time_ns();
 
-# the exclamation point ! makes the function to pass by reference, 
+# the exclamation point ! makes the function pass by reference, 
 # so no extra memory is used.
 differentiate_cube!(v,dt);
 
