@@ -85,9 +85,9 @@ end
 
 % -- b values
 % this one is like a staggered triangular matrix on nt-1 points.
-% ** nt odd ***
+% ** nt odd **
 % the number of entries is: (sum of first nt/2 odd numbers)
-% ** nt ** even
+% ** nt even **
 % the number of entries is: (sum of first nt/2 - 1 even numbers)
 if mod(nt,2)==1
  nb = floor(nt*0.5)^2;

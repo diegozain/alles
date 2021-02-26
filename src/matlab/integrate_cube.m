@@ -10,10 +10,10 @@ function v = integrate_cube(v,dt)
 % 
 % tight memory requirements: no extra copy of 'v' is stored.
 % ------------------------------------------------------------------------------
-% this method follows the integration scheme in integrate_.m,
-% and does so as a void method.
+% this method follows the integration scheme in integrate_line.m,
+% and does so as a void method. 
 % 
-% this method is explained in detail in Idt.m
+% the idea of this method is explained in detail in Idt.m
 % ------------------------------------------------------------------------------
 a = 0.5*dt;
 b = 2*dt;
@@ -31,5 +31,5 @@ for it=4:nt
  v(:,:,it)= v(:,:,it-2) + b*v_;
  v_   = v__;
 end
-v(:,:,1) = 0;
+v(:,:,1) = zeros(nz,nx);
 end

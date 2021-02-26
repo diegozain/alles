@@ -10,9 +10,7 @@ The next functions on the list are:
  * ```geom_median.m```
  * ```shape_curve.m```
 
-## How to use these functions
-
-_Julia_ needs to import libraries and stuff.
+## Generic stuff
 
 ```julia
 pwd()
@@ -45,4 +43,53 @@ using PyPlot
 # pcolormesh(M)
 imshow(M)
 colorbar()
+```
+
+## A specific example
+
+Let's run the functions ```differentiate_cube.jl``` and ```integrate_cube.jl```.
+
+They both act on a cube matrix, and they both do so by reference.
+
+*Matlab* (at least my version) __cannot pass by reference__. I checked with these same functions and looked at the task monitor. At least an extra copy of the cube was stored.
+
+*Julia* __can pass by reference__, but is about __4 times slower__ than *Matlab*.
+
+```julia
+# change path to wherever alles is
+cd("alles/src/julia/")
+
+# this includes the functions we want to use.
+# every time you change the function you need to include it again.
+include("differentiate_cube.jl")
+include("integrate_cube.jl")
+
+# numbers without the .0 are ints automatically
+nx=100;
+nz=100;
+
+# make nt so that the cube is of size 1Gb
+nt=round(1/(nx*nz*8*1e-9));
+nt=convert(Int,nt);
+
+# some fake data
+dt=0.1;
+v=rand(nz,nx,nt);
+
+# some idiot decided it was a good idea to
+# remove the tic toc functions in julia.
+t1=time_ns();
+
+# the exclamation point ! makes the function to pass by reference, 
+# so no extra memory is used.
+differentiate_cube!(v,dt);
+
+t2=time_ns();
+elapsed_time=(t2-t1)/1.0e9
+
+# now the integration
+t1=time_ns();
+integrate_cube!(v,dt);
+t2=time_ns();
+elapsed_time=(t2-t1)/1.0e9
 ```

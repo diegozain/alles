@@ -10,8 +10,8 @@ function v = differentiate_cube(v,dt)
 % 
 % tight memory requirements: no extra copy of 'v' is stored.
 % ------------------------------------------------------------------------------
-% this code does finds the derivative with minimal storage,
-% it is a void method.
+% 
+% 
 % ------------------------------------------------------------------------------
 % for a time series of size 5, the diff operator is:
 % a b  c
@@ -36,7 +36,7 @@ v(:,:,1) = a*v(:,:,1) + b*v(:,:,2) + c*v(:,:,3);
 for it=2:2:(nt-2)
  v__    = v(:,:,it);
  v(:,:,it)  = c*v_ - c*v(:,:,it+1);
- v_     = v(it+1);
+ v_     = v(:,:,it+1);
  v(:,:,it+1)= c*v__- c*v(:,:,it+2);
 end
 
