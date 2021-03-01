@@ -16,7 +16,10 @@ function [d_filt,gaussian_] = filt_gauss(d,dt,f_low,f_high,steep)
 [nt,nr] = size(d);
 
 % tukey before fourier
-d = d .* repmat(tukeywin(nt,0.1),[1,nr]);
+% - this involves matlab's signal processing toolbox
+% d = d .* repmat(tukeywin(nt,0.1),[1,nr]);
+% - this does the same but it's free
+d = d .* repmat(tukey(nt,0.1),[1,nr]);
 % fft can't do this by itself so we help it,
 nt_=2^nextpow2(nt);
 nt_extra = nt_-nt;

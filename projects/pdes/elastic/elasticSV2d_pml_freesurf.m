@@ -116,7 +116,7 @@ dt = courant_factor * dt / 2;
 fprintf('\n  space discretization = %2.2d\n',dx)
 fprintf('  time  discretization = %2.2d\n',dt)
 fprintf('\n   2nd order in time, 4th order in space is \n ~~~ less stable than 2nd and 2nd order ~~~\n\n')
-fprintf('  therefore, dt = dt/2\n\n')
+fprintf('  ...therefore, dt = dt/2\n\n')
 % ------------------------------------------------------------------------------
 % --- discretization
 x=(0:dx:X).';
@@ -125,6 +125,8 @@ t=(0:dt:T).';
 nx=numel(x);
 nz=numel(z);
 nt=numel(t);
+% ------------------------------------------------------------------------------
+fprintf('wavecube of size: %2.2d Gb\n\n',nx*nz*nt*8*1e-9)
 % ------------------------------------------------------------------------------
 % --- pde parameters
 lam=lam_(1)*ones(nz,nx);
@@ -140,6 +142,14 @@ rho=rho_(1)*ones(nz,nx);
 lam(fix(nz*(1/5)):nz,:)= lam_(2);
 mu(fix(nz*(1/5)):nz,:) = mu_(2);
 rho(fix(nz*(1/5)):nz,:)= rho_(2);
+
+% % -- linear gradient in depth 
+% lam= linspace(lam_(1),lam_(2),nz).';
+% mu = linspace(mu_(1),mu_(2),nz).';
+% rho= linspace(rho_(1),rho_(2),nz).';
+% lam=lam*ones(1,nx);
+% mu=mu*ones(1,nx);
+% rho=rho*ones(1,nx);
 
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);
@@ -626,6 +636,10 @@ for it=1:nt
   
   vx(src_iz,src_ix) = vx(src_iz,src_ix) + fx(it)*dt/rho(src_iz,src_ix);
   vz(src_iz,src_ix) = vz(src_iz,src_ix) + fz(it)*dt/rho_half_x_half_z;
+  % ----------------------------------------------------------------------------
+  % % source as a boundary condition
+  % vx(src_iz,src_ix) = fx(it);
+  % vz(src_iz,src_ix) = fz(it);
   % ----------------------------------------------------------------------------
   %  wrap up dirichlet bc on edges
   % ----------------------------------------------------------------------------
