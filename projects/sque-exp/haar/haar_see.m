@@ -1,6 +1,8 @@
 clear
 close all
 % ------------------------------------------------------------------------------
+addpath('src/')
+% ------------------------------------------------------------------------------
 % 
 % visualize the results from the c code haar-test.
 % 
@@ -28,9 +30,24 @@ ylabel('Amplitude')
 title('Haar wavelet pairs example')
 simple_figure()
 % ------------------------------------------------------------------------------
+% a is propagated "fwd" to the weird basis and the output is b
+% b is propagated "inv" to the block basis and the outpu is a
+%
+% these are from the book and were found with the C code:
+%
 % coefficients of "block" basis
 a = [1.0000 ; 0.5000 ; 0.3333 ; 0.2500 ; 0.2000 ; 0.1667 ; 0.1429 ; 0.1250];
+% coefficients of "weird" basis
 b = [0.3397 ; 0.1250 ; 0.1620 ; 0.0208 ; 0.1811 ; 0.0083 ; 0.0175 ; 0.0045];
+%
+% you can also put your own, but remember they have to be of size a power of 2.
+% you can either run them in the C code (input by hand, run Makefile, run exe),
+% or use the matlab version:
+% a = (1:1:2^4).';
+% b = haar1d_fwd(a);
+% ------------------------------------------------------------------------------
+% % here you could drop some values. maybe the reconstruction is not so bad.
+% b(b<0.01)=0;
 % ------------------------------------------------------------------------------
 % haar basis parameters
 % n_basis_= 4; % (index j)

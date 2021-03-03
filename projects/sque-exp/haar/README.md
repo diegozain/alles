@@ -40,8 +40,16 @@ It displays,
 
 Under construction.
 
+## Haar transform in *Matlab*
+
+All *C* functions are cloned in *Matlab* in the ```src/``` directory here.
+
+This was done so it is easy to play with them. 
+
+You can also visualize the basis elements for both the *blocky* and *weird* basis.
+
 ## References
-[Programming Projects in C for Students of Engineering, Science, and Mathematics](https://userpages.umbc.edu/~rostamia/cbook/). Rouben Rostamian. SIAM, 2014.
+[Programming Projects in C for Students of Engineering, Science, and Mathematics](https://userpages.umbc.edu/~rostamia/cbook/). *Rouben Rostamian*. SIAM, 2014.
 
 ---
 
