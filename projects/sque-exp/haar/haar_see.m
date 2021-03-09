@@ -43,7 +43,8 @@ b = [0.3397 ; 0.1250 ; 0.1620 ; 0.0208 ; 0.1811 ; 0.0083 ; 0.0175 ; 0.0045];
 % you can also put your own, but remember they have to be of size a power of 2.
 % you can either run them in the C code (input by hand, run Makefile, run exe),
 % or use the matlab version:
-% a = (1:1:2^4).';
+% % a = (1:1:2^4).';
+% a = linspace(0,2*pi,2^4).'; a=sin(a);
 % b = haar1d_fwd(a);
 % ------------------------------------------------------------------------------
 % % here you could drop some values. maybe the reconstruction is not so bad.

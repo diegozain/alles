@@ -3,14 +3,14 @@
 diego domenzain
 2020
 
-__All small projects that need a place to live - but are not part of a large project - live here.__
+__All small projects that need a place to live *but are not part of a large project*, live here.__
 
 [![](projects/pdes/pics/eikonal-funny.png)](gallery/)
 
 * Go to ```/gallery``` to see nice pictures ([link](gallery/)).
 * Go to ```/projects``` to run projects.
 
-If running Matlab projects, please set paths first by running the script:
+If running *Matlab* projects, please set paths first by running the script:
 
 ```dir_paths.m```
 
@@ -67,6 +67,7 @@ If running Matlab projects, please set paths first by running the script:
 
 	* Slurm
 	* AWS
+	* [OpenMP](projects/cloud/openmp/)
 	
 * Deep learning
 	
@@ -74,12 +75,11 @@ If running Matlab projects, please set paths first by running the script:
 	
 ---
 
-Some are written in Matlab, some in C, some in Julia, some use Python packages.
+Some are written in *Matlab*, some in *C*, some in *Fortran*, some in *Julia*, some use *Python* packages.
 
-Some were written by me, some I found in books (as exercises), some are a collage of stuff taken from the internet.
-Most are proof of concept by example. 
+Some were written by me, some I found in books (as exercises), some are a collage of stuff taken from the internet. Most are proof of concept by example. 
 
-__Not all are perfect but they all work. They are toy examples.__
+__Not all are perfect but they all work. *They are toy examples*.__
 
 ---
 
