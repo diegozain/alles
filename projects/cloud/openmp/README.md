@@ -2,7 +2,9 @@
 diego domenzain
 March 2021 @ Colorado School of Mines
 
-## Implementation of OpenMP 
+## Implementation of OpenMP
+
+[![](../pics/serial-parallel.png)](./)
 
 Communicating with multiple processors (MP) using the openMP framework.
 
@@ -34,6 +36,7 @@ My old Mac doesn't have openMP enabled for *C*.
 
 ## Lessons learned
 
+1. **SMP** = Symmetric Multiprocessor. **NUMA** = non-uniform memory architecture.
 1. Concurrency: if you don't schedule right, the result will be scrambled.
 1. *GPU*s prioritize __throughput__ rather than __latency__,
     * good for algorithms whose "workers" need little data interaction.
@@ -43,3 +46,7 @@ My old Mac doesn't have openMP enabled for *C*.
     * initialize data on the same cores that will later process that data.
 1. *MPI* between nodes, and *openMP* within a node.
 1. *openMP* makes ```pthread.h``` simple.
+1. **SPMD** = *Simple program multiple data* design pattern:
+    * Launch two or more threads that execute the same code.
+    * Each thread determines its ID and the number of threads in the team.
+    * Use the ID and the number of threads in the team to split up the work between threads.
