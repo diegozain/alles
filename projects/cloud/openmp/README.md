@@ -26,9 +26,20 @@ gfortran -fopenmp file.f90
 ./a.out
 ```
 
-My old Mac doesn't have openMP enabled for *C*. *Homebrew* won't even download ```gcc```. 
+My old Mac doesn't have openMP enabled for *C*.
 
-*Fortran* seems to be doing ok though.
+*Fortran* seems to be doing ok though. 
 
 ---
 
+## Lessons learned
+
+1. Concurrency: if you don't schedule right, the result will be scrambled.
+1. *GPU*s prioritize __throughput__ rather than __latency__,
+  * good for algorithms whose "workers" need little data interaction.
+1. *CPU*s prioritize __latency__ rather than __throughput__.
+1. Optimize code by
+  * reorganizing loops to reuse data from cache lines (*cache blocking*),
+  * initialize data on the same cores that will later process that data.
+1. *MPI* between nodes, and *openMP* within a node.
+1. *openMP* makes ```pthread.h``` simple.
