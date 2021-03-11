@@ -1,5 +1,6 @@
 # OpenMP
 diego domenzain
+
 March 2021 @ Colorado School of Mines
 
 ## Implementation of OpenMP
@@ -12,6 +13,8 @@ __These functions are examples on how to use openMP.__
 
 They are taken from the book [The openMP common core](https://mitpress.mit.edu/books/openmp-common-core). The book itself comes with code in *C* and *Fortran*. The code can be found [here](http://ompcore.com/) and [here](https://github.com/tgmattso/OmpCommonCore/tree/master/Book/).
 
+---
+
 This repo is just a way for me to learn this stuff. The code is to be compiled and run here in a simple way.
 
 For *C*,
@@ -21,20 +24,20 @@ gcc -fopenmp file.c
 ```
 
 For *Fortran*,
-```shell
+```bash
 gfortran -fopenmp file.f90
 ./a.out
 ```
 
 My old Mac doesn't have openMP enabled for *C*.
 
-*Fortran* seems to be doing ok though. 
+*Fortran* is doing ok though. 
 
 ---
 
 ## Lessons learned
 
-1. Concurrency: if you don't schedule right, the result will be scrambled.
+1. Concurrency: if you don't schedule right, the result will be scrambled. Solutions,
     * critical sections
     * barriers
 1. *GPU*s prioritize __throughput__ rather than __latency__,
