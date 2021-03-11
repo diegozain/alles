@@ -29,7 +29,7 @@ gfortran -fopenmp file.f90
 ./a.out
 ```
 
-My old Mac doesn't have openMP enabled for *C*.
+My old Mac doesn't have openMP enabled for *C*, so the *C* implementation might not be complete.
 
 *Fortran* is doing ok though. 
 
@@ -38,8 +38,8 @@ My old Mac doesn't have openMP enabled for *C*.
 ## Lessons learned
 
 1. Concurrency: if you don't schedule right, the result will be scrambled. Solutions,
-    * critical sections
-    * barriers
+    * *critical sections*: forces a block of code to be executed by only one thread at a time.
+    * *barriers*: explicitly force all threads to wait until all threads have finished.
 1. *GPU*s prioritize __throughput__ rather than __latency__,
     * good for algorithms whose "workers" need little data interaction.
 1. *CPU*s prioritize __latency__ rather than __throughput__.

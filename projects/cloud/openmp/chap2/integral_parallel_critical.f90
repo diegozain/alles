@@ -40,6 +40,9 @@ do i = id, num_steps-1, numthreads
    partial_sum = partial_sum + 4.0/(1.0+x*x)
 enddo
 ! ------------------------------------------------------------------------------
+! this forces one thread at a time to execute this block of code,
+! so if another thread wants to do this,
+! it must wait for the previous thread to finish.
 !$omp critical
 full_sum = full_sum + partial_sum
 !$omp end critical
