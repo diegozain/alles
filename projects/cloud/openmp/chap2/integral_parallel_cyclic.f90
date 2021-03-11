@@ -61,7 +61,6 @@ do i = id, num_steps - 1, numthreads
 enddo
 !$omp end parallel
 ! ------------------------------------------------------------------------------
-
 ! this collects all the threads-sums into one sum
 pi = 0.0
 do i = 0, nthreads-1
