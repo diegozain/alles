@@ -40,6 +40,11 @@ My old Mac doesn't have openMP enabled for *C*, so the *C* implementation might 
 1. Concurrency: if you don't schedule right, the result will be scrambled. Solutions,
     * *critical sections*: forces a block of code to be executed by only one thread at a time.
     * *barriers*: explicitly force all threads to wait until all threads have finished.
+1. Plagues of parallel programing,
+    * *data racing*:
+        1. two or more threads in a shared memory sytem issue loads and stores to overlapping address ranges,
+        1. those loads and stores are not constrained to follow a well defined order.
+    * *false sharing*: cache lines have to move back and forth between cores because the object being accessed by different cores are close in cache.
 1. *GPU*s prioritize __throughput__ rather than __latency__,
     * good for algorithms whose "workers" need little data interaction.
 1. *CPU*s prioritize __latency__ rather than __throughput__.

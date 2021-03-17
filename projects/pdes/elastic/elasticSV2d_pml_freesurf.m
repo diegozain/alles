@@ -51,32 +51,92 @@ close all
 % rho= 1.7e+3
 % ------------------------------------------------------------------------------
 % --- pde parameters
+% % slow - fast
 % lam_= [2; 5];
 % mu_ = [3; 9];
 % rho_= [1; 6];
 
+% % fast - slow
 % lam_= [5; 2];
 % mu_ = [9; 3];
 % rho_= [6; 1];
 
-lam_= [2; 2];
-mu_ = [3; 3];
-rho_= [6; 6];
+% % homogeneous 1
+% lam_= [2; 2];
+% mu_ = [3; 3];
+% rho_= [6; 6];
 
+% homogeneous 2
+lam_= [2000; 2000];
+mu_ = [3000; 3000];
+rho_= [2; 2];
+
+% % homogeneous like Lisa Groos,
+% % vp=500 , vs=300 m/s ; rho=1800 kg/m^3
+% % source is a 'hammer', to = 32ms = 0.032 s
+% lam_= [126000000; 126000000];
+% mu_ = [162000000; 162000000];
+% rho_= [1800; 1800];
+
+% % second layer twice as fast, density constant (homogeneous 1)
+% lam_= [2; 8];
+% mu_ = [3; 12];
+% rho_= [6; 6];
+
+% % second layer twice as fast, density constant (homogeneous 2)
+% lam_= [2000; 2000];
+% mu_ = [3000; 12000];
+% rho_= [2; 2];
+
+% % shear zero, shear non-zero
 % lam_= [2; 5];
 % mu_ = [0; 9];
 % rho_= [1; 6];
 
+% % air - rock
 % lam_= [1e+5; 1e+9];
 % mu_ = [0; 1e+10];
 % rho_= [1; 2e+3];
+% ------------------------------------------------------------------------------
 % --- spatial constraints
-X=3;
-Z=2.5;
-T=3;
+% % -- slow - fast, fast - slow, homogeneous 1
+% X= 3;
+% Z= 2.5;
+% T= 3;
+% -- homogeneous 2
+X= 25;
+Z= 10;
+T= 0.4;
+% % -- gradient in depth from homogeneous 2
+% X= 25;
+% Z= 10;
+% T= 0.4;
+% % -- lisa groos
+% X= 30;
+% Z= 30;
+% T= 0.1;
 % --- source parameters
-to = 0.5;
-fo = 3;
+% WARNING:
+% if the 'hammer' source is used, the central frequency is determined by 
+% the time duration of the pulse (this is given by 'to').
+% this means you have to input 'fo' in correspondance to that, fo ~ 1/to.
+%
+% if the ricker wavelet is used, the central frequency is determined by 'fo'.
+% in this case, 'to' determines when the shot is performed.
+
+% % -- slow - fast, fast - slow, homogeneous 1
+% to = 0.5;
+% fo = 3;
+% -- homogeneous 2
+to = 0.04;
+fo = 30;
+% % -- gradient in depth from homogeneous 2
+% to = 0.04;
+% fo = 30;
+% % -- lisa groos ('hammer source')
+% to = 0.032;
+% fo = 31;
+% ------------------------------------------------------------------------------
 wo = 2*pi*fo;
 % ------------------------------------------------------------------------------
 % --- stability
@@ -138,18 +198,18 @@ rho=rho_(1)*ones(nz,nx);
 % mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
 % rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= rho_(2);
 
-% -- two layers
-lam(fix(nz*(1/5)):nz,:)= lam_(2);
-mu(fix(nz*(1/5)):nz,:) = mu_(2);
-rho(fix(nz*(1/5)):nz,:)= rho_(2);
+% % -- two layers
+% lam(fix(nz*(1/5)):nz,:)= lam_(2);
+% mu(fix(nz*(1/5)):nz,:) = mu_(2);
+% rho(fix(nz*(1/5)):nz,:)= rho_(2);
 
-% % -- linear gradient in depth 
-% lam= linspace(lam_(1),lam_(2),nz).';
-% mu = linspace(mu_(1),mu_(2),nz).';
-% rho= linspace(rho_(1),rho_(2),nz).';
-% lam=lam*ones(1,nx);
-% mu=mu*ones(1,nx);
-% rho=rho*ones(1,nx);
+% -- linear gradient in depth 
+lam= linspace(lam_(1),lam_(2),nz).';
+mu = linspace(mu_(1),mu_(2),nz).';
+rho= linspace(rho_(1),rho_(2),nz).';
+lam=lam*ones(1,nx);
+mu=mu*ones(1,nx);
+rho=rho*ones(1,nx);
 
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);
@@ -213,34 +273,71 @@ simple_figure()
 figure;
 subplot(121)
 fancy_imagesc(vp/fo,x,z)
-xlabel('Length')
-ylabel('Depth')
-title('P wavelength')
+xlabel('Length (m)')
+ylabel('Depth (m)')
+title('P wavelength (m)')
 simple_figure()
 
 subplot(122)
 fancy_imagesc(vs/fo,x,z)
-xlabel('Length')
-% ylabel('Depth')
-title('S wavelength')
+xlabel('Length (m)')
+ylabel('Depth (m)')
+title('S wavelength (m)')
 simple_figure()
 % ------------------------------------------------------------------------------
 % -- source function (real coordinates)
 src_xz = [x(fix(nx*0.5)) , z(1)]; 
 
 % - source location (index coordinates)
-src_ix = binning(x,src_xz(1));
-src_iz = binning(z,src_xz(2));
+isrc_x = binning(x,src_xz(1));
+isrc_z = binning(z,src_xz(2));
 
 % - sources in x and z
 fx=zeros(nt,1);
+% ricker
 fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
+% 'hammer' according to the germans
+Fo = 1; % kg*m/s^2
+fz = Fo * (1/(dx*dz)) * sin((pi*t)./(to)).^3;
+fz(t>=to) = 0;
 % NOTE: the staggered fd scheme actually outputs integral(f,dt)!!!
 %       so, if you want an output source f, you need to input dt_(f,dt)
 fx_=fx;
 fz_=fz;
-fx= differentiate_line(fx,dt);
-fz= differentiate_line(fz,dt);
+fx = differentiate_line(fx,dt);
+fz = differentiate_line(fz,dt);
+% ------------------------------------------------------------------------------
+% power spectra of source
+figure;
+subplot(121)
+hold on
+plot(t(1:fix(nt*0.5)),normali(fz_(1:fix(nt*0.5))),'r','linewidth',4)
+plot(t(1:fix(nt*0.5)),normali(fz(1:fix(nt*0.5))),'k','linewidth',4)
+hold off
+axis tight
+axis square
+xlabel('Time (s)')
+ylabel('Norm. amplitude')
+set(gca,'ytick',[])
+simple_figure()
+
+[fz_fou,freq,~] = fourier_rt(fz,dt);
+[fz_fou_,freq,~]= fourier_rt(fz_,dt);
+fz_fou = normali(abs(fz_fou));
+fz_fou_= normali(abs(fz_fou_));
+
+subplot(122)
+hold on
+plot(freq(1:fix(numel(freq)*0.25)),fz_fou_(1:fix(numel(freq)*0.25)),'r','linewidth',4)
+plot(freq(1:fix(numel(freq)*0.25)),fz_fou(1:fix(numel(freq)*0.25)),'k','linewidth',4)
+hold off
+axis tight
+axis square
+xlabel('Frequency (Hz)')
+ylabel('Norm. power')
+set(gca,'ytick',[])
+legend({'source','dt(source)'})
+simple_figure()
 % ------------------------------------------------------------------------------
 % -- init pml
 n_points_pml= 20;
@@ -271,6 +368,11 @@ rho= [repmat(rho(:,1),1,n_points_pml), rho , repmat(rho(:,nx),1,n_points_pml)];
 % z axis
 rho= [repmat(rho(1,:),n_ghost,1); rho ; repmat(rho(nz,:),n_points_pml,1)];
 
+% % ?
+% lam(1:n_ghost,:) = 0;
+% mu(1:n_ghost,:)  = 0;
+% rho(1:n_ghost,:) = 0;
+
 x = [x; (dx*(1:2*n_points_pml)+x(nx)).' ];
 z = [z; (dz*(1:(n_points_pml+n_ghost))+z(nz)).' ];
 
@@ -282,8 +384,8 @@ vs = sqrt(mu./rho);
 % ------------------------------------------------------------------------------
 % -- source function new index because of pml & free surface
 % - source location (index coordinates)
-src_ix = src_ix+n_points_pml;
-src_iz = src_iz+n_ghost;
+isrc_x = isrc_x+n_points_pml;
+isrc_z = isrc_z+n_ghost;
 % ------------------------------------------------------------------------------
 % -- init fields
 
@@ -296,8 +398,15 @@ sxx=zeros(nz,nx);
 szz=zeros(nz,nx);
 sxz=zeros(nz,nx);
 
+% - data
+d = zeros(nt,nx);
+% ------------------------------------------------------------------------------
 % - wavefield recorder
-vz_=zeros(nz,nx,nt);
+prompt = '\n    do you want to save the wave-cube? (y or n):  ';
+wave_cube = input(prompt,'s');
+if strcmp(wave_cube,'y')
+  vz_=zeros(nz,nx,nt);
+end
 % ------------------------------------------------------------------------------
 % -- init PML
 a_x = zeros(nz,nx);
@@ -574,8 +683,6 @@ for it=1:nt
   i_ghost = 1:(n_ghost+1);
   % -- boundary condition on stress xz
   sxz(iz-i_ghost+1,ix)  = -sxz(iz+i_ghost,ix);
-  % sxz(iz,ix)  = -sxz(iz+1,ix-1);
-  % sxz(iz-1,ix)= -sxz(iz+2,ix-1);
   % ----------------------------------------------------------------------------
   %  compute velocity and update memory variables for C-PML
   % ----------------------------------------------------------------------------
@@ -627,19 +734,19 @@ for it=1:nt
   ix=1:nx;
   i_ghost = 1:n_ghost;
   % -- boundary condition on velocity vz
-  vz(iz-i_ghost-1,ix)  = 0;
+  vz(iz-i_ghost-1,ix) = 0;
   % ----------------------------------------------------------------------------
   %  source update
   % ----------------------------------------------------------------------------
   % interpolate density at the right location in the staggered grid cell
-  rho_half_x_half_z = 0.25 * (rho(src_iz,src_ix) + rho(src_iz,src_ix+1) + rho(src_iz+1,src_ix+1) + rho(src_iz+1,src_ix));
+  rho_half_x_half_z = 0.25 * (rho(isrc_z,isrc_x) + rho(isrc_z,isrc_x+1) + rho(isrc_z+1,isrc_x+1) + rho(isrc_z+1,isrc_x));
   
-  vx(src_iz,src_ix) = vx(src_iz,src_ix) + fx(it)*dt/rho(src_iz,src_ix);
-  vz(src_iz,src_ix) = vz(src_iz,src_ix) + fz(it)*dt/rho_half_x_half_z;
+  vx(isrc_z,isrc_x) = vx(isrc_z,isrc_x) + fx(it)*dt/rho(isrc_z,isrc_x);
+  vz(isrc_z,isrc_x) = vz(isrc_z,isrc_x) + fz(it)*dt/rho_half_x_half_z;
   % ----------------------------------------------------------------------------
   % % source as a boundary condition
-  % vx(src_iz,src_ix) = fx(it);
-  % vz(src_iz,src_ix) = fz(it);
+  % vx(isrc_z,isrc_x) = fx(it);
+  % vz(isrc_z,isrc_x) = fz(it);
   % ----------------------------------------------------------------------------
   %  wrap up dirichlet bc on edges
   % ----------------------------------------------------------------------------
@@ -659,96 +766,107 @@ for it=1:nt
   % vz(1,:) = 0;
   vz(nz,:)= 0;
   % ----------------------------------------------------------------------------
+  %  store data
+  % ----------------------------------------------------------------------------
+  d(it,:) = vz(n_ghost+2,:);
+  % ----------------------------------------------------------------------------
   %  store wavefield
   % ----------------------------------------------------------------------------
-  vz_(:,:,it) = vz;
+  if strcmp(wave_cube,'y')
+    vz_(:,:,it) = vz;
+  end
 end
 toc;
-% the data 
-d = squeeze(vz_(n_ghost+2,:,:)).';
 % ------------------------------------------------------------------------------
-vz_min = min(vz_(:));
-vz_max = max(vz_(:));
-vz_min = max([abs(vz_min) vz_max]);
-vz_min = vz_min*0.03;
+if strcmp(wave_cube,'y')
+  vz_min = min(vz_(:));
+  vz_max = max(vz_(:));
+  vz_min = max([abs(vz_min) vz_max]);
+  vz_min = vz_min*0.03;
 
-% t1=to*1.25;
-% t2=to*1.65;
-% t3=to*2.25;
+  % t1=to*1.25;
+  % t2=to*1.65;
+  % t3=to*2.25;
 
-t1=to*2.25;
-t2=to*3;
-t3=to*5;
+  t1=to*2.25;
+  t2=to*3;
+  t3=to*5;
 
-figure;
+  figure;
 
-subplot(2,3,1)
-fancy_imagesc(vz_(:,:,binning(t,t1)),x,z)
-colormap(rainbow2(1))
-caxis([-vz_min vz_min])
-hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
-hold off
-colorbar off
-% xlabel('Length')
-% ylabel('Depth')
-set(gca,'xtick',[])
-set(gca,'ytick',[])
-% title('First')
-simple_figure()
+  subplot(2,3,1)
+  fancy_imagesc(vz_(:,:,binning(t,t1)),x,z)
+  colormap(rainbow2(1))
+  caxis([-vz_min vz_min])
+  hold on
+  plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+  plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
+  hold off
+  colorbar off
+  % xlabel('Length')
+  % ylabel('Depth')
+  set(gca,'xtick',[])
+  set(gca,'ytick',[])
+  % title('First')
+  simple_figure()
 
-subplot(2,3,2)
-fancy_imagesc(vz_(:,:,binning(t,t2)),x,z)
-colormap(rainbow2(1))
-caxis([-vz_min vz_min])
-hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
-hold off
-colorbar off
-% xlabel('Length')
-% ylabel('Depth')
-set(gca,'xtick',[])
-set(gca,'ytick',[])
-title('Wavefield snapshots')
-% title('Middle')
-simple_figure()
+  subplot(2,3,2)
+  fancy_imagesc(vz_(:,:,binning(t,t2)),x,z)
+  colormap(rainbow2(1))
+  caxis([-vz_min vz_min])
+  hold on
+  plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+  plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
+  hold off
+  colorbar off
+  % xlabel('Length')
+  % ylabel('Depth')
+  set(gca,'xtick',[])
+  set(gca,'ytick',[])
+  title('Wavefield snapshots')
+  % title('Middle')
+  simple_figure()
 
-subplot(2,3,3)
-fancy_imagesc(vz_(:,:,binning(t,t3)),x,z)
-colormap(rainbow2(1))
-caxis([-vz_min vz_min]);
-hold on
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
-plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
-hold off
-colorbar off
-% xlabel('Length')
-% ylabel('Depth')
-set(gca,'xtick',[])
-set(gca,'ytick',[])
-% title('Final')
-simple_figure()
+  subplot(2,3,3)
+  fancy_imagesc(vz_(:,:,binning(t,t3)),x,z)
+  colormap(rainbow2(1))
+  caxis([-vz_min vz_min]);
+  hold on
+  plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
+  plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
+  hold off
+  colorbar off
+  % xlabel('Length')
+  % ylabel('Depth')
+  set(gca,'xtick',[])
+  set(gca,'ytick',[])
+  % title('Final')
+  simple_figure()
 
-subplot(2,3,[4 5 6])
-hold on
-plot(t,fz_,'k','linewidth',2)
-plot(t1*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
-plot(t2*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
-plot(t3*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
-hold off
-axis tight
-set(gca,'ytick',[])
-xlabel('Time')
-title('Source')
-simple_figure()
+  subplot(2,3,[4 5 6])
+  hold on
+  plot(t,fz_,'k','linewidth',2)
+  plot(t1*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
+  plot(t2*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
+  plot(t3*ones(3,1),linspace(min(fz_),max(fz_),3),'linewidth',3)
+  hold off
+  axis tight
+  set(gca,'ytick',[])
+  xlabel('Time')
+  title('Source')
+  simple_figure()
+end
 % ------------------------------------------------------------------------------
+d_min = min(d(:));
+d_max = max(d(:));
+d_min = max([abs(d_min) d_max]);
+d_min = d_min*0.03;
+
 figure;
 fancy_imagesc(d,x,t);
 axis normal;
 colorbar off
-caxis(1e-1*[-vz_min vz_min])
+caxis(1e-1*[-d_min d_min])
 set(gca,'xtick',[])
 set(gca,'ytick',[])
 % ylabel('Time')
@@ -831,6 +949,75 @@ colorbar off
 set(gca,'xtick',[])
 set(gca,'ytick',[])
 title('Velocity z')
+simple_figure()
+% ------------------------------------------------------------------------------
+figure;
+
+subplot(1,2,1)
+fancy_imagesc(vp,x,z)
+colormap(rainbow2(1))
+xlabel('Length (m)')
+ylabel('Depth (m)')
+title('P velocity (m/s)')
+simple_figure()
+
+subplot(1,2,2)
+fancy_imagesc(vs,x,z)
+colormap(rainbow2(1))
+xlabel('Length (m)')
+ylabel('Depth (m)')
+title('S velocity (m/s)')
+simple_figure()
+% ------------------------------------------------------------------------------
+figure;
+fancy_imagesc(d,x,t)
+axis normal
+colorbar off
+caxis(1e-1*[-d_min d_min])
+xlabel('Length (m)')
+ylabel('Time (s)')
+title('Surface receivers')
+simple_figure()
+% ------------------------------------------------------------------------------
+% linear semblance
+d_onesided = d(:,isrc_x:(nx-n_points_pml));
+rx= x(isrc_x:(nx-n_points_pml)) - x(isrc_x);
+
+velos = linspace(vel_min*0.8,vel_max*1.2,1e+2);
+
+v_analy = v_linear(d_onesided,t,rx,velos);
+semblance_v = sum(v_analy,1);
+
+[~,iv] = max(semblance_v);
+fprintf('\n  max linear velocity achieved at %2.2d m/s',velos(iv))
+fprintf('\n  this velocity is %2.2d percent of Vs\n\n',velos(iv)*100/vs(1))
+% ------------------------------------------------------------------------------
+figure;
+subplot(2,2,1)
+fancy_imagesc(v_analy,velos,t);
+colorbar off
+axis normal
+title('Linear semblance')
+xlabel('Velocity (m/s)')
+ylabel('Time (s)')
+simple_figure()
+
+subplot(2,2,3)
+plot(velos,semblance_v)
+set(gca,'ytick',[])
+axis tight
+xlabel('Velocity (m/s)')
+ylabel('Lin. semblance')
+simple_figure()
+
+subplot(2,2,[2,4])
+fancy_imagesc(d_onesided,rx,t);
+colorbar off
+caxis(5e-2*[-d_min d_min])
+axis normal
+title('One-sided data') 
+xlabel('Receivers (m)')
+ylabel('Time (s)')
 simple_figure()
 % ------------------------------------------------------------------------------
 %}
