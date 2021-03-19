@@ -61,15 +61,15 @@ close all
 % mu_ = [9; 3];
 % rho_= [6; 1];
 
-% % homogeneous 1
-% lam_= [2; 2];
-% mu_ = [3; 3];
-% rho_= [6; 6];
+% homogeneous 1
+lam_= [2; 2];
+mu_ = [3; 3];
+rho_= [6; 6];
 
-% homogeneous 2
-lam_= [2000; 2000];
-mu_ = [3000; 3000];
-rho_= [2; 2];
+% % homogeneous 2
+% lam_= [2000; 2000];
+% mu_ = [3000; 3000];
+% rho_= [2; 2];
 
 % % homogeneous like Lisa Groos,
 % % vp=500 , vs=300 m/s ; rho=1800 kg/m^3
@@ -99,14 +99,14 @@ rho_= [2; 2];
 % rho_= [1; 2e+3];
 % ------------------------------------------------------------------------------
 % --- spatial constraints
-% % -- slow - fast, fast - slow, homogeneous 1
-% X= 3;
-% Z= 2.5;
-% T= 3;
-% -- homogeneous 2
-X= 25;
-Z= 10;
-T= 0.4;
+% -- slow - fast, fast - slow, homogeneous 1
+X= 3;
+Z= 2.5;
+T= 3;
+% % -- homogeneous 2
+% X= 25;
+% Z= 10;
+% T= 0.4;
 % % -- gradient in depth from homogeneous 2
 % X= 25;
 % Z= 10;
@@ -124,12 +124,12 @@ T= 0.4;
 % if the ricker wavelet is used, the central frequency is determined by 'fo'.
 % in this case, 'to' determines when the shot is performed.
 
-% % -- slow - fast, fast - slow, homogeneous 1
-% to = 0.5;
-% fo = 3;
-% -- homogeneous 2
-to = 0.04;
-fo = 30;
+% -- slow - fast, fast - slow, homogeneous 1
+to = 0.5;
+fo = 3; % 3 8
+% % -- homogeneous 2
+% to = 0.04;
+% fo = 35;
 % % -- gradient in depth from homogeneous 2
 % to = 0.04;
 % fo = 30;
@@ -169,14 +169,14 @@ dx = l_min/no_p_wa;
 dx=min([0.1; dx]);
 dz = dx;
 % - time
-courant_factor = 0.9;
+courant_factor = 0.3;
 dt = 1/(vel_max * sqrt((1/dx^2)+(1/dz^2)));
-dt = courant_factor * dt / 2;
+dt = courant_factor * dt;
 % ------------------------------------------------------------------------------
 fprintf('\n  space discretization = %2.2d\n',dx)
 fprintf('  time  discretization = %2.2d\n',dt)
 fprintf('\n   2nd order in time, 4th order in space is \n ~~~ less stable than 2nd and 2nd order ~~~\n\n')
-fprintf('  ...therefore, dt = dt/2\n\n')
+fprintf('  ...therefore, courant = %2.2d\n\n',courant_factor)
 % ------------------------------------------------------------------------------
 % --- discretization
 x=(0:dx:X).';
@@ -207,9 +207,9 @@ rho=rho_(1)*ones(nz,nx);
 lam= linspace(lam_(1),lam_(2),nz).';
 mu = linspace(mu_(1),mu_(2),nz).';
 rho= linspace(rho_(1),rho_(2),nz).';
-lam=lam*ones(1,nx);
-mu=mu*ones(1,nx);
-rho=rho*ones(1,nx);
+lam= lam*ones(1,nx);
+mu = mu*ones(1,nx);
+rho= rho*ones(1,nx);
 
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);
@@ -217,7 +217,7 @@ vs = sqrt(mu./rho);
 figure;
 subplot(231)
 fancy_imagesc(lam,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 % colorbar off
 % xlabel('Length')
 % ylabel('Depth')
@@ -228,7 +228,7 @@ simple_figure()
 
 subplot(232)
 fancy_imagesc(mu,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 % colorbar off
 % xlabel('Length')
 % ylabel('Depth')
@@ -239,7 +239,7 @@ simple_figure()
 
 subplot(233)
 fancy_imagesc(rho,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 % colorbar off
 % xlabel('Length')
 % ylabel('Depth')
@@ -250,7 +250,7 @@ simple_figure()
 
 subplot(234)
 fancy_imagesc(vp,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 % colorbar off
 % xlabel('Length')
 % ylabel('Depth')
@@ -261,7 +261,7 @@ simple_figure()
 
 subplot(236)
 fancy_imagesc(vs,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 % colorbar off
 % xlabel('Length')
 % ylabel('Depth')
@@ -286,7 +286,7 @@ title('S wavelength (m)')
 simple_figure()
 % ------------------------------------------------------------------------------
 % -- source function (real coordinates)
-src_xz = [x(fix(nx*0.5)) , z(1)]; 
+src_xz = [x(fix(nx*0.15)) , z(1)]; 
 
 % - source location (index coordinates)
 isrc_x = binning(x,src_xz(1));
@@ -294,12 +294,13 @@ isrc_z = binning(z,src_xz(2));
 
 % - sources in x and z
 fx=zeros(nt,1);
+fz=zeros(nt,1);
 % ricker
 fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
-% 'hammer' according to the germans
-Fo = 1; % kg*m/s^2
-fz = Fo * (1/(dx*dz)) * sin((pi*t)./(to)).^3;
-fz(t>=to) = 0;
+% % 'hammer' according to the germans
+% Fo = 1; % kg*m/s^2
+% fz = Fo * (1/(dx*dz)) * sin((pi*t)./(to)).^3;
+% fz(t>=to) = 0;
 % NOTE: the staggered fd scheme actually outputs integral(f,dt)!!!
 %       so, if you want an output source f, you need to input dt_(f,dt)
 fx_=fx;
@@ -592,25 +593,32 @@ K_z_half(1:(nz-n_points_pml-1),:) = 1;
 % lam2mu_half_x = zeros(nz-1,nx-1);
 % mu_half_z = zeros(nz-1,nx-1);
 % rho_half_x_half_z = 0;
-% value_dvx_dx = zeros(nz-1,nx-1);
-% value_dvx_dz = zeros(nz-1,nx-1);
-% value_dvz_dx = zeros(nz-1,nx-1);
-% value_dvz_dz = zeros(nz-1,nx-1);
-% value_dsxx_dx = zeros(nz-1,nx-1);
-% value_dszz_dz = zeros(nz-1,nx-1);
-% value_dsxz_dx = zeros(nz-1,nx-1);
-% value_dsxz_dz = zeros(nz-1,nx-1);
+% dvx_dx = zeros(nz-1,nx-1);
+% dvx_dz = zeros(nz-1,nx-1);
+% dvz_dx = zeros(nz-1,nx-1);
+% dvz_dz = zeros(nz-1,nx-1);
+% dsxx_dx = zeros(nz-1,nx-1);
+% dszz_dz = zeros(nz-1,nx-1);
+% dsxz_dx = zeros(nz-1,nx-1);
+% dsxz_dz = zeros(nz-1,nx-1);
 
 % could be saved only on PML region
-memory_dvx_dx = zeros(nz,nx);
-memory_dvx_dz = zeros(nz,nx);
-memory_dvz_dx = zeros(nz,nx);
-memory_dvz_dz = zeros(nz,nx);
-memory_dsxx_dx = zeros(nz,nx);
-memory_dszz_dz = zeros(nz,nx);
-memory_dsxz_dx = zeros(nz,nx);
-memory_dsxz_dz = zeros(nz,nx);
-
+dvx_dx_memory = zeros(nz,nx);
+dvx_dz_memory = zeros(nz,nx);
+dvz_dx_memory = zeros(nz,nx);
+dvz_dz_memory = zeros(nz,nx);
+dsxx_dx_memory = zeros(nz,nx);
+dszz_dz_memory = zeros(nz,nx);
+dsxz_dx_memory = zeros(nz,nx);
+dsxz_dz_memory = zeros(nz,nx);
+% ------------------------------------------------------------------------------
+%
+%
+%                                wave solver
+%
+%
+% ------------------------------------------------------------------------------
+fprintf('\n\n ¡¡¡ solving the wave !!!\n\n');
 tic;
 for it=1:nt
   % ----------------------------------------------------------------------------
@@ -618,26 +626,25 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   % compute dvx and dvz,
   % for sxx and szz
-  iz=(3+n_ghost-1):(nz-1);
+  iz=3:(nz-1);
   ix=2:(nx-2);
   % interpolate at the right location in the staggered grid cell
   lam_half_x= 0.5 * (lam(iz,ix+1) + lam(iz,ix));
   mu_half_x = 0.5 * (mu(iz,ix+1) + mu(iz,ix));
   lam2mu_half_x = lam_half_x + 2*mu_half_x;
   
-  value_dvx_dx = (27*vx(iz,ix+1)-27*vx(iz,ix)-vx(iz,ix+2)+vx(iz,ix-1)) / (24*dx);
-  value_dvz_dz = (27*vz(iz,ix)-27*vz(iz-1,ix)-vz(iz+1,ix)+vz(iz-2,ix)) / (24*dz);
+  dvx_dx = (27*vx(iz,ix+1)-27*vx(iz,ix)-vx(iz,ix+2)+vx(iz,ix-1)) / (24*dx);
+  dvz_dz = (27*vz(iz,ix)-27*vz(iz-1,ix)-vz(iz+1,ix)+vz(iz-2,ix)) / (24*dz);
   
-  memory_dvx_dx(iz,ix) = b_x_half(iz,ix).*memory_dvx_dx(iz,ix) + a_x_half(iz,ix).*value_dvx_dx;
-  memory_dvz_dz(iz,ix) = b_z(iz,ix).*memory_dvz_dz(iz,ix) + a_z(iz,ix).*value_dvz_dz;
+  dvx_dx_memory(iz,ix) = b_x_half(iz,ix).*dvx_dx_memory(iz,ix) + a_x_half(iz,ix).*dvx_dx;
+  dvz_dz_memory(iz,ix) = b_z(iz,ix).*dvz_dz_memory(iz,ix) + a_z(iz,ix).*dvz_dz;
   
-  value_dvx_dx = (value_dvx_dx./K_x_half(iz,ix)) + memory_dvx_dx(iz,ix);
-  value_dvz_dz = (value_dvz_dz./K_z(iz,ix)) + memory_dvz_dz(iz,ix);
+  dvx_dx = (dvx_dx./K_x_half(iz,ix)) + dvx_dx_memory(iz,ix);
+  dvz_dz = (dvz_dz./K_z(iz,ix)) + dvz_dz_memory(iz,ix);
   % ----------------------------------------------------------------------------
   % -- update sxx and szz
-  sxx(iz,ix) = sxx(iz,ix) + (lam2mu_half_x.*value_dvx_dx + lam_half_x.*value_dvz_dz)*dt;
-  
-  szz(iz,ix) = szz(iz,ix) + (lam_half_x.*value_dvx_dx + lam2mu_half_x.*value_dvz_dz)*dt;
+  sxx(iz,ix) = sxx(iz,ix) + (lam2mu_half_x.*dvx_dx + lam_half_x.*dvz_dz)*dt;
+  szz(iz,ix) = szz(iz,ix) + (lam_half_x.*dvx_dx + lam2mu_half_x.*dvz_dz)*dt;
   % ----------------------------------------------------------------------------
   % -- free surface explicit conditions
   iz=n_ghost+1;
@@ -648,93 +655,94 @@ for it=1:nt
   lam_half_x= 0.5 * (lam(iz,ix+1) + lam(iz,ix));
   mu_half_x = 0.5 * (mu(iz,ix+1) + mu(iz,ix));
   lam2mu_half_x = lam_half_x + 2*mu_half_x;
-  value_dvx_dx = (27*vx(iz,ix+1)-27*vx(iz,ix)-vx(iz,ix+2)+vx(iz,ix-1)) / (24*dx);
-  memory_dvx_dx(iz,ix) = b_x_half(iz,ix).*memory_dvx_dx(iz,ix) + a_x_half(iz,ix).*value_dvx_dx;
-  value_dvx_dx = (value_dvx_dx./K_x_half(iz,ix)) + memory_dvx_dx(iz,ix);
+  
+  dvx_dx = (27*vx(iz,ix+1)-27*vx(iz,ix)-vx(iz,ix+2)+vx(iz,ix-1)) / (24*dx);
+  dvx_dx_memory(iz,ix) = b_x_half(iz,ix).*dvx_dx_memory(iz,ix) + a_x_half(iz,ix).*dvx_dx;
+  dvx_dx = (dvx_dx./K_x_half(iz,ix)) + dvx_dx_memory(iz,ix);
 
-  sxx(iz,ix) = sxx(iz,ix) + 4*(( (lam_half_x.*mu_half_x + mu_half_x.^2) ./ lam2mu_half_x ) .* value_dvx_dx)*dt;
+  sxx(iz,ix) = sxx(iz,ix) + 4*(( (lam_half_x.*mu_half_x + mu_half_x.^2) ./ lam2mu_half_x ) .* dvx_dx)*dt;
+  % sxx(iz,ix) = sxx(iz,ix) + (lam2mu_half_x.*dvx_dx - lam_half_x.*dvx_dx)*dt;
   szz(iz,ix) = 0;
   
   szz(iz-i_ghost,ix)= -szz(iz+i_ghost,ix);
-  sxx(iz-i_ghost,ix)= -sxx(iz+i_ghost,ix);
   % ----------------------------------------------------------------------------
   % compute dvx and dvz,
   % for sxz
-  iz=(2+n_ghost):(nz-2);
+  iz=2:(nz-2);
   ix=3:(nx-1);
   % interpolate at the right location in the staggered grid cell
   mu_half_z = 0.5 * (mu(iz+1,ix) + mu(iz,ix));
 
-  value_dvz_dx = (27*vz(iz,ix)-27*vz(iz,ix-1)-vz(iz,ix+1)+vz(iz,ix-2)) / (24*dx);
-  value_dvx_dz = (27*vx(iz+1,ix)-27*vx(iz,ix)-vx(iz+2,ix)+vx(iz-1,ix)) / (24*dz);
+  dvz_dx = (27*vz(iz,ix)-27*vz(iz,ix-1)-vz(iz,ix+1)+vz(iz,ix-2)) / (24*dx);
+  dvx_dz = (27*vx(iz+1,ix)-27*vx(iz,ix)-vx(iz+2,ix)+vx(iz-1,ix)) / (24*dz);
   
-  memory_dvz_dx(iz,ix) = b_x(iz,ix).*memory_dvz_dx(iz,ix) + a_x(iz,ix).*value_dvz_dx;
-  memory_dvx_dz(iz,ix) = b_z_half(iz,ix).* memory_dvx_dz(iz,ix) + a_z_half(iz,ix).* value_dvx_dz;
+  dvz_dx_memory(iz,ix) = b_x(iz,ix).*dvz_dx_memory(iz,ix) + a_x(iz,ix).*dvz_dx;
+  dvx_dz_memory(iz,ix) = b_z_half(iz,ix).* dvx_dz_memory(iz,ix) + a_z_half(iz,ix).* dvx_dz;
   
-  value_dvz_dx = (value_dvz_dx./K_x(iz,ix)) + memory_dvz_dx(iz,ix);
-  value_dvx_dz = (value_dvx_dz./K_z_half(iz,ix)) + memory_dvx_dz(iz,ix);
+  dvz_dx = (dvz_dx./K_x(iz,ix)) + dvz_dx_memory(iz,ix);
+  dvx_dz = (dvx_dz./K_z_half(iz,ix)) + dvx_dz_memory(iz,ix);
   % ----------------------------------------------------------------------------
   % -- update stress xz
-  sxz(iz,ix) = sxz(iz,ix) + mu_half_z.*(value_dvz_dx + value_dvx_dz)*dt;
+  sxz(iz,ix) = sxz(iz,ix) + mu_half_z.*(dvz_dx + dvx_dz)*dt;
   % ----------------------------------------------------------------------------
   % -- free surface explicit conditions
   iz=n_ghost+1;
   ix=1:nx;
-  i_ghost = 1:(n_ghost+1);
+  i_ghost = 1:n_ghost;
   % -- boundary condition on stress xz
-  sxz(iz-i_ghost+1,ix)  = -sxz(iz+i_ghost,ix);
+  sxz(iz-i_ghost,ix) = -sxz(iz+i_ghost-1,ix);
   % ----------------------------------------------------------------------------
   %  compute velocity and update memory variables for C-PML
   % ----------------------------------------------------------------------------
   % compute dsxx and dsxz,
   % for vx
-  iz=(3+n_ghost-1):(nz-1);
+  iz=3:(nz-1);
   ix=3:(nx-1);
   
-  value_dsxx_dx = (27*sxx(iz,ix)-27*sxx(iz,ix-1)-sxx(iz,ix+1)+sxx(iz,ix-2)) / (24*dx);
-  value_dsxz_dz = (27*sxz(iz,ix)-27*sxz(iz-1,ix)-sxz(iz+1,ix)+sxz(iz-2,ix)) / (24*dz);
+  dsxx_dx = (27*sxx(iz,ix)-27*sxx(iz,ix-1)-sxx(iz,ix+1)+sxx(iz,ix-2)) / (24*dx);
+  dsxz_dz = (27*sxz(iz,ix)-27*sxz(iz-1,ix)-sxz(iz+1,ix)+sxz(iz-2,ix)) / (24*dz);
   
-  memory_dsxx_dx(iz,ix) = b_x(iz,ix).*memory_dsxx_dx(iz,ix) + a_x(iz,ix).*value_dsxx_dx;
-  memory_dsxz_dz(iz,ix) = b_z(iz,ix).*memory_dsxz_dz(iz,ix) + a_z(iz,ix).*value_dsxz_dz;
+  dsxx_dx_memory(iz,ix) = b_x(iz,ix).*dsxx_dx_memory(iz,ix) + a_x(iz,ix).*dsxx_dx;
+  dsxz_dz_memory(iz,ix) = b_z(iz,ix).*dsxz_dz_memory(iz,ix) + a_z(iz,ix).*dsxz_dz;
   
-  value_dsxx_dx = (value_dsxx_dx./K_x(iz,ix)) + memory_dsxx_dx(iz,ix);
-  value_dsxz_dz = (value_dsxz_dz./K_z(iz,ix)) + memory_dsxz_dz(iz,ix);
+  dsxx_dx = (dsxx_dx./K_x(iz,ix)) + dsxx_dx_memory(iz,ix);
+  dsxz_dz = (dsxz_dz./K_z(iz,ix)) + dsxz_dz_memory(iz,ix);
   % ----------------------------------------------------------------------------
   % -- update velocity vx
-  vx(iz,ix) = vx(iz,ix) + (value_dsxx_dx+value_dsxz_dz)*dt./rho(iz,ix);
+  vx(iz,ix) = vx(iz,ix) + (dsxx_dx+dsxz_dz)*dt./rho(iz,ix);
   % ----------------------------------------------------------------------------
   % -- free surface explicit conditions
-  iz=n_ghost+2;
+  iz=n_ghost+1;
   ix=1:nx;
-  i_ghost = 1:(n_ghost+1);
+  i_ghost = 1:n_ghost;
   % -- boundary condition on velocity vx
-  vx(iz-i_ghost,ix)  = 0;
+  vx(iz-i_ghost,ix) = 0;
   % ----------------------------------------------------------------------------
   % compute dsxz and dszz,
   % for vz
-  iz = (2+n_ghost):(nz-2);
+  iz = 2:(nz-2);
   ix = 2:(nx-2);
   % interpolate at the right location in the staggered grid cell
   rho_half_x_half_z = 0.25 * (rho(iz,ix) + rho(iz,ix+1) + rho(iz+1,ix+1) + rho(iz+1,ix));
 
-  value_dsxz_dx = (27*sxz(iz,ix+1)-27*sxz(iz,ix)-sxz(iz,ix+2)+sxz(iz,ix-1)) / (24*dx);
-  value_dszz_dz = (27*szz(iz+1,ix)-27*szz(iz,ix)-szz(iz+2,ix)+szz(iz-1,ix)) / (24*dz);
+  dsxz_dx = (27*sxz(iz,ix+1)-27*sxz(iz,ix)-sxz(iz,ix+2)+sxz(iz,ix-1)) / (24*dx);
+  dszz_dz = (27*szz(iz+1,ix)-27*szz(iz,ix)-szz(iz+2,ix)+szz(iz-1,ix)) / (24*dz);
   
-  memory_dsxz_dx(iz,ix) = (b_x_half(iz,ix).*memory_dsxz_dx(iz,ix)) + (a_x_half(iz,ix).*value_dsxz_dx);
-  memory_dszz_dz(iz,ix) = (b_z_half(iz,ix).*memory_dszz_dz(iz,ix)) + (a_z_half(iz,ix).*value_dszz_dz);
+  dsxz_dx_memory(iz,ix) = (b_x_half(iz,ix).*dsxz_dx_memory(iz,ix)) + (a_x_half(iz,ix).*dsxz_dx);
+  dszz_dz_memory(iz,ix) = (b_z_half(iz,ix).*dszz_dz_memory(iz,ix)) + (a_z_half(iz,ix).*dszz_dz);
   
-  value_dsxz_dx = (value_dsxz_dx./K_x_half(iz,ix)) + memory_dsxz_dx(iz,ix);
-  value_dszz_dz = (value_dszz_dz./K_z_half(iz,ix)) + memory_dszz_dz(iz,ix);
+  dsxz_dx = (dsxz_dx./K_x_half(iz,ix)) + dsxz_dx_memory(iz,ix);
+  dszz_dz = (dszz_dz./K_z_half(iz,ix)) + dszz_dz_memory(iz,ix);
   % ----------------------------------------------------------------------------
   % -- update velocity vz
-  vz(iz,ix) = vz(iz,ix) + (value_dsxz_dx + value_dszz_dz)*dt ./ rho_half_x_half_z;
+  vz(iz,ix) = vz(iz,ix) + (dsxz_dx + dszz_dz)*dt ./ rho_half_x_half_z;
   % ----------------------------------------------------------------------------
   % -- free surface explicit conditions
-  iz=n_ghost+2;
+  iz=n_ghost+1;
   ix=1:nx;
   i_ghost = 1:n_ghost;
   % -- boundary condition on velocity vz
-  vz(iz-i_ghost-1,ix) = 0;
+  vz(iz-i_ghost,ix) = 0;
   % ----------------------------------------------------------------------------
   %  source update
   % ----------------------------------------------------------------------------
@@ -750,25 +758,25 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   %  wrap up dirichlet bc on edges
   % ----------------------------------------------------------------------------
-  % -- left and right edge
-  vx(:,1) = 0;
-  vx(:,nx)= 0;
-  
-  % -- top and bottom edge
-  % vx(1,:) = 0;
-  vx(nz,:)= 0;
-  
-  % -- left and right edge
-  vz(:,1) = 0;
-  vz(:,nx)= 0;
-  
-  % -- top and bottom edge
-  % vz(1,:) = 0;
-  vz(nz,:)= 0;
+  % % -- left and right edge
+  % vx(:,1) = 0;
+  % vx(:,nx)= 0;
+  % 
+  % % -- top and bottom edge
+  % % vx(1,:) = 0;
+  % vx(nz,:)= 0;
+  % 
+  % % -- left and right edge
+  % vz(:,1) = 0;
+  % vz(:,nx)= 0;
+  % 
+  % % -- top and bottom edge
+  % % vz(1,:) = 0;
+  % vz(nz,:)= 0;
   % ----------------------------------------------------------------------------
   %  store data
   % ----------------------------------------------------------------------------
-  d(it,:) = vz(n_ghost+2,:);
+  d(it,:) = vz(n_ghost+1,:);
   % ----------------------------------------------------------------------------
   %  store wavefield
   % ----------------------------------------------------------------------------
@@ -784,10 +792,6 @@ if strcmp(wave_cube,'y')
   vz_min = max([abs(vz_min) vz_max]);
   vz_min = vz_min*0.03;
 
-  % t1=to*1.25;
-  % t2=to*1.65;
-  % t3=to*2.25;
-
   t1=to*2.25;
   t2=to*3;
   t3=to*5;
@@ -796,7 +800,7 @@ if strcmp(wave_cube,'y')
 
   subplot(2,3,1)
   fancy_imagesc(vz_(:,:,binning(t,t1)),x,z)
-  colormap(rainbow2(1))
+  colormap(rainbow2_cb(1))
   caxis([-vz_min vz_min])
   hold on
   plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
@@ -812,7 +816,7 @@ if strcmp(wave_cube,'y')
 
   subplot(2,3,2)
   fancy_imagesc(vz_(:,:,binning(t,t2)),x,z)
-  colormap(rainbow2(1))
+  colormap(rainbow2_cb(1))
   caxis([-vz_min vz_min])
   hold on
   plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
@@ -829,7 +833,7 @@ if strcmp(wave_cube,'y')
 
   subplot(2,3,3)
   fancy_imagesc(vz_(:,:,binning(t,t3)),x,z)
-  colormap(rainbow2(1))
+  colormap(rainbow2_cb(1))
   caxis([-vz_min vz_min]);
   hold on
   plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
@@ -860,7 +864,7 @@ end
 d_min = min(d(:));
 d_max = max(d(:));
 d_min = max([abs(d_min) d_max]);
-d_min = d_min*0.03;
+d_min = d_min*0.8;
 
 figure;
 fancy_imagesc(d,x,t);
@@ -878,7 +882,7 @@ figure;
 
 subplot(231)
 fancy_imagesc(sxx,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 hold on
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
@@ -893,7 +897,7 @@ simple_figure()
 
 subplot(232)
 fancy_imagesc(szz,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 hold on
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
@@ -908,7 +912,7 @@ simple_figure()
 
 subplot(233)
 fancy_imagesc(sxz,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 hold on
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
@@ -923,7 +927,7 @@ simple_figure()
 
 subplot(234)
 fancy_imagesc(vx,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 hold on
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
@@ -938,7 +942,7 @@ simple_figure()
 
 subplot(236)
 fancy_imagesc(vz,x,z)
-colormap(rainbow2(1))
+colormap(rainbow2_cb(1))
 hold on
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'k.','markersize',60)
 plot(src_xz(1)+dx*n_points_pml,src_xz(2)+dz*n_ghost,'w.','markersize',40)
@@ -952,24 +956,6 @@ title('Velocity z')
 simple_figure()
 % ------------------------------------------------------------------------------
 figure;
-
-subplot(1,2,1)
-fancy_imagesc(vp,x,z)
-colormap(rainbow2(1))
-xlabel('Length (m)')
-ylabel('Depth (m)')
-title('P velocity (m/s)')
-simple_figure()
-
-subplot(1,2,2)
-fancy_imagesc(vs,x,z)
-colormap(rainbow2(1))
-xlabel('Length (m)')
-ylabel('Depth (m)')
-title('S velocity (m/s)')
-simple_figure()
-% ------------------------------------------------------------------------------
-figure;
 fancy_imagesc(d,x,t)
 axis normal
 colorbar off
@@ -977,6 +963,24 @@ caxis(1e-1*[-d_min d_min])
 xlabel('Length (m)')
 ylabel('Time (s)')
 title('Surface receivers')
+simple_figure()
+% ------------------------------------------------------------------------------
+figure;
+
+subplot(1,2,1)
+fancy_imagesc(vp,x,z)
+colormap(rainbow2_cb(1))
+xlabel('Length (m)')
+ylabel('Depth (m)')
+title('P velocity (m/s)')
+simple_figure()
+
+subplot(1,2,2)
+fancy_imagesc(vs,x,z)
+colormap(rainbow2_cb(1))
+xlabel('Length (m)')
+ylabel('Depth (m)')
+title('S velocity (m/s)')
 simple_figure()
 % ------------------------------------------------------------------------------
 % linear semblance
@@ -990,7 +994,7 @@ semblance_v = sum(v_analy,1);
 
 [~,iv] = max(semblance_v);
 fprintf('\n  max linear velocity achieved at %2.2d m/s',velos(iv))
-fprintf('\n  this velocity is %2.2d percent of Vs\n\n',velos(iv)*100/vs(1))
+fprintf('\n  this velocity is %2.2d percent of Vs\n\n',velos(iv)*100/vs(n_ghost+1))
 % ------------------------------------------------------------------------------
 figure;
 subplot(2,2,1)
@@ -1013,11 +1017,30 @@ simple_figure()
 subplot(2,2,[2,4])
 fancy_imagesc(d_onesided,rx,t);
 colorbar off
-caxis(5e-2*[-d_min d_min])
+caxis(1e-1*[-d_min d_min])
 axis normal
 title('One-sided data') 
 xlabel('Receivers (m)')
 ylabel('Time (s)')
+simple_figure()
+% ------------------------------------------------------------------------------
+% dispersion analysis
+[d_onesided_,f,df] = fourier_rt(d_onesided,dt);
+
+f_disp = 0:df:30;
+dsx= (1/vel_min) - (1/vel_max);
+dsx= dsx/1e4;
+sx = (1/vel_max):dsx:(1/vel_min);
+
+[disper_vxf,disper_sxf] = masw(d_onesided_,rx,sx,f,f_disp);
+
+figure;
+fancy_imagesc(flip(disper_vxf,1),f,flip(1./sx));
+colormap(rainbow2_cb(1))
+axis normal
+xlabel('Frequency (Hz)')
+ylabel('Phase velocity (m/s)')
+title('MASW')
 simple_figure()
 % ------------------------------------------------------------------------------
 %}

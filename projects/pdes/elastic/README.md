@@ -38,6 +38,9 @@ vs = sqrt(mu./rho)
 mu  = rho.*vs^2
 lam = (vp.^2 - 2*vs.^2).*rho = rho.*(vp.^2 - 2*vs.^2)
 ```
+They are solved on a staggered grid.
+
+[![](../pics/elastic-grid.png)](./)
 
 ## References
 

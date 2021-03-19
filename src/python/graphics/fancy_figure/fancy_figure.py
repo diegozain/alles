@@ -819,7 +819,7 @@ class fancy_figure():
         # -------------------------
         if self.colo == 'ybwrk_colorblind':
             from matplotlib.colors import LinearSegmentedColormap
-            colo  = [(1.0000,0.7608,0.0392),(0.0471,0.4824,0.8627)]
+            colo  = [(0.9412,0.8941,0.2588),(0.0471,0.4824,0.8627)]
             colo_ = [(0.865,0.865,0.865), (0.8627,0.1961,0.1255),(0,0,0)]
             colo = colo + colo_
             colo  = LinearSegmentedColormap.from_list('name',colors=colo,N=256)

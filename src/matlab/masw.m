@@ -46,9 +46,9 @@ for i_=1:nf_disp
 	% put together
 	%
 	disper_sxf(:,i_) = p;
-  % interpolate from slowness to velocity
+	% interpolate from slowness to velocity
 	% interp1( x, y(x), new x ) = new y( new x )
-  %
+	%
 	p = interp1( 1./sx, abs(p), vx, 'pchip' );
 	disper_vxf(:,i_) = p ./ max(p);
 end
