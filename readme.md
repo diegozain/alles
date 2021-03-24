@@ -53,6 +53,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* Matrix completion
 	* [Pixelating pics](projects/sque-exp/pixelate/) (for face-recognition-free profile pics)
 	* [Haar wavelet compression](projects/sque-exp/haar/)
+	* [Fast Fourier Transform](projects/sque-exp/fourier/)
 
 * Wave processing
 
@@ -68,6 +69,12 @@ If running *Matlab* projects, please set paths first by running the script:
 	* Slurm
 	* AWS
 	* [OpenMP](projects/cloud/openmp/)
+	
+* Visualize
+ 
+	* Plot output from *C*
+	* [Plot output from *Fortran*](projects/visualize/see-fortran/)
+	* Plot output from *Julia*
 	
 * Deep learning
 	

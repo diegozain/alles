@@ -61,22 +61,29 @@ close all
 % mu_ = [9; 3];
 % rho_= [6; 1];
 
-% homogeneous 1
-lam_= [2; 2];
-mu_ = [3; 3];
-rho_= [6; 6];
+% % homogeneous 1
+% lam_= [2; 2];
+% mu_ = [3; 3];
+% rho_= [6; 6];
 
 % % homogeneous 2
 % lam_= [2000; 2000];
 % mu_ = [3000; 3000];
 % rho_= [2; 2];
 
-% % homogeneous like Lisa Groos,
-% % vp=500 , vs=300 m/s ; rho=1800 kg/m^3
-% % source is a 'hammer', to = 32ms = 0.032 s
-% lam_= [126000000; 126000000];
-% mu_ = [162000000; 162000000];
-% rho_= [1800; 1800];
+% homogeneous like Lisa Groos,
+% vp=500 , vs=300 m/s ; rho=1800 kg/m^3
+% source is a 'hammer', to = 32ms = 0.032 s
+lam_= [126000000; 126000000];
+mu_ = [162000000; 162000000];
+rho_= [1800; 1800];
+
+% % homogeneous like Robertsson,
+% % vp=3000 , vs=1730 m/s ; rho=2500 kg/m^3
+% % source is 'ricker', fo = 15Hz
+% lam_= [7.5355e9; 7.5355e9];
+% mu_ = [7.4822e9; 7.4822e9];
+% rho_= [2500; 2500];
 
 % % second layer twice as fast, density constant (homogeneous 1)
 % lam_= [2; 8];
@@ -98,11 +105,11 @@ rho_= [6; 6];
 % mu_ = [0; 1e+10];
 % rho_= [1; 2e+3];
 % ------------------------------------------------------------------------------
-% --- spatial constraints
-% -- slow - fast, fast - slow, homogeneous 1
-X= 3;
-Z= 2.5;
-T= 3;
+% % --- spatial constraints
+% % -- slow - fast, fast - slow, homogeneous 1
+% X= 3;
+% Z= 2.5;
+% T= 3;
 % % -- homogeneous 2
 % X= 25;
 % Z= 10;
@@ -111,10 +118,14 @@ T= 3;
 % X= 25;
 % Z= 10;
 % T= 0.4;
-% % -- lisa groos
-% X= 30;
-% Z= 30;
-% T= 0.1;
+% -- lisa groos
+X= 50;
+Z= 30;
+T= 0.2;
+% % -- Robertsson
+% X= 2000;
+% Z= 1000;
+% T= 1;
 % --- source parameters
 % WARNING:
 % if the 'hammer' source is used, the central frequency is determined by 
@@ -124,18 +135,21 @@ T= 3;
 % if the ricker wavelet is used, the central frequency is determined by 'fo'.
 % in this case, 'to' determines when the shot is performed.
 
-% -- slow - fast, fast - slow, homogeneous 1
-to = 0.5;
-fo = 3; % 3 8
+% % -- slow - fast, fast - slow, homogeneous 1
+% to = 0.5;
+% fo = 3; % 3 8
 % % -- homogeneous 2
 % to = 0.04;
 % fo = 35;
 % % -- gradient in depth from homogeneous 2
 % to = 0.04;
 % fo = 30;
-% % -- lisa groos ('hammer source')
-% to = 0.032;
-% fo = 31;
+% -- lisa groos ('hammer source')
+to = 0.032;
+fo = 31;
+% % -- Robertsson
+% to = 0.1;
+% fo = 15;
 % ------------------------------------------------------------------------------
 wo = 2*pi*fo;
 % ------------------------------------------------------------------------------
@@ -164,7 +178,7 @@ vel_max = max([vs_max,vp_max]);
 fmax = 2.2*fo;
 % - space
 l_min = vel_min / fmax;
-no_p_wa = 10; % 10 50
+no_p_wa = 10; % 10
 dx = l_min/no_p_wa;
 dx=min([0.1; dx]);
 dz = dx;
@@ -190,7 +204,7 @@ fprintf('wavecube of size: %2.2d Gb\n\n',nx*nz*nt*8*1e-9)
 % ------------------------------------------------------------------------------
 % --- pde parameters
 lam=lam_(1)*ones(nz,nx);
-mu =mu_(1)*ones(nz,nx);
+mu = mu_(1)*ones(nz,nx);
 rho=rho_(1)*ones(nz,nx);
 
 % % -- box in the middle
@@ -285,6 +299,12 @@ ylabel('Depth (m)')
 title('S wavelength (m)')
 simple_figure()
 % ------------------------------------------------------------------------------
+% -- receivers (real coordinates)
+receivers = [x zeros(nx,1)];
+% - receiver locations (index coordinates)
+irecs_x = binning(x,receivers(:,1));
+irecs_z = binning(x,receivers(:,2));
+% ------------------------------------------------------------------------------
 % -- source function (real coordinates)
 src_xz = [x(fix(nx*0.15)) , z(1)]; 
 
@@ -295,18 +315,42 @@ isrc_z = binning(z,src_xz(2));
 % - sources in x and z
 fx=zeros(nt,1);
 fz=zeros(nt,1);
-% ricker
-fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
-% % 'hammer' according to the germans
-% Fo = 1; % kg*m/s^2
-% fz = Fo * (1/(dx*dz)) * sin((pi*t)./(to)).^3;
-% fz(t>=to) = 0;
+
+prompt = '\n    do you want ricker, hammer, or hammer delayed? (r, h, hd):  ';
+src_type = input(prompt,'s');
+if strcmp(src_type,'r')
+  % ricker
+  fz=( 1-0.5*(wo^2)*(t-to).^2 ) .* exp( -0.25*(wo^2)*(t-to).^2 );
+end
+if strcmp(src_type,'h')
+  % 'hammer' according to the germans
+  Fo = 1; % kg*m/s^2
+  fz = Fo * (1/(dx*dz)) * sin((pi*t)./to).^3;
+  fz(t>=to) = 0;
+end
+if strcmp(src_type,'hd')
+  % 'hammer' according to the germans - but delayed at 0.5*to
+  Fo = 1; % kg*m/s^2
+  a=1;
+  fz = Fo * (1/(dx*dz)) * sin((pi*(t-a*to))./to).^3;
+  fz(t >= (1+a)*to) = 0;
+  fz(t < a*to) = 0;
+end
+
 % NOTE: the staggered fd scheme actually outputs integral(f,dt)!!!
 %       so, if you want an output source f, you need to input dt_(f,dt)
 fx_=fx;
 fz_=fz;
-fx = differentiate_line(fx,dt);
-fz = differentiate_line(fz,dt);
+% NOTE: the hammer is special: Lisa Groos does not differentiate source (why??)
+% NOTE: taking the numerical derivative of the hammer introduces lots of 
+% higher freqs AND a bunch of notches in the freq domain, so better do the 
+% analytical derivative for this one.
+% derivative for the hammer:
+% fz = Fo*(3*pi/to)*(sin(pi*t/to).^2).*cos(pi*t/to);
+if ~strcmp(src_type(1),'h')
+  fx = differentiate_line(fx,dt);
+  fz = differentiate_line(fz,dt);
+end
 % ------------------------------------------------------------------------------
 % power spectra of source
 figure;
@@ -351,7 +395,7 @@ thickness_PML_z = n_points_pml * dz;
 Rcoef = 1e-3; % 1e-3
 % ------------------------------------------------------------------------------
 % -- free surface ghost nodes
-n_ghost = 2;
+n_ghost = 2; % 2
 % ------------------------------------------------------------------------------
 % -- expand everything to pml & free surface
 % lam, mu, rho, vp, vs, x, z, nx, nz
@@ -383,6 +427,13 @@ nz = nz + n_points_pml + n_ghost;
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);
 % ------------------------------------------------------------------------------
+% -- receivers new index because of pml & free surface
+% - receoivers (index coordinates)
+irecs_x= irecs_x+n_points_pml;
+irecs_z= irecs_z+n_ghost;
+irecs  = sub2ind([nz,nx],irecs_z,irecs_x);
+nr = numel(irecs);
+% ------------------------------------------------------------------------------
 % -- source function new index because of pml & free surface
 % - source location (index coordinates)
 isrc_x = isrc_x+n_points_pml;
@@ -400,7 +451,7 @@ szz=zeros(nz,nx);
 sxz=zeros(nz,nx);
 
 % - data
-d = zeros(nt,nx);
+d = zeros(nt,nr);
 % ------------------------------------------------------------------------------
 % - wavefield recorder
 prompt = '\n    do you want to save the wave-cube? (y or n):  ';
@@ -607,10 +658,10 @@ dvx_dx_memory = zeros(nz,nx);
 dvx_dz_memory = zeros(nz,nx);
 dvz_dx_memory = zeros(nz,nx);
 dvz_dz_memory = zeros(nz,nx);
-dsxx_dx_memory = zeros(nz,nx);
-dszz_dz_memory = zeros(nz,nx);
-dsxz_dx_memory = zeros(nz,nx);
-dsxz_dz_memory = zeros(nz,nx);
+dsxx_dx_memory= zeros(nz,nx);
+dszz_dz_memory= zeros(nz,nx);
+dsxz_dx_memory= zeros(nz,nx);
+dsxz_dz_memory= zeros(nz,nx);
 % ------------------------------------------------------------------------------
 %
 %
@@ -648,7 +699,7 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   % -- free surface explicit conditions
   iz=n_ghost+1;
-  ix=2:(nx-2);
+  % ix=2:(nx-2);
   i_ghost = 1:n_ghost;
   % -- boundary condition on sxx and szz
   % interpolate at the right location in the staggered grid cell
@@ -660,8 +711,8 @@ for it=1:nt
   dvx_dx_memory(iz,ix) = b_x_half(iz,ix).*dvx_dx_memory(iz,ix) + a_x_half(iz,ix).*dvx_dx;
   dvx_dx = (dvx_dx./K_x_half(iz,ix)) + dvx_dx_memory(iz,ix);
 
-  sxx(iz,ix) = sxx(iz,ix) + 4*(( (lam_half_x.*mu_half_x + mu_half_x.^2) ./ lam2mu_half_x ) .* dvx_dx)*dt;
-  % sxx(iz,ix) = sxx(iz,ix) + (lam2mu_half_x.*dvx_dx - lam_half_x.*dvx_dx)*dt;
+  % sxx(iz,ix) = sxx(iz,ix) + 4*(( (lam_half_x.*mu_half_x + mu_half_x.^2) ./ lam2mu_half_x ) .* dvx_dx)*dt;
+  sxx(iz,ix) = sxx(iz,ix) + (lam2mu_half_x.*dvx_dx - lam_half_x.*dvx_dx)*dt;
   szz(iz,ix) = 0;
   
   szz(iz-i_ghost,ix)= -szz(iz+i_ghost,ix);
@@ -687,10 +738,17 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   % -- free surface explicit conditions
   iz=n_ghost+1;
-  ix=1:nx;
+  % ix=1:nx;
   i_ghost = 1:n_ghost;
   % -- boundary condition on stress xz
   sxz(iz-i_ghost,ix) = -sxz(iz+i_ghost-1,ix);
+  
+  % % -- free surface explicit conditions
+  % iz=n_ghost+2;
+  % % ix=1:nx;
+  % i_ghost = 1:(n_ghost+1);
+  % % -- boundary condition on stress xz
+  % sxz(iz-i_ghost,ix) = -sxz(iz+i_ghost-1,ix);
   % ----------------------------------------------------------------------------
   %  compute velocity and update memory variables for C-PML
   % ----------------------------------------------------------------------------
@@ -713,15 +771,15 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   % -- free surface explicit conditions
   iz=n_ghost+1;
-  ix=1:nx;
+  % ix=1:nx;
   i_ghost = 1:n_ghost;
   % -- boundary condition on velocity vx
   vx(iz-i_ghost,ix) = 0;
   % ----------------------------------------------------------------------------
   % compute dsxz and dszz,
   % for vz
-  iz = 2:(nz-2);
-  ix = 2:(nx-2);
+  iz=2:(nz-2);
+  ix=2:(nx-2);
   % interpolate at the right location in the staggered grid cell
   rho_half_x_half_z = 0.25 * (rho(iz,ix) + rho(iz,ix+1) + rho(iz+1,ix+1) + rho(iz+1,ix));
 
@@ -739,10 +797,17 @@ for it=1:nt
   % ----------------------------------------------------------------------------
   % -- free surface explicit conditions
   iz=n_ghost+1;
-  ix=1:nx;
+  % ix=1:nx;
   i_ghost = 1:n_ghost;
   % -- boundary condition on velocity vz
   vz(iz-i_ghost,ix) = 0;
+  
+  % % -- free surface explicit conditions
+  % iz=n_ghost+2;
+  % % ix=1:nx;
+  % i_ghost = 1:(n_ghost+1);
+  % % -- boundary condition on stress xz
+  % vz(iz-i_ghost,ix) = 0;
   % ----------------------------------------------------------------------------
   %  source update
   % ----------------------------------------------------------------------------
@@ -756,27 +821,10 @@ for it=1:nt
   % vx(isrc_z,isrc_x) = fx(it);
   % vz(isrc_z,isrc_x) = fz(it);
   % ----------------------------------------------------------------------------
-  %  wrap up dirichlet bc on edges
-  % ----------------------------------------------------------------------------
-  % % -- left and right edge
-  % vx(:,1) = 0;
-  % vx(:,nx)= 0;
-  % 
-  % % -- top and bottom edge
-  % % vx(1,:) = 0;
-  % vx(nz,:)= 0;
-  % 
-  % % -- left and right edge
-  % vz(:,1) = 0;
-  % vz(:,nx)= 0;
-  % 
-  % % -- top and bottom edge
-  % % vz(1,:) = 0;
-  % vz(nz,:)= 0;
-  % ----------------------------------------------------------------------------
   %  store data
   % ----------------------------------------------------------------------------
-  d(it,:) = vz(n_ghost+1,:);
+  % d(it,:) = vz(n_ghost+1,:); % receivers
+  d(it,:) = vz(irecs); % receivers
   % ----------------------------------------------------------------------------
   %  store wavefield
   % ----------------------------------------------------------------------------
@@ -984,8 +1032,8 @@ title('S velocity (m/s)')
 simple_figure()
 % ------------------------------------------------------------------------------
 % linear semblance
-d_onesided = d(:,isrc_x:(nx-n_points_pml));
-rx= x(isrc_x:(nx-n_points_pml)) - x(isrc_x);
+d_onesided = d(:,(isrc_x-n_points_pml):(nx-2*n_points_pml));
+rx= x((isrc_x-n_points_pml):(nx-2*n_points_pml)) - x(isrc_x);
 
 velos = linspace(vel_min*0.8,vel_max*1.2,1e+2);
 
@@ -1024,23 +1072,23 @@ xlabel('Receivers (m)')
 ylabel('Time (s)')
 simple_figure()
 % ------------------------------------------------------------------------------
-% dispersion analysis
-[d_onesided_,f,df] = fourier_rt(d_onesided,dt);
-
-f_disp = 0:df:30;
-dsx= (1/vel_min) - (1/vel_max);
-dsx= dsx/1e4;
-sx = (1/vel_max):dsx:(1/vel_min);
-
-[disper_vxf,disper_sxf] = masw(d_onesided_,rx,sx,f,f_disp);
-
-figure;
-fancy_imagesc(flip(disper_vxf,1),f,flip(1./sx));
-colormap(rainbow2_cb(1))
-axis normal
-xlabel('Frequency (Hz)')
-ylabel('Phase velocity (m/s)')
-title('MASW')
-simple_figure()
+% % dispersion analysis
+% [d_onesided_,f,df] = fourier_rt(d_onesided,dt);
+% 
+% f_disp = 0:df:30;
+% dsx= (1/vel_min) - (1/vel_max);
+% dsx= dsx/1e4;
+% sx = (1/vel_max):dsx:(1/vel_min);
+% 
+% [disper_vxf,disper_sxf] = masw(d_onesided_,rx,sx,f,f_disp);
+% 
+% figure;
+% fancy_imagesc(flip(disper_vxf,1),f,flip(1./sx));
+% colormap(rainbow2_cb(1))
+% axis normal
+% xlabel('Frequency (Hz)')
+% ylabel('Phase velocity (m/s)')
+% title('MASW')
+% simple_figure()
 % ------------------------------------------------------------------------------
 %}

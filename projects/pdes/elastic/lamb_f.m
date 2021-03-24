@@ -1,4 +1,4 @@
-function [vx_rx,vz_rx] = lamb_anal(rx,sz,F,vp,vs,rho,f,u)
+function [vx_rx,vz_rx] = lamb_f(rx,sz,F,vp,vs,rho,f,u)
 % diego domenzain
 % @ CSM, spring 2021
 % ------------------------------------------------------------------------------

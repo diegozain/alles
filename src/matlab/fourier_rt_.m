@@ -19,7 +19,7 @@ f = fftshift(f);
 % % ifft would go here, BEFORE fftshift,
 % d = ifft(f_d_f);
 % % trim padded zeros because fft can't do this by itself
-% d = d(1:end-nt_extra, : );
+% d = d(1:nt_-nt_extra, : );
 % % d would now be (up to machine precission),
 % % identical to original d (same size even).
 end

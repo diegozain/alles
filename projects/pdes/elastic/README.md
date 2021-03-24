@@ -84,3 +84,7 @@ This picture shows off the power of the free surface conditions.
 Here the source function is differeniated in time before it enters the solver. As a result, the wavefield expresses the true source wavelet.
 
 [![](../pics/elastic_2d_free_surface.png)](./)
+
+This picture shows the solution for Lamb's problem: elastic wave propagation on a free-surface of a homogeneous half-space.
+
+[![](../pics/elastic-lamb-data-.png)](./)

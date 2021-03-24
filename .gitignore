@@ -19,6 +19,9 @@ __pycache__/
 *.h5
 *.npy
 *.txt
+*.mod
+*.dat
+fort.*
 
 *.o
 
@@ -26,3 +29,4 @@ fortran_supplement_ver_1.1.pdf
 
 test/
 kate/
+outside-code/

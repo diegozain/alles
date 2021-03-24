@@ -1,4 +1,4 @@
-function [vx_rx,vz_rx] = lamb_anal_v4(rx,sz,Fo,vp,vs,rho,f,u)
+function [vx_rx,vz_rx] = lamb_solu(rx,sz,Fo,vp,vs,rho,f,u)
 % diego domenzain
 % @ CSM, spring 2021
 % ------------------------------------------------------------------------------
@@ -48,9 +48,9 @@ du = u(2) - u(1);
 % - rayleigh thing
 raylim = 1e-30;
 % ------------------------------------------------------------------------------
-tuk= tukey(2*nu,0.9);
-tuk= tuk((nu+1):(2*nu));
-utap  = u.*tuk;
+tuk  = tukey(2*nu,0.9);
+tuk  = tuk((nu+1):(2*nu));
+utap = u.*tuk;
 
 tuk = tukey(nf,1);
 tuk = tuk.';
@@ -105,6 +105,6 @@ vz_rx=vz_rx.*src;
 vx_rx = ifft(vx_rx,[],1);
 vz_rx = ifft(vz_rx,[],1);
 
-vx_rx=real(vx_rx);
-vz_rx=real(vz_rx);
-end % function lamb_anal
+vx_rx= - real(vx_rx);
+vz_rx= - real(vz_rx);
+end % function lamb_solu

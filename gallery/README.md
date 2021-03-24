@@ -65,6 +65,8 @@ Each image links to its project.
 [![](../projects/sque-exp/pics/pixelate_mini.png)](../projects/sque-exp/pixelate/)
 #### Haar wavelet compression
 [![](../projects/sque-exp/pics/haar1d.png)](../projects/sque-exp/haar/)
+#### Fast Fourier Transform
+[![](../projects/sque-exp/pics/data-f.png)](projects/sque-exp/fourier/)
 
 ## Wave processing
 
@@ -76,20 +78,30 @@ Each image links to its project.
 #### Beamforming (to find direction of signal)
 [![](../projects/wave-proc/pics/beamform_data.png)](../projects/wave-proc/beamforming/)[![](../projects/wave-proc/pics/beamform_velo-angle.png)](../projects/wave-proc/beamforming/)
 ### Seismic beachball
-	
+
 ## Cloud computing
 
 #### Slurm
 #### AWS
+#### OpenMP
+[![](../projects/cloud/pics/serial-parallel.png)](../projects/cloud/openmp/)
+
+## Visualize 
+
+### Plot output from *C*
+### Plot output from *Fortran*
+[![](../projects/visualize/pics/fortran-2D.png)](projects/visualize/see-fortran/)
+### Plot output from *Julia*
 
 ## Deep learning
 
 #### pic2pic
 
-Ideal case:
 [![](../projects/deep-learning/pics/pic2pic_idea.png)](../projects/deep-learning/pic2pic/)
 
 In practice:
+
+
 [![](../projects/deep-learning/pics/pic2pic_true-.png)](../projects/deep-learning/pic2pic/)
 
 [![](../projects/deep-learning/pics/pic2pic_obse-.png)](../projects/deep-learning/pic2pic/)
