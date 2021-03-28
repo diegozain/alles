@@ -42,8 +42,8 @@ close all
 % vp = 300 m/s;
 % vs = 0.0 m/s;
 % rho = 1.25 kg/m^3
-% lam = 112500 kg/m^3
-% mu = 0 kg/m^3
+% lam = 112500 Kg/m/s^2
+% mu = 0 Kg/m/s^2
 % 
 % - some rock
 % lam= 1.0163e+10
@@ -200,7 +200,7 @@ nx=numel(x);
 nz=numel(z);
 nt=numel(t);
 % ------------------------------------------------------------------------------
-fprintf('wavecube of size: %2.2d Gb\n\n',nx*nz*nt*8*1e-9)
+fprintf('wavecube of size (doubles): %2.2d Gb\n\n',nx*nz*nt*8*1e-9)
 % ------------------------------------------------------------------------------
 % --- pde parameters
 lam=lam_(1)*ones(nz,nx);
@@ -345,11 +345,14 @@ fz_=fz;
 % NOTE: taking the numerical derivative of the hammer introduces lots of 
 % higher freqs AND a bunch of notches in the freq domain, so better do the 
 % analytical derivative for this one.
-% derivative for the hammer:
-% fz = Fo*(3*pi/to)*(sin(pi*t/to).^2).*cos(pi*t/to);
+% Worth saying, even the analytical derivative has plenty of notches.
+% derivative for the hammer
 if ~strcmp(src_type(1),'h')
   fx = differentiate_line(fx,dt);
   fz = differentiate_line(fz,dt);
+else
+  % fz = Fo*(3*pi/to)*(sin(pi*t/to).^2).*cos(pi*t/to);
+  % fz(t>=to) = 0;
 end
 % ------------------------------------------------------------------------------
 % power spectra of source
@@ -742,13 +745,6 @@ for it=1:nt
   i_ghost = 1:n_ghost;
   % -- boundary condition on stress xz
   sxz(iz-i_ghost,ix) = -sxz(iz+i_ghost-1,ix);
-  
-  % % -- free surface explicit conditions
-  % iz=n_ghost+2;
-  % % ix=1:nx;
-  % i_ghost = 1:(n_ghost+1);
-  % % -- boundary condition on stress xz
-  % sxz(iz-i_ghost,ix) = -sxz(iz+i_ghost-1,ix);
   % ----------------------------------------------------------------------------
   %  compute velocity and update memory variables for C-PML
   % ----------------------------------------------------------------------------
@@ -801,13 +797,6 @@ for it=1:nt
   i_ghost = 1:n_ghost;
   % -- boundary condition on velocity vz
   vz(iz-i_ghost,ix) = 0;
-  
-  % % -- free surface explicit conditions
-  % iz=n_ghost+2;
-  % % ix=1:nx;
-  % i_ghost = 1:(n_ghost+1);
-  % % -- boundary condition on stress xz
-  % vz(iz-i_ghost,ix) = 0;
   % ----------------------------------------------------------------------------
   %  source update
   % ----------------------------------------------------------------------------

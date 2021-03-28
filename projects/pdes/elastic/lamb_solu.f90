@@ -89,6 +89,12 @@ program lamb_solu
  ! source_impulse(t,to_)=(3*pi/to_)*(dsin(pi*t/to_)**2)*dcos(pi*t/to_)
  ! ! antiderivative of hammer (by wolframalpha)
  ! source_impulse(t,to_)=(to_*dcos((pi*t)/to_)*(dcos((2*pi*t)/to_) - 5))/(6*pi)
+ ! ! ricker wavelet
+ ! double precision wo_, wo
+ ! double precision, parameter :: fo = 31 ! Hz
+ ! source_impulse(t,to_,wo_)=( 1-0.5*(wo_**2)*(t-to_)**2 ) * exp( -0.25*(wo_**2)*(t-to_)**2 )
+ ! ! only for ricker wavelet
+ ! wo = 2*pi*fo
  
  ! for loops
  integer it,irx,iu

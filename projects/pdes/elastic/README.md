@@ -87,4 +87,8 @@ Here the source function is differeniated in time before it enters the solver. A
 
 This picture shows the solution for Lamb's problem: elastic wave propagation on a free-surface of a homogeneous half-space.
 
+The code used for this is based on [```lamb.f```](https://git.scc.kit.edu/Seitosh/Seitosh/-/blob/master/src/synt/misc/lamb.f) by Thomas Frobriger and lives in ```lamb_solu.f90```. Activate it by running ```lamb_solu.sh```.
+
+I do not know what the deal is at late times. Some Fourier domain nonsense.
+
 [![](../pics/elastic-lamb-data-.png)](./)
