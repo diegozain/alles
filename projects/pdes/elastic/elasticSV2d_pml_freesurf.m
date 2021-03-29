@@ -348,11 +348,11 @@ fz_=fz;
 % Worth saying, even the analytical derivative has plenty of notches.
 % derivative for the hammer
 if ~strcmp(src_type(1),'h')
-  fx = differentiate_line(fx,dt);
-  fz = differentiate_line(fz,dt);
+  fx = differentiate_o6(fx,dt);
+  fz = differentiate_o6(fz,dt);
 else
-  % fz = Fo*(3*pi/to)*(sin(pi*t/to).^2).*cos(pi*t/to);
-  % fz(t>=to) = 0;
+  fz = (1/(dx*dz)) * Fo*(3*pi/to)*(sin(pi*t/to).^2).*cos(pi*t/to);
+  fz(t>=to) = 0;
 end
 % ------------------------------------------------------------------------------
 % power spectra of source

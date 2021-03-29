@@ -16,12 +16,11 @@ function v = differentiate_plane(v,dt)
 % c 0 -c
 % 0 c  0 -c
 % 0 0  c  0 -c
-% 0 0 -c  d -a
+% 0 0 -c  b -a
 % ------------------------------------------------------------------------------
 a = -1.5/dt;
 b = 2/dt;
 c = -0.5/dt;
-d = 2/dt;
 
 [nt,nr]= size(v);
 
@@ -43,9 +42,9 @@ end
 if mod(nt,2)==1
  v__ = v(nt-1,:);
  v(nt-1,:) = c*v_ - c*v(nt,:);
- v(nt,:) = -c*v_ - d*v__ - a*v(nt,:);
+ v(nt,:) = -c*v_ - b*v__ - a*v(nt,:);
 else
- v(nt,:) = -c*v__ - d*v_ - a*v(nt,:);
+ v(nt,:) = -c*v__ - b*v_ - a*v(nt,:);
 end
 end
 

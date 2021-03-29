@@ -19,7 +19,7 @@ program test_modules
  ! -----------------------------------------------------------------------------
  double precision, parameter :: pi=3.1415926535898
  
- integer, parameter :: nt=100
+ integer, parameter :: nt=10000
  integer :: it
  double precision, parameter :: tmin=0, tmax=2*pi
  double precision :: t(nt),y(nt),y_diff(nt),y_inte(nt),dt
@@ -42,8 +42,9 @@ program test_modules
   y_inte(it) = y(it)
  enddo
  
- call differentiate(y_diff,dt,nt)
- call integrate(y_inte,dt,nt)
+ call differentiate_o6(y_diff,dt,nt) ! sixth order derivative
+ ! call differentiate(y_diff,dt,nt) ! second order derivative
+ call integrate(y_inte,dt,nt) ! second order antiderivative
  ! -----------------------------------------------------------------------------
  ! write data
  ! -- data transform
