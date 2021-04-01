@@ -8,6 +8,8 @@ implicit none
 ! this approach is the cyclic parallelization of the integral for loop.
 ! ------------------------------------------------------------------------------
 
+
+
 ! parallel variables
 integer, parameter :: max_threads = 4
 integer ::  i, id, numthreads, nthreads

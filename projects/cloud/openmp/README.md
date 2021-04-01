@@ -58,5 +58,7 @@ My old Mac doesn't have openMP enabled for *C*, so the *C* implementation might 
     * *Non-uniform memory architecture* (**NUMA**).
 1. *Simple program multiple data* (**SPMD**) design pattern:
     * Launch two or more threads that execute the same code.
-    * Each thread determines its ID and the number of threads in the team.
+    * A team is a set of threads.
+    * Each thread has its own ID, and knows the total number of threads in the team.
     * Use the ID and the number of threads in the team to split up the work between threads.
+    * Parallelization can be made **cyclically** or by **blocks**.

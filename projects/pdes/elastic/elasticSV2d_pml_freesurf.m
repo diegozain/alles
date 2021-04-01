@@ -51,10 +51,10 @@ close all
 % rho= 1.7e+3
 % ------------------------------------------------------------------------------
 % --- pde parameters
-% % slow - fast
-% lam_= [2; 5];
-% mu_ = [3; 9];
-% rho_= [1; 6];
+% slow - fast
+lam_= [2; 5];
+mu_ = [3; 9];
+rho_= [1; 6];
 
 % % fast - slow
 % lam_= [5; 2];
@@ -71,12 +71,12 @@ close all
 % mu_ = [3000; 3000];
 % rho_= [2; 2];
 
-% homogeneous like Lisa Groos,
-% vp=500 , vs=300 m/s ; rho=1800 kg/m^3
-% source is a 'hammer', to = 32ms = 0.032 s
-lam_= [126000000; 126000000];
-mu_ = [162000000; 162000000];
-rho_= [1800; 1800];
+% % homogeneous like Lisa Groos,
+% % vp=500 , vs=300 m/s ; rho=1800 kg/m^3
+% % source is a 'hammer', to = 32ms = 0.032 s
+% lam_= [126000000; 126000000];
+% mu_ = [162000000; 162000000];
+% rho_= [1800; 1800];
 
 % % homogeneous like Robertsson,
 % % vp=3000 , vs=1730 m/s ; rho=2500 kg/m^3
@@ -105,11 +105,11 @@ rho_= [1800; 1800];
 % mu_ = [0; 1e+10];
 % rho_= [1; 2e+3];
 % ------------------------------------------------------------------------------
-% % --- spatial constraints
-% % -- slow - fast, fast - slow, homogeneous 1
-% X= 3;
-% Z= 2.5;
-% T= 3;
+% --- spatial constraints
+% -- slow - fast, fast - slow, homogeneous 1
+X= 3;
+Z= 2.5;
+T= 3;
 % % -- homogeneous 2
 % X= 25;
 % Z= 10;
@@ -118,10 +118,10 @@ rho_= [1800; 1800];
 % X= 25;
 % Z= 10;
 % T= 0.4;
-% -- lisa groos
-X= 50;
-Z= 30;
-T= 0.2;
+% % -- lisa groos
+% X= 50;
+% Z= 30;
+% T= 0.2;
 % % -- Robertsson
 % X= 2000;
 % Z= 1000;
@@ -135,18 +135,18 @@ T= 0.2;
 % if the ricker wavelet is used, the central frequency is determined by 'fo'.
 % in this case, 'to' determines when the shot is performed.
 
-% % -- slow - fast, fast - slow, homogeneous 1
-% to = 0.5;
-% fo = 3; % 3 8
+% -- slow - fast, fast - slow, homogeneous 1
+to = 0.5;
+fo = 3; % 3 8
 % % -- homogeneous 2
 % to = 0.04;
 % fo = 35;
 % % -- gradient in depth from homogeneous 2
 % to = 0.04;
 % fo = 30;
-% -- lisa groos ('hammer source')
-to = 0.032;
-fo = 31;
+% % -- lisa groos ('hammer source')
+% to = 0.032;
+% fo = 31;
 % % -- Robertsson
 % to = 0.1;
 % fo = 15;
@@ -200,6 +200,16 @@ nx=numel(x);
 nz=numel(z);
 nt=numel(t);
 % ------------------------------------------------------------------------------
+fprintf('  nx = %i\n',nx)
+fprintf('  nz = %i\n',nz)
+fprintf('  nt = %i\n\n',nt)
+
+fprintf('  vp min = %2.2d\n',vp_min)
+fprintf('  vp max = %2.2d\n',vp_max)
+
+fprintf('  vs min = %2.2d\n',vs_min)
+fprintf('  vs max = %2.2d\n\n',vs_max)
+% ------------------------------------------------------------------------------
 fprintf('wavecube of size (doubles): %2.2d Gb\n\n',nx*nz*nt*8*1e-9)
 % ------------------------------------------------------------------------------
 % --- pde parameters
@@ -207,23 +217,23 @@ lam=lam_(1)*ones(nz,nx);
 mu = mu_(1)*ones(nz,nx);
 rho=rho_(1)*ones(nz,nx);
 
-% % -- box in the middle
-% lam(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= lam_(2);
-% mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
-% rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= rho_(2);
+% -- box in the middle
+lam(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= lam_(2);
+mu(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3))) = mu_(2);
+rho(fix(nz*(1/3)):fix(nz*(2/3)),fix(nx*(1/3)):fix(nx*(2/3)))= rho_(2);
 
 % % -- two layers
 % lam(fix(nz*(1/5)):nz,:)= lam_(2);
 % mu(fix(nz*(1/5)):nz,:) = mu_(2);
 % rho(fix(nz*(1/5)):nz,:)= rho_(2);
 
-% -- linear gradient in depth 
-lam= linspace(lam_(1),lam_(2),nz).';
-mu = linspace(mu_(1),mu_(2),nz).';
-rho= linspace(rho_(1),rho_(2),nz).';
-lam= lam*ones(1,nx);
-mu = mu*ones(1,nx);
-rho= rho*ones(1,nx);
+% % -- linear gradient in depth 
+% lam= linspace(lam_(1),lam_(2),nz).';
+% mu = linspace(mu_(1),mu_(2),nz).';
+% rho= linspace(rho_(1),rho_(2),nz).';
+% lam= lam*ones(1,nx);
+% mu = mu*ones(1,nx);
+% rho= rho*ones(1,nx);
 
 vp = sqrt((lam + 2*mu)./rho);
 vs = sqrt(mu./rho);

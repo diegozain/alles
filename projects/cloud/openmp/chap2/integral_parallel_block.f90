@@ -1,11 +1,14 @@
 program main
 use omp_lib
+
 ! ------------------------------------------------------------------------------
 ! parallelize the numerical integral of 4/(1+x^2) between 0 and 1.
 ! this integral is equal to pi.
 ! 
 ! this approach is the block parallelization of the integral for loop.
 ! ------------------------------------------------------------------------------
+
+
 
 ! parallel variables
 integer, parameter :: max_threads = 4

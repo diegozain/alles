@@ -12,7 +12,7 @@ implicit none
 
 ! parallel variables
 integer, parameter :: max_threads=4
-integer :: i, id, numthreads, nthreads
+integer :: i
 integer, parameter :: num_steps=100000000
 
 ! integral variables
@@ -26,25 +26,25 @@ step = 1.0 / num_steps
 call omp_set_num_threads(max_threads)
 start_time = omp_get_wtime()
 ! ------------------------------------------------------------------------------
-!$omp parallel private(i,id,numthreads,partial_sum,x)
-id = omp_get_thread_num()
-numthreads = omp_get_num_threads()
+!$omp parallel private(i,partial_sum,x)
+
 partial_sum = 0.0
 
-if (id == 0)  nthreads = numthreads
+! the construct '$omp do ... $omp end do' takes care of all the
+! ID/num of threads/cyclic or block/ stuff, and has the compiler (via ompenMP)
+! do it for you.
 
-do i = id, num_steps-1, numthreads
+!$omp do
+do i = 1, num_steps
    x = (i+0.5)*step
    partial_sum = partial_sum + 4.0/(1.0+x*x)
 enddo
+!$omp end do
 ! ------------------------------------------------------------------------------
-! this forces one thread at a time to execute this block of code,
-! so if another thread wants to do this,
-! it must wait for the previous thread to finish.
+! the construct '$omp do ... $omp end do' also takes care of the
+! critical barrier.
 
-!$omp critical
 full_sum = full_sum + partial_sum
-!$omp end critical
 ! ------------------------------------------------------------------------------
 !$omp end parallel
 ! ------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ pi = step * full_sum
 
 run_time = omp_get_wtime() - start_time
 
-write(*,100) pi, run_time, nthreads
-100     format('pi is ',f15.8,' in ',f8.3,'secs and ',i3,' threads')
+write(*,100) pi, run_time
+100     format('pi is ',f15.8,' in ',f8.3,'secs')
 
 end program main
