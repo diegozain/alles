@@ -54,19 +54,19 @@ print *, ' run-time was ',run_time,'secs'
 1. do it in **parallel cyclic**: ```integral_parallel_cyclic.f90```
 1. do it in **parallel block**: ```integral_parallel_block.f90```
 1. do it in **parallel cyclic** with **critical** synchronization: ```integral_parallel_critical.f90```
-  * cyclic and block suffer from *false sharing*
-  * this is fixed by placing a *critical construct*:
-    * this forces one thread at a time to execute this block of code,
-    * so if another thread wants to do this, it must wait for the previous thread to finish.
+    * cyclic and block suffer from **false sharing**
+    * this is fixed by placing a **critical construct**:
+      * this forces one thread at a time to execute this block of code,
+      * so if another thread wants to do this, it must wait for the previous thread to finish.
 1. all these parallel constructs do similar stuff:
-  * define ```omp parallel``` block,
-  * get ID and num. of threads,
-  * use ID and num. of threads to break up for loop in *cyclic* or *block*,
-  * place a *critical construct* to avoid *false sharing*.
-1. the *ID/num of threads/cyclic or block/critical* declaration can be handled by openMP on its own: ```integral_parallel_for.f90```
-1. what about the *partial sums* that had to be defined to make the parallel scheme work? : ```integral_parallel_redu.f90```
-  * well, you can *get rid* of them by using ```reduction(op:vars)```
+    * define ```omp parallel``` block,
+    * get **ID** and **num. of threads**,
+    * use **ID** and **num. of threads** to break up for loop in **cyclic** or **block**,
+    * place a **critical construct** to avoid **false sharing**.
+1. the **ID/num of threads/cyclic or block/critical** declaration can be handled by openMP on its own: ```integral_parallel_for.f90```
+1. what about the **partial sums** that had to be defined to make the parallel scheme work? : ```integral_parallel_redu.f90```
+    * well, you can **get rid** of them by using ```reduction(op:vars)```
 1. can we schedule how many chunks go to each thread? : ```integral_parallel_redu.f90```
-  * yes, with ```schedule(static or dynamic, ichunks)```
-  * ```schedule(static,1)``` is **cyclic**
-  * ```schedule(static)```   is **block**
+    * yes, with ```schedule(static or dynamic, ichunks)```
+    * ```schedule(static,1)``` is **cyclic**
+    * ```schedule(static)```   is **block**
