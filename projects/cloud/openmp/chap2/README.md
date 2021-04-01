@@ -54,10 +54,10 @@ print *, ' run-time was ',run_time,'secs'
 1. do it in **parallel cyclic**: ```integral_parallel_cyclic.f90```
 1. do it in **parallel block**: ```integral_parallel_block.f90```
 1. do it in **parallel cyclic** with **critical** synchronization: ```integral_parallel_critical.f90```
- * cyclic and block suffer from *false sharing*
- * this is fixed by placing a *critical construct*:
-  * this forces one thread at a time to execute this block of code,
-  * so if another thread wants to do this, it must wait for the previous thread to finish.
+  * cyclic and block suffer from *false sharing*
+  * this is fixed by placing a *critical construct*:
+    * this forces one thread at a time to execute this block of code,
+    * so if another thread wants to do this, it must wait for the previous thread to finish.
 1. all these parallel constructs do similar stuff:
   * define ```omp parallel``` block,
   * get ID and num. of threads,
