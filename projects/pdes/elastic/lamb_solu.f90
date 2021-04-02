@@ -9,8 +9,8 @@ program lamb_solu
 ! Uses the module 'fourier'. Results are plotted in Python.
 !
 !
-!         $> gfortran -c ../../../src/fortran/fourier.f90 lamb_solu.f90
-!         $> gfortran fourier.o lamb_solu.o
+!         $> gfortran -c ../../../src/fortran/fourier.f90 -fopenmp lamb_solu.f90
+!         $> gfortran -fopenmp fourier.o lamb_solu.o
 !         $> ./a.out
 !
 !         $> python visualize_f.py
@@ -50,7 +50,7 @@ complex*16 :: vp_c, vs_c, a, b, vx_num, vz_num, wvlt
 
 ! source parameters
 double precision, parameter :: to=0.032D0 ! s
-double precision, parameter :: Fo=1e1 ! 1e4 ! kg*m/s^2
+double precision, parameter :: Fo=1e4 ! kg*m/s^2
 
 ! slowness integration (s/m)
 double precision, parameter :: umin=0.D0    ! minimal slowness being calculated
