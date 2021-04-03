@@ -4,12 +4,74 @@ clc
 % ------------------------------------------------------------------------------
 addpath('src');
 % ------------------------------------------------------------------------------
-%     mesh generation
+%                            mesh generation
+% 
+% given a rectangular gridded mesh where only a certain region is wanted for 
+% modeling, how do we extract this wanted region?
+% 
+% Answer:
+% 
+% 1. find only the nodes that matter in the domain, 
+% 2. find their neighbors,
+% 3. find what type of neighbors they are.
+% 
+% The words **mesh** or **mesh-grid** refer to the existing rectangular gridded mesh.
+% 
+% The word **graph** refers to the region of interest inside the mesh-grid.
+% 
+% Expanded answer:
+% 
+% 1. The only nodes that matter in the domain are given in these two column vectors,
+% 
+% graph2mesh : indexes are graph nodes, entries are mesh nodes
+% mesh2graph : indexes are mesh nodes, entries are graph nodes
+% 
+% graph2mesh:
+% 
+% | |
+% | |
+% | | size = # of nodes that matter by 1
+% | |
+% | |
+% | |
+% 
+% mesh2graph:
+% 
+% | |
+% | |
+% | | size = # of nodes in the mesh by 1
+% | |
+% | |
+% | |
+% | |
+% | |
+% 
+% 2. Their neighbors are given by these two matrices,
+% 
+% neigh_mesh  : row indexes are graph nodes. Row entries are neighbors of that node, in the mesh.
+% neigh_graph : row indexes are graph nodes. Row entries are neighbors of that node, in the graph.
+% 
+% 3. Their neighbor type is given by this matrix,
+% 
+% neigh_type : row indexes are graph nodes. Row entries are the type of neighbor for that node.
+% 
+% neigh_mesh, neigh_graph, and neigh_type are all of size:
+% 
+% |        |
+% |        |
+% |        | size = # of nodes that matter by max # of neighbors in the mesh
+% |        |
+% |        |
+% |        |
 % ------------------------------------------------------------------------------
+% since we are assuming a 2D mesh-grid, max # of neighbors in the mesh is 4
+n_neigh_max = 4;
+% ------------------------------------------------------------------------------
+% setup a simple example
 a = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1];
-% ------------------------------------------------------------------------------
 [nz,nx]=size(a);
-
+% ------------------------------------------------------------------------------
+% this is only for easy reference:
 a_index = 1:(nx*nz);
 a_index = reshape(a_index,[nz,nx]);
 % ------------------------------------------------------------------------------
@@ -22,7 +84,7 @@ for ia = 1:nx*nz
         n_g2m = n_g2m + 1;
     end
 end
-
+% ------------------------------------------------------------------------------
 % make two dictionaries,
 % graph2mesh : indexes are graph nodes, entries are mesh nodes
 % mesh2graph : indexes are mesh nodes, entries are graph nodes
@@ -37,9 +99,6 @@ for ia = 1:nx*nz
         mesh2graph(ia) = i_g2m;
     end
 end
-% ------------------------------------------------------------------------------
-% we are assuming a mesh-grid
-n_neigh_max = 4;
 % ------------------------------------------------------------------------------
 % each node has neighbors.
 % neigh_mesh : row indexes are graph nodes.
@@ -166,6 +225,7 @@ end
 %              row entries are the type of neighbor for that node.
 % 
 % we define : (type,BC) = (1,inner) (-1,neumann) (0,robin)
+% ------------------------------------------------------------------------------
 neigh_type = zeros(n_g2m,n_neigh_max);
 
 inner =  1;
@@ -333,9 +393,10 @@ set(gca,'xtick',[])
 set(gca,'ytick',[])
 simple_figure()
 % ------------------------------------------------------------------------------
-a_graph = nan(nz,nx);%*(n_g2m+1+0.564646)*0.5;
+% this is just for visualizing
+a_graph = nan(nz,nx);
 a_graph(graph2mesh) = (1:n_g2m);
-
+% pcolor does not plot the edges for some weird reason I do not understand
 a_graph_plot = [a_graph;nan(1,nx)];
 a_graph_plot = [a_graph_plot , nan(nz+1,1)];
 
@@ -347,11 +408,4 @@ title('Mesh-graph indexes')
 set(gca,'xtick',[])
 set(gca,'ytick',[])
 simple_figure()
-% ------------------------------------------------------------------------------
-thet = linspace(0,2*pi,n_g2m+1);
-thet = thet.';
-thet(1) = [];
-nodes = [cos(thet) , sin(thet)];
-
-
 % ------------------------------------------------------------------------------
