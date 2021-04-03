@@ -1,6 +1,7 @@
 clear
 close all
 clc
+clc
 % ------------------------------------------------------------------------------
 addpath('src');
 % ------------------------------------------------------------------------------
@@ -63,12 +64,22 @@ addpath('src');
 % |        |
 % |        |
 % |        |
-% ------------------------------------------------------------------------------
-% since we are assuming a 2D mesh-grid, max # of neighbors in the mesh is 4
-n_neigh_max = 4;
+% 
+% since we are assuming a 2D mesh-grid, max # of neighbors in the mesh is 4.
+% 
+% the way the neigh_mesh, neigh_graph, and neigh_type refer to the neighbors of node 'i' (i.e. in row 'i') is by,
+% 
+%      2
+%      |
+% 3 -- i -- 1
+%      |
+%      4
+% 
+% that is, columns 1, 2, 3, and 4 represent neighbors right, up, left and down.
 % ------------------------------------------------------------------------------
 % setup a simple example
-a = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1];
+% a = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1];
+a = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
 [nz,nx]=size(a);
 % ------------------------------------------------------------------------------
 % this is only for easy reference:
@@ -76,139 +87,22 @@ a_index = 1:(nx*nz);
 a_index = reshape(a_index,[nz,nx]);
 % ------------------------------------------------------------------------------
 % get the number of nodes in the graph 
-b=0;
-n_g2m = 0;
-for ia = 1:nx*nz
-    b=a(ia);
-    if b==1
-        n_g2m = n_g2m + 1;
-    end
-end
+n_g2m = n_g2m_(a,nx,nz);
 % ------------------------------------------------------------------------------
 % make two dictionaries,
 % graph2mesh : indexes are graph nodes, entries are mesh nodes
 % mesh2graph : indexes are mesh nodes, entries are graph nodes
-graph2mesh = zeros(n_g2m,1);
-mesh2graph = zeros(nz*nx,1);
-i_g2m = 0;
-for ia = 1:nx*nz
-    b=a(ia);
-    if b==1
-        i_g2m = i_g2m + 1;
-        graph2mesh(i_g2m) = ia;
-        mesh2graph(ia) = i_g2m;
-    end
-end
+[graph2mesh,mesh2graph] = g2m_m2g(a,nx,nz,n_g2m);
 % ------------------------------------------------------------------------------
 % each node has neighbors.
 % neigh_mesh : row indexes are graph nodes.
 %              row entries are neighbors of that node, in the mesh. 
-neigh_mesh = zeros(n_g2m,n_neigh_max);
-
-i_up = 0;
-i_do = 0;
-i_ri = 0;
-i_le = 0;
-
-for i_g2m = 1:n_g2m
-    
-    i_ri = graph2mesh(i_g2m) + nz;
-    i_up = graph2mesh(i_g2m) - 1;
-    i_le = graph2mesh(i_g2m) - nz;
-    i_do = graph2mesh(i_g2m) + 1;
-    
-    % left edge
-    if (graph2mesh(i_g2m)<=nz)
-        if (a(i_ri)==1)
-            neigh_mesh(i_g2m,1) = i_ri;
-        end
-        
-        if i_up>=1
-            if (a(i_up)==1)
-                neigh_mesh(i_g2m,2) = i_up;
-            end
-        end
-        if i_do<=nz
-            if (a(i_do)==1)
-                neigh_mesh(i_g2m,4) = i_do;
-            end
-        end
-    % right edge
-    elseif (graph2mesh(i_g2m)>nz*(nx-1))
-        if (a(i_le)==1)
-            neigh_mesh(i_g2m,3) = i_le;
-        end
-        
-        if i_up>=nz*(nx-1)+1
-            if (a(i_up)==1)
-                neigh_mesh(i_g2m,2) = i_up;
-            end
-        end
-        if i_do<=(nz*nx)
-            if (a(i_do)==1)
-                neigh_mesh(i_g2m,4) = i_do;
-            end
-        end
-    % bottom edge
-    elseif (mod(graph2mesh(i_g2m),nz)==0)
-        if (a(i_up)==1)
-            neigh_mesh(i_g2m,2) = i_up;
-        end
-        
-        if i_ri<=(nz*nx)
-            if (a(i_ri)==1)
-                neigh_mesh(i_g2m,1) = i_ri;
-            end
-        end
-        if i_le>=nz
-            if (a(i_le)==1)
-                neigh_mesh(i_g2m,3) = i_le;
-            end
-        end
-    % top edge
-    elseif (mod(graph2mesh(i_g2m),nz)==1)
-        if (a(i_do)==1)
-            neigh_mesh(i_g2m,4) = i_do;
-        end
-        
-        if i_ri<=(nz*(nx-1)+1)
-            if (a(i_ri)==1)
-                neigh_mesh(i_g2m,1) = i_ri;
-            end
-        end
-        if i_le>=1
-            if (a(i_le)==1)
-                neigh_mesh(i_g2m,3) = i_le;
-            end
-        end
-    % inner nodes
-    else
-        if (a(i_ri)==1)
-            neigh_mesh(i_g2m,1) = i_ri;
-        end
-        if (a(i_up)==1)
-            neigh_mesh(i_g2m,2) = i_up;
-        end
-        if (a(i_le)==1)
-            neigh_mesh(i_g2m,3) = i_le;
-        end
-        if (a(i_do)==1)
-            neigh_mesh(i_g2m,4) = i_do;
-        end
-    end
-end
+neigh_mesh = neigh_mesh_(a,nx,nz,n_g2m,graph2mesh);
 % ------------------------------------------------------------------------------
 % each node has neighbors.
 % neigh_graph : row indexes are graph nodes.
 %               row entries are neighbors of that node, in the graph.
-neigh_graph = zeros(n_g2m,n_neigh_max);
-for i_g2m = 1:n_g2m
-    for i_nei = 1:n_neigh_max
-        if (neigh_mesh(i_g2m,i_nei) ~= 0)
-            neigh_graph(i_g2m,i_nei) = mesh2graph(neigh_mesh(i_g2m,i_nei));
-        end
-    end
-end
+neigh_graph = neigh_graph_(neigh_mesh,mesh2graph,n_g2m);
 % ------------------------------------------------------------------------------
 % each node has a special type in a mesh-grid.
 % neighbors that are (in the mesh):
@@ -226,155 +120,27 @@ end
 % 
 % we define : (type,BC) = (1,inner) (-1,neumann) (0,robin)
 % ------------------------------------------------------------------------------
-neigh_type = zeros(n_g2m,n_neigh_max);
-
-inner =  1;
-neuma = -1;
-
-i_up = 0;
-i_do = 0;
-i_ri = 0;
-i_le = 0;
-
-for i_g2m = 1:n_g2m
-    
-    i_ri = graph2mesh(i_g2m) + nz;
-    i_up = graph2mesh(i_g2m) - 1;
-    i_le = graph2mesh(i_g2m) - nz;
-    i_do = graph2mesh(i_g2m) + 1;
-    
-    % left edge
-    if (graph2mesh(i_g2m)<=nz)
-        if (a(i_ri)==1)
-            neigh_type(i_g2m,1) = inner;
-        else
-            neigh_type(i_g2m,1) = neuma;
-        end
-        
-        if i_up>=1
-            if (a(i_up)==1)
-                neigh_type(i_g2m,2) = inner;
-            else
-                neigh_type(i_g2m,2) = neuma;
-            end
-        end
-        if i_do<=nz
-            if (a(i_do)==1)
-                neigh_type(i_g2m,4) = inner;
-            else
-                neigh_type(i_g2m,4) = neuma;
-            end
-        end
-    % right edge
-    elseif (graph2mesh(i_g2m)>nz*(nx-1))
-        if (a(i_le)==1)
-            neigh_type(i_g2m,3) = inner;
-        else
-            neigh_type(i_g2m,3) = neuma;
-        end
-        
-        if i_up>=nz*(nx-1)+1
-            if (a(i_up)==1)
-                neigh_type(i_g2m,2) = inner;
-            else
-                neigh_type(i_g2m,2) = neuma;
-            end
-        end
-        if i_do<=(nz*nx)
-            if (a(i_do)==1)
-                neigh_type(i_g2m,4) = inner;
-            else
-                neigh_type(i_g2m,4) = neuma;
-            end
-        end
-    % bottom edge
-    elseif (mod(graph2mesh(i_g2m),nz)==0)
-        if (a(i_up)==1)
-            neigh_type(i_g2m,2) = inner;
-        else
-            neigh_type(i_g2m,2) = neuma;
-        end
-        
-        if i_ri<=(nz*nx)
-            if (a(i_ri)==1)
-                neigh_type(i_g2m,1) = inner;
-            else
-                neigh_type(i_g2m,1) = neuma;
-            end
-        end
-        if i_le>=nz
-            if (a(i_le)==1)
-                neigh_type(i_g2m,3) = inner;
-            else
-                neigh_type(i_g2m,3) = neuma;
-            end
-        end
-    % top edge
-    elseif (mod(graph2mesh(i_g2m),nz)==1)
-        if (a(i_do)==1)
-            neigh_type(i_g2m,4) = inner;
-        else
-            neigh_type(i_g2m,4) = neuma;
-        end
-        
-        if i_ri<=(nz*(nx-1)+1)
-            if (a(i_ri)==1)
-                neigh_type(i_g2m,1) = inner;
-            else
-                neigh_type(i_g2m,1) = neuma;
-            end
-        end
-        if i_le>=1
-            if (a(i_le)==1)
-                neigh_type(i_g2m,3) = inner;
-            else
-                neigh_type(i_g2m,3) = neuma;
-            end
-        end
-    % inner nodes
-    else
-        if (a(i_ri)==1)
-            neigh_type(i_g2m,1) = inner;
-        else
-            neigh_type(i_g2m,1) = neuma;
-        end
-        if (a(i_up)==1)
-            neigh_type(i_g2m,2) = inner;
-        else
-            neigh_type(i_g2m,2) = neuma;
-        end
-        if (a(i_le)==1)
-            neigh_type(i_g2m,3) = inner;
-        else
-            neigh_type(i_g2m,3) = neuma;
-        end
-        if (a(i_do)==1)
-            neigh_type(i_g2m,4) = inner;
-        else
-            neigh_type(i_g2m,4) = neuma;
-        end
-    end
-end
+neigh_type = neigh_type_(a,nx,nz,n_g2m,graph2mesh);
 % ------------------------------------------------------------------------------
-fprintf(' mesh under consideration\n')
+fprintf(' -------------- mesh under consideration -------------- \n')
 a
 
-fprintf(' indexes of previous mesh\n')
+fprintf(' -------------- indexes of mesh ----------------------- \n')
 a_index
 
-fprintf(' graph -> mesh\n')
+fprintf(' -------------- graph -> mesh ------------------------- \n')
 graph2mesh
 
-fprintf(' mesh -> graph\n')
+fprintf(' -------------- mesh -> graph ------------------------- \n')
 mesh2graph
 
-fprintf(' neighbors in mesh\n')
+fprintf(' -------------- neighbors in mesh --------------------- \n')
 neigh_mesh
 
-fprintf(' neighbors in graph\n')
+fprintf(' -------------- neighbors in graph --------------------- \n')
 neigh_graph
 
-fprintf(' type of neighbors\n')
+fprintf(' -------------- type of neighbors ---------------------- \n')
 neigh_type
 % ------------------------------------------------------------------------------
 figure;

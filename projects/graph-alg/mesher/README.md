@@ -60,6 +60,18 @@ neigh_mesh, neigh_graph, and neigh_type are all of size:
 |        |
 |        |
 |        |
+
+since we are assuming a 2D mesh-grid, max # of neighbors in the mesh is 4.
+
+the way the neigh_mesh, neigh_graph, and neigh_type refer to the neighbors of node 'i' (i.e. in row 'i') is by,
+
+     2
+     |
+3 -- i -- 1
+     |
+     4
+
+that is, columns 1, 2, 3, and 4 represent neighbors right, up, left and down.
 ```
 ---
 
