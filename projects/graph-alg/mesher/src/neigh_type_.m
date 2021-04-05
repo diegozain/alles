@@ -19,7 +19,7 @@ function neigh_type = neigh_type_(a,nx,nz,n_g2m,graph2mesh)
 % 
 % we define : (type,BC) = (1,inner) (-1,neumann) (0,robin)
 % ------------------------------------------------------------------------------
-neigh_type = zeros(n_g2m,4);
+neigh_type = zeros(n_g2m,4,'int32');
 
 inner =  1;
 neuma = -1;

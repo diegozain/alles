@@ -6,7 +6,7 @@ function neigh_graph = neigh_graph_(neigh_mesh,mesh2graph,n_g2m)
 % neigh_graph : row indexes are graph nodes.
 %               row entries are neighbors of that node, in the graph.
 % ------------------------------------------------------------------------------
-neigh_graph = zeros(n_g2m,4);
+neigh_graph = zeros(n_g2m,4,'uint32');
 for i_g2m = 1:n_g2m
     for i_nei = 1:4
         if (neigh_mesh(i_g2m,i_nei) ~= 0)

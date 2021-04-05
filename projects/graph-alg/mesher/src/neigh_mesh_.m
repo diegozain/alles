@@ -9,7 +9,7 @@ function neigh_mesh = neigh_mesh_(a,nx,nz,n_g2m,graph2mesh)
 % neigh_mesh : row indexes are graph nodes.
 %              row entries are neighbors of that node, in the mesh. 
 % ------------------------------------------------------------------------------
-neigh_mesh = zeros(n_g2m,4);
+neigh_mesh = zeros(n_g2m,4,'uint32');
 
 i_up = 0;
 i_do = 0;

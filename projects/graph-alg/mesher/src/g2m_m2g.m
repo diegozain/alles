@@ -10,8 +10,8 @@ function [graph2mesh,mesh2graph] = g2m_m2g(a,nx,nz,n_g2m)
 % graph2mesh : indexes are graph nodes, entries are mesh nodes
 % mesh2graph : indexes are mesh nodes, entries are graph nodes
 % ------------------------------------------------------------------------------
-graph2mesh = zeros(n_g2m,1);
-mesh2graph = zeros(nz*nx,1);
+graph2mesh = zeros(n_g2m,1,'uint32');
+mesh2graph = zeros(nz*nx,1,'uint32');
 i_g2m = 0;
 for ia = 1:nx*nz
     b=a(ia);
