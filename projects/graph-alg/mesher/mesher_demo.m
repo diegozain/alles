@@ -163,6 +163,49 @@ neigh_type = neigh_type_(a,nx,nz,n_g2m,graph2mesh);
 % ------------------------------------------------------------------------------
 [I,J] = IJ_(n_g2m,n_ij,n_IJ,neigh_graph);
 % ------------------------------------------------------------------------------
+V = zeros(n_IJ,1);
+il = 1;
+il_= 0;
+for i_g2m=1:n_g2m
+    % -- end of line
+    il_ = il_ + n_ij(i_g2m)+1;
+    % -- in line
+    % V
+    ith = 0;
+    for ii=(il+1):il_
+        % sum for ith entry
+        ith = ith +1;
+        % neighbors entries
+        V(ii) = -1;
+        % NOTE: the +1 and -1 should be replaced (each) with a combination of:
+        % 1. material properties (i.e. harmonic averages of conductivity),
+        % 2. and dx_j / dz_j terms.
+        % 
+        % to do so, use J.
+        % for example, inside this loop:
+        % J(il) gives the ith node,
+        % J(ii) gives neighbor of ith node.
+        % 
+        % the harmonic average would be:
+        % sig_ij_ = ( 2*sig(J(il)) * sig(J(ii)) ) / ( sig(J(il)) + sig(J(ii)) )
+    end
+    % robin nodes are summed to 'ith'
+    for i_nei=1:4
+        if (neigh_type(J(il),i_nei) == 0)
+            ith = ith +1;
+            % NOTE: the +1 should be replaced by the appropriate entry.
+            % J(il) gives the ith node,
+            % neigh_type(J(il),i_nei) gives neighbor of ith node.
+        end
+    end
+    % ith entry
+    V(il) = ith;
+    % -- begining of next line
+    il = il_ + 1;
+end
+% ------------------------------------------------------------------------------
+L = sparse(I,J,V);
+% ------------------------------------------------------------------------------
 % 
 %                              visualize results
 % 
@@ -222,12 +265,11 @@ set(gca,'xtick',[])
 set(gca,'ytick',[])
 simple_figure()
 % ------------------------------------------------------------------------------
-% this part is only an example on how the matrix L will look like
-v=ones(n_IJ,1); 
-L=sparse(I,J,v);
-
 figure;
-spy(L)
+fancy_imagesc(L);
+colormap(rainbow2_cb(1))
 title('L graph-operator')
+set(gca,'xtick',[])
+set(gca,'ytick',[])
 simple_figure()
 % ------------------------------------------------------------------------------
