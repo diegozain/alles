@@ -140,8 +140,8 @@ neigh_type = neigh_type_(a,nx,nz,n_g2m,graph2mesh);
 % 2. we also need to count for each node in the graph, 
 % how many entries in I (and J) are of that node.
 % 
-% for 1, we sum all positive entries of neigh_type + n_g2m.
-% the term n_g2m accounts for each L(i,i) entry.
+% for 1, we sum all positive entries of neigh_type +n_g2m.
+% the term +n_g2m accounts for all L(i,i) entries.
 % 
 % for 2, we sum columnwise all positive entries of neigh_type.
 % 
@@ -177,7 +177,7 @@ for i_g2m=1:n_g2m
         ith = ith +1;
         % neighbors entries
         V(ii) = -1;
-        % NOTE: the +1 and -1 should be replaced (each) with a combination of:
+        % NOTE: the +1 and -1 should be replaced (each) with a product of:
         % 1. material properties (i.e. harmonic averages of conductivity),
         % 2. and dx_j / dz_j terms.
         % 

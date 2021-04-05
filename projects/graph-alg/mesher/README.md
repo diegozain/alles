@@ -76,7 +76,7 @@ the way the neigh_mesh, neigh_graph, and neigh_type refer to the neighbors of no
 that is, columns 1, 2, 3, and 4 represent neighbors right, up, left and down.
 ```
 
-The last steps are to build the PDE operator ```L```.
+We can now begin to build the PDE operator ```L```.
 
 ```
 we need L to be defined as a sparse matrix,
@@ -87,33 +87,39 @@ so we need arrays I and J to do:
 where 'v' is special.
 
 1. we need the total number of non-zero entries on L.
-that is for each row i of L, we have as many entries as neighbors of i + 1.
-the +1 is to count its own entry.
+that is for each row i of L, we have as many entries as neighbors of i +1.
+the +1 term counts its own entry.
 
 2. we also need to count for each node in the graph, 
-how many entries in I (and J) are of that node.
+how many entries in 'I' (and 'J') are of that node.
 
-for 1, we sum all positive entries of neigh_type + n_g2m.
-the term n_g2m accounts for each L(i,i) entry.
+for 1, we sum all positive entries of neigh_type +n_g2m.
+the term +n_g2m accounts for all L(i,i) entries.
 
-for 2, we sum columnwise all positive entries of neigh_type.
+for 2, we sum column-wise all positive entries of neigh_type.
 
-n_IJ : total number of non-zero entries of L (also length of I and J).
-n_ij : holds the info of how many entries in I (and J) belong to each node i.
+n_IJ : total number of non-zero entries of L (also length of 'I' and 'J').
+n_ij : holds the info of how many entries in 'I' (and J) belong to each node i.
        it is an array of size n_g2m by 1.
 
-now we need to build I and J.
+now we need to build 'I' and 'J'.
 
-both I and J are of size n_IJ by 1.
+both 'I' and 'J' are of size n_IJ by 1.
 
-I denotes the row entries, and J the column entries.
+'I' denotes the row entries, and 'J' the column entries.
 
 for each node i:
-   I needs to have n_ij(i)+1 consecutive entries with the number i.
+   'I' needs to have n_ij(i)+1 consecutive entries with the number 'i'.
    In the same place as these n_ij(i)+1 consecutive entries, 
-      J needs to have the number i in the first entry, 
-      and then each neighbor of i (in the graph) in the subsequent entries.
+      'J' needs to have the number 'i' in the first entry, 
+      and then each neighbor of 'i' (in the graph) in the subsequent entries.
 ```
+The last step is to build the entries ```V``` of ```L``` using ```J``` and ```neigh_type``` (for Robin boundary conditions).
+
+In practice, we also need material properties ```sig``` and geometry parameters ```dx``` and ```dz```. 
+
+I leave those for another project. Here, I show ```L``` assuming  ```sig=dx=dz=1```.
+
 ---
 
 ### Example
