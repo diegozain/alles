@@ -47,20 +47,24 @@ program test_modules
  call integrate(y_inte,dt,nt) ! second order antiderivative
  ! -----------------------------------------------------------------------------
  ! write data
- ! -- data transform
- open(1, file = 't.dat', status='unknown')
- open(2, file = 'y.dat', status='unknown')
- open(3, file = 'y_diff.dat', status='unknown')
- open(4, file = 'y_inte.dat', status='unknown')
- do it = 1,nt
-  write(1,"(E15.7)") t(it)
-  write(2,"(E15.7)") y(it)
-  write(3,"(E15.7)") y_diff(it)
-  write(4,"(E15.7)") y_inte(it)
- end do  
+ open(1,file = 't.dat', status='unknown',form='unformatted',access='stream')
+ open(2,file = 'y.dat', status='unknown',form='unformatted',access='stream')
+ open(3,file = 'y_diff.dat',status='unknown',form='unformatted',access='stream')
+ open(4,file = 'y_inte.dat',status='unknown',form='unformatted',access='stream')
+
+ write(1) (t(it),it=1,nt)
+ write(2) (y(it),it=1,nt)
+ write(3) (y_diff(it),it=1,nt)
+ write(4) (y_inte(it),it=1,nt)
+ 
  close(1)
  close(2)
  close(3)
  close(4)
+ ! -----------------------------------------------------------------------------
+ ! in Matlab
+ ! fid=fopen('t.dat','r');
+ ! t=fread(fid,'double');
+ ! fclose(fid);
  ! -----------------------------------------------------------------------------
 end program test_modules

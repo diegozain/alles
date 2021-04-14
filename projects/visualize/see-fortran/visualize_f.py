@@ -10,12 +10,25 @@ nrows = 3
 ncols = 2
 # ------------------------------------------------------------------------------
 import numpy as np
-t = np.loadtxt('t.dat')
-one_d= np.loadtxt('one_d.dat')
-two_d= np.loadtxt('two_d.dat')
 # ------------------------------------------------------------------------------
+# # load when saved as characters
+# t = np.loadtxt('t.dat')
+# one_d= np.loadtxt('one_d.dat')
+# two_d= np.loadtxt('two_d.dat')
+# 
+# two_d=two_d.reshape((ncols,nrows))
+# two_d=two_d.transpose()
+# ------------------------------------------------------------------------------
+# load when saved as binary
+t = np.fromfile('t.dat',dtype=float)
+one_d = np.fromfile('one_d.dat',dtype=float)
+two_d = np.fromfile('two_d.dat',dtype='int32')
+
 two_d=two_d.reshape((ncols,nrows))
 two_d=two_d.transpose()
+# ------------------------------------------------------------------------------
+print('shape of 1D data ',one_d.shape)
+print('shape of 2D data ',two_d.shape)
 # ------------------------------------------------------------------------------
 # 
 #                    plotting routine begins 

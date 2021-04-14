@@ -116,13 +116,19 @@ for each node i:
 ```
 The last step is to build the entries ```V``` of ```L``` using ```J``` and ```neigh_type``` (for Robin boundary conditions).
 
-In practice, we also need material properties ```sig``` and geometry parameters ```dx``` and ```dz```. 
+In general, ```L``` could be any differential operator you could think of. In particular, I assume ```L``` is the left-hand side of this PDE,
 
-I leave those for another project. Here, I show ```L``` assuming  ```sig=dx=dz=1```.
+-∇⋅σ ∇ u = s
+
+where σ is conductivity, 'u' is the sought-after field, and 's' is the source term.
+
+In practice, we need 2D material properties σ, and geometry parameters Δx and Δz. 
+
+I leave those for another project. Here, I show ```L``` assuming  σ = Δx = Δz = 1.
 
 ---
 
-### Example
+### Tiny example (*Matlab*)
 
 [![](../pics/mesh.png)](./)
 

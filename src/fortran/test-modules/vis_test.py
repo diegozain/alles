@@ -7,10 +7,11 @@ guarda_path = ''
 dpi=120
 # ------------------------------------------------------------------------------
 import numpy as np
-t = np.loadtxt('t.dat')
-y = np.loadtxt('y.dat')
-y_diff= np.loadtxt('y_diff.dat')
-y_inte= np.loadtxt('y_inte.dat')
+
+t = np.fromfile('t.dat',dtype=float)
+y = np.fromfile('y.dat',dtype=float)
+y_diff = np.fromfile('y_diff.dat',dtype=float)
+y_inte = np.fromfile('y_inte.dat',dtype=float)
 # ------------------------------------------------------------------------------
 nt = t.size
 # ------------------------------------------------------------------------------

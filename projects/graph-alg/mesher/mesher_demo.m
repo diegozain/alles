@@ -196,6 +196,12 @@ for i_g2m=1:n_g2m
             % NOTE: the +1 should be replaced by the appropriate entry.
             % J(il) gives the ith node,
             % neigh_type(J(il),i_nei) gives neighbor of ith node.
+            % 
+            % WARNING: be careful with the corners!!
+            % 'bottom' corners are characterized by having two 0 entries in:
+            %     neigh_type(J(il),1:4)
+            % 'top' corners are characterized by having one 0 and one -1 in:
+            %     neigh_type(J(il),1:4)
         end
     end
     % ith entry
@@ -205,6 +211,21 @@ for i_g2m=1:n_g2m
 end
 % ------------------------------------------------------------------------------
 L = sparse(I,J,V);
+% ------------------------------------------------------------------------------
+% this is how we would solve for the electric potential 'u'
+%       -∇⋅σ ∇ u = s
+% ------------------------------------------------------------------------------
+% source
+s=zeros(n_g2m,1);
+s(4)=1;
+s(19)=-1;
+% solve
+u=L\s;
+% for plotting
+u_=nan(nz,nx);
+u_(graph2mesh)=u;
+u_plot=[u_;nan(1,nx)];
+u_plot=[u_plot,nan(nz+1,1)];
 % ------------------------------------------------------------------------------
 % 
 %                              visualize results
@@ -269,6 +290,15 @@ figure;
 fancy_imagesc(L);
 colormap(rainbow2_cb(1))
 title('L graph-operator')
+set(gca,'xtick',[])
+set(gca,'ytick',[])
+simple_figure()
+% ------------------------------------------------------------------------------
+figure;
+fancy_pcolor(u_plot)      
+colormap(rainbow2_cb(1))
+colorbar('off')
+title('Mesh-graph field')
 set(gca,'xtick',[])
 set(gca,'ytick',[])
 simple_figure()

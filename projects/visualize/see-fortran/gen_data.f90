@@ -26,13 +26,22 @@ program get_data
    t(it)=dble(it-1)*dt
    one_d(it)=dsin(t(it))
  end do
- 
- open(1, file = 't.dat', status='unknown')
- open(2, file = 'one_d.dat', status='unknown')
- do it = 1,nt
-  write(1,"(E15.7)") t(it)
-  write(2,"(E15.7)") one_d(it)
- end do  
+ ! -----------------------------------------------------------------------------
+ ! ! save as characters
+ ! open(1, file = 't.dat', status='unknown')
+ ! open(2, file = 'one_d.dat', status='unknown')
+ ! do it = 1,nt
+ !  write(1,"(E15.7)") t(it)
+ !  write(2,"(E15.7)") one_d(it)
+ ! end do  
+ ! close(1)
+ ! close(2)
+ ! -----------------------------------------------------------------------------
+ ! save as binary
+ open(1,file = 't.dat', status='unknown',form='unformatted',access='stream')
+ open(2,file = 'one_d.dat', status='unknown',form='unformatted',access='stream')
+ write(1) (t(it),it=1,nt)
+ write(2) (one_d(it),it=1,nt)
  close(1)
  close(2)
  ! -----------------------------------------------------------------------------
@@ -44,13 +53,19 @@ program get_data
      ientry=ientry+1
    end do
  end do
- 
- open(1, file = 'two_d.dat', status='unknown')
- do icols=1,ncols
-   do irows=1,nrows
-     write(1,"(I2)") two_d(irows,icols)
-   end do
- end do
+ ! -----------------------------------------------------------------------------
+ ! ! save as characters
+ ! open(1, file = 'two_d.dat', status='unknown')
+ ! do icols=1,ncols
+ !   do irows=1,nrows
+ !     write(1,"(I2)") two_d(irows,icols)
+ !   end do
+ ! end do
+ ! close(1)
+ ! -----------------------------------------------------------------------------
+ ! save as binary
+ open(1,file = 'two_d.dat', status='unknown',form='unformatted',access='stream')
+ write(1) ((two_d(irows,icols),irows=1,nrows),icols=1,ncols)
  close(1)
  ! -----------------------------------------------------------------------------
 end program get_data
