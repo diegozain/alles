@@ -46,6 +46,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Heat equation](projects/pdes/heat/)
 	* [Korteweg De Vries](projects/pdes/korteweg/)
 	* [Eikonal solver](projects/pdes/eikonal/)
+	* [Umfpack demo](projects/pdes/umfpack-demo/)
 
 * Squeezing and expanding matrices
 

@@ -1,0 +1,88 @@
+# Umfpack demo
+diego domenzain
+April 2021 @ Colorado School of Mines
+
+## Solve a sparse system of equations
+
+[![](../pics/sparse-simple.png)](./)
+
+__These scripts are an example of solving a sparse system of equations using UMFPACK.__
+
+This whole project is from [this great](https://userpages.umbc.edu/~rostamia/cbook/) book.
+
+## Sparse matrix
+
+We need three vectors: ```I, J``` and ```V```. 
+
+In *Matlab* this would be ```A = sparse(I,J,V)```.
+
+*Umfpack* wants them in *Compressed Column Storage* (**CSS**) notation, which is actually more clever.
+
+```matlab
+% A of size m by n
+m = 4;
+n = 5;
+A = [0 7 0 0 1; 0 4 0 3 0; 6 6 5 1 4; 5 5 0 0 0];
+
+% gives I, J and V,
+
+I = [2 3 0 1 2 3 2 1 2 0 2];
+J = [0 0 1 1 1 1 2 3 3 4 4];
+V = [6 5 7 4 6 5 5 3 1 1 4];
+
+A = sparse(I+1,J+1,V);
+
+% CSS notation asks for P.
+% P is a clever substitute for J.
+%
+% build of P is like so,
+% 
+% 0. P is of size columns of A,
+% 1. count repeated entries in J,
+% 2. sum these repetitions recursively and put partial results in P.
+
+% init P
+P = zeros(1,n);
+% count repeated entries in J
+2 4 1 2 2
+% sum them recursively and store (starts at 0)
+0, 2, 2+4=6, 6+1=7, 7+2=9, 9+2=11
+
+P = [0 2 6 7 9 11];
+
+% now A is given by I, P and V:
+
+P = [0 2 6 7 9 11]
+I = [2 3 0 1 2 3 2 1 2 0 2]
+V = [6 5 7 4 6 5 5 3 1 1 4]
+```
+
+## Umfpack install
+
+This is your problem. This code assumes this has already been done.
+
+The [Umfpack website](https://people.engr.tamu.edu/davis/suitesparse.html) might be a good place to start.
+
+In my personal computer the address to the *Umfpack* libs relative to this directory is:
+
+```../../../../SuiteSparse/UMFPACK/Include/umfpack.h```
+
+## Simple
+
+Simple, straight-forward, trackable example.
+
+```umfpack-simple.c```
+
+
+## Cool
+
+Builds on ```umfpack-simple.c```. Robust, trackable example.
+
+```umfpack-cool.c```
+
+## References
+[Programming Projects in C for Students of Engineering, Science, and Mathematics](https://userpages.umbc.edu/~rostamia/cbook/). *Rouben Rostamian*. SIAM, 2014.
+
+---
+
+[![](../pics/sparse-simple.png)](./)

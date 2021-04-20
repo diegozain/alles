@@ -56,6 +56,8 @@ Each image links to its project.
 [![](../projects/pdes/pics/korteweg_.png)](../projects/pdes/korteweg/)
 #### Eikonal solver
 [![](../projects/pdes/pics/eikonal_2d.png)](../projects/pdes/eikonal/)
+#### Umfpack demo
+[![](../projects/pdes/pics/sparse-simple.png)](../projects/pdes/umfpack-demo/)
 
 ## Squeezing and expanding matrices
 
