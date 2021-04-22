@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../../../src/c/sparse.h"
 #include "../../../src/c/xmalloc.h"
+#include "../../../src/c/array.h"
 #include "../../../../SuiteSparse/UMFPACK/Include/umfpack.h"
 // -----------------------------------------------------------------------------
 // solve Ax = b using LU decomposition with the the umfpack lib
@@ -9,42 +9,46 @@
 int main(void)
 {
     void *Symbolic, *Numeric;
-    double **A;
-    double *b, *x, *Ax;
-    int *Ap, *Ai;
+    double *b, *x;
     int n = 5;
-    int i, j, nz;
+    
+    int nz_ = 20; // nz_=20 is an overestimate, nz_=12 would do fine
+    int *Ti, *Tj;
+    double *Tx;
+    
+    int *Ap, *Ai;
+    double *Ax;
+    
+    int nz;
     // ----------------   matrix A ---------------------------------------------
-    make_matrix(A, n, n);
+    make_vector(Ti, nz_);
+    make_vector(Tj, nz_);
+    make_vector(Tx, nz_);
+    Ti[0] = 0; Tj[0] = 0; Tx[0] = 2;
+    Ti[1] = 1; Tj[1] = 0; Tx[1] = 3;
+    Ti[2] = 0; Tj[2] = 1; Tx[2] = 3;
+    Ti[3] = 2; Tj[3] = 1; Tx[3] = -1;
+    Ti[4] = 4; Tj[4] = 1; Tx[4] = 4;
+    Ti[5] = 1; Tj[5] = 2; Tx[5] = 4;
+    Ti[6] = 2; Tj[6] = 2; Tx[6] = -3;
+    Ti[7] = 3; Tj[7] = 2; Tx[7] = 1;
+    Ti[8] = 4; Tj[8] = 2; Tx[8] = 2;
+    Ti[9] = 2; Tj[9] = 3; Tx[9] = 2;
+    Ti[10]= 1; Tj[10]= 4; Tx[10]= 6;
+    Ti[11]= 4; Tj[11]= 4; Tx[11]= 1;
+    // ----------------   get CSS  ---------------------------------------------
+    make_vector(Ai, nz_);
+    make_vector(Ap, n+1);
+    make_vector(Ax, nz_);
+    umfpack_di_triplet_to_col(n, n, nz_, Ti, Tj, Tx, Ap, Ai, Ax, NULL);
     
-    // populate zeros
-    for(i=0; i<n; i++)
-        for(j=0; j<n; j++)
-            A[i][j] = 0.0;
-        
-    // populate non-zeros of A
-    // A:
-    // 2   3   0   0   0
-    // 3   0   4   0   6
-    // 0  -1  -3   2   0
-    // 0   0   1   0   0
-    // 0   4   2   0   1
-    A[0][0] = 2; A[0][1] = 3;
-    A[1][0] = 3; A[1][2] = 4; A[1][4] = 6;
-    A[2][1] = -1; A[2][2] = -3; A[2][3] = 2;
-    A[3][2] = 1;
-    A[4][1] = 4; A[4][2] = 2; A[4][4] = 1;
+    // get true number of nonzero elements
+    nz = Ap[n];
     
-    // number of non-zero entries of A
-    nz = nonz(A,n,n);
-    
-    // sparsify A
-    make_vector( Ap, n+1 );
-    Ap[0] = 0;
-    make_vector( Ai, nz );
-    make_vector( Ax, nz );
-    
-    sparse_pack(A, n, n, Ap, Ai, Ax);
+    // clean - we dont need these anymore
+    free_vector(Ti);
+    free_vector(Tj);
+    free_vector(Tx);
     // ----------------   vector b ---------------------------------------------
     make_vector(b, n);
     
@@ -61,10 +65,7 @@ int main(void)
     // get x with simple matrix-multiply from LU
     umfpack_di_solve(UMFPACK_A, Ap, Ai, Ax, x, b, Numeric, NULL, NULL);
     // ----------------   end of UMFPACK magic ---------------------------------
-    
     // print
-    printf("\nA:\n");
-    print_matrix("%7.2f", A, n, n);
     printf("b:\n");
     print_vector("%7.2f", b, n);
     printf("\n ----- solve Ax = b -----\n\n");
@@ -79,7 +80,6 @@ int main(void)
     print_vector("%7.2f", Ax, nz);
     // ----------------   clean up  --------------------------------------------
     // clean up
-    free_matrix(A);
     free_vector(b);
     free_vector(Ap);
     free_vector(Ai);

@@ -8,11 +8,13 @@
 
 # declare TARGET variable to handle output
 # 
-TARGET = umfpack-simple
+TARGET_SIMPLE = umfpack-simple
+TARGET_COOL = umfpack-cool
 
 # declare OFILES variable to handle names
 # 
-OFILES = umfpack-simple.o ../../../src/c/xmalloc.o ../../../src/c/sparse.o
+OFILES_SIMPLE = umfpack-simple.o ../../../src/c/xmalloc.o ../../../src/c/sparse.o
+OFILES_COOL = umfpack-cool.o ../../../src/c/xmalloc.o
 
 # declare LIBS variable to handle libs
 # 
@@ -26,15 +28,19 @@ CC = gcc
 # 
 CFLAGS = -Wall -pedantic -std=c99 -O2
 
-# compile
+# compile SIMPLE
 # 
-$(TARGET) : $(OFILES)
-	$(CC) $(OFILES) -o $@ $(LIBS)
-
+# $(TARGET_SIMPLE) : $(OFILES_SIMPLE)
+# 	$(CC) $(OFILES_SIMPLE) -o $@ $(LIBS)
+# compile COOL
+# 
+$(TARGET_COOL) : $(OFILES_COOL)
+	$(CC) $(OFILES_COOL) -o $@ $(LIBS)
 # clean
 # 
 clean:
-	rm -f $(OFILES)
+	rm -f $(OFILES_SIMPLE)
+	rm -f $(OFILES_COOL)
 
 # gcc -MM output. Generated after running:
 # 
@@ -42,39 +48,7 @@ clean:
 # 
 # $ gcc -MM $(CFIL) >>Makefile
 # 
-# NOTE: I dont know what all these local/include files are doing here lol
-umfpack-simple.o: umfpack-simple.c ../../../src/c/sparse.h ../../../src/c/array.h ../../../src/c/xmalloc.h ../../../../SuiteSparse/UMFPACK/Include/umfpack.h \
-  /usr/local/include/SuiteSparse_config.h \
-  /usr/local/include/umfpack_symbolic.h \
-  /usr/local/include/umfpack_numeric.h \
-  /usr/local/include/umfpack_solve.h \
-  /usr/local/include/umfpack_free_symbolic.h \
-  /usr/local/include/umfpack_free_numeric.h \
-  /usr/local/include/umfpack_defaults.h \
-  /usr/local/include/umfpack_qsymbolic.h \
-  /usr/local/include/umfpack_wsolve.h \
-  /usr/local/include/umfpack_triplet_to_col.h \
-  /usr/local/include/umfpack_col_to_triplet.h \
-  /usr/local/include/umfpack_transpose.h \
-  /usr/local/include/umfpack_scale.h \
-  /usr/local/include/umfpack_get_lunz.h \
-  /usr/local/include/umfpack_get_numeric.h \
-  /usr/local/include/umfpack_get_symbolic.h \
-  /usr/local/include/umfpack_save_numeric.h \
-  /usr/local/include/umfpack_load_numeric.h \
-  /usr/local/include/umfpack_save_symbolic.h \
-  /usr/local/include/umfpack_load_symbolic.h \
-  /usr/local/include/umfpack_get_determinant.h \
-  /usr/local/include/umfpack_report_status.h \
-  /usr/local/include/umfpack_report_info.h \
-  /usr/local/include/umfpack_report_control.h \
-  /usr/local/include/umfpack_report_matrix.h \
-  /usr/local/include/umfpack_report_triplet.h \
-  /usr/local/include/umfpack_report_vector.h \
-  /usr/local/include/umfpack_report_symbolic.h \
-  /usr/local/include/umfpack_report_numeric.h \
-  /usr/local/include/umfpack_report_perm.h \
-  /usr/local/include/umfpack_timer.h /usr/local/include/umfpack_tictoc.h \
-  /usr/local/include/amd.h /usr/local/include/umfpack_global.h
 xmalloc.o: ../../../src/c/xmalloc.c ../../../src/c/xmalloc.h
 sparse.o: ../../../src/c/sparse.c ../../../src/c/sparse.h ../../../src/c/array.h ../../../src/c/xmalloc.h
+umfpack-simple.o: umfpack-simple.c ../../../src/c/sparse.h ../../../src/c/array.h ../../../src/c/xmalloc.h ../../../../SuiteSparse/UMFPACK/Include/umfpack.h
+umfpack-cool.o: umfpack-cool.c ../../../src/c/array.h ../../../src/c/xmalloc.h ../../../../SuiteSparse/UMFPACK/Include/umfpack.h
