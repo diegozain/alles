@@ -79,12 +79,31 @@ $> ./umpfpack-simple
 
 ## ```umfpack-cool.c```
 
-Builds on ```umfpack-simple.c```. Robust, trackable example.
+Builds on ```umfpack-simple.c```. Mostly just adds error & warning handles.
 
 ```bash
 $> make
 $> make clean
 $> ./umpfpack-cool
+```
+
+## ```umfpack_cool.f90```
+
+Implements *Umfpack* in *Fortran*. Builds on ```umfpack-cool.c```.
+
+The error & warning handles of ```umfpack-cool.c``` are not implemented here. It is very difficult to find clear documentation of porting *Umfpack* to *Fortran* online.
+
+The "porting" is done via the *C* wrapper ```SuiteSparse/UMFPACK/Demo/umf4_f77wrapper.c```.
+
+Not all features of *Umfpack.c* are in *Umfpack.f*. For example, the matrix has to already be in CSS format. 
+
+Even more annoyingly, the names of the functions change when using *Umfpack.f*. For a dictionary of this nonsense, see the *Umfpack User Guide, Chapter 7* (in ```SuiteSparse/UMFPACK/Doc```).
+
+```bash
+$> gfortran -c umfpack_cool.f90
+$> gcc -c ../../../../SuiteSparse/UMFPACK/Demo/umf4_f77wrapper.c
+$> gfortran umfpack_cool.o umf4_f77wrapper.o -L../../../../SuiteSparse/lib -lumfpack 
+$> ./a.out
 ```
 
 ## References

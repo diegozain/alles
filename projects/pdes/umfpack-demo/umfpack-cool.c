@@ -4,7 +4,26 @@
 #include "../../../src/c/array.h"
 #include "../../../../SuiteSparse/UMFPACK/Include/umfpack.h"
 // -----------------------------------------------------------------------------
+// 
 // solve Ax = b using LU decomposition with the the umfpack lib
+// 
+// -----------------------------------------------------------------------------
+// some error nonsense
+static void error_and_exit(int status, const char *file, int line)
+{
+    fprintf(stderr, "*** file %s, line %d: ", file, line); 
+    switch (status) {
+        case UMFPACK_ERROR_out_of_memory: 
+            fprintf(stderr, "out of memory!\n"); 
+            break;
+        case UMFPACK_WARNING_singular_matrix: 
+            fprintf(stderr, "matrix is singular!\n"); 
+            break;
+        default: 
+            fprintf(stderr, "UMFPACK error code %d\n", status);
+    }
+    exit(EXIT_FAILURE);
+}
 // -----------------------------------------------------------------------------
 int main(void)
 {
@@ -12,7 +31,11 @@ int main(void)
     double *b, *x;
     int n = 5;
     
-    int nz_ = 20; // nz_=20 is an overestimate, nz_=12 would do fine
+    // nz_=20 is an overestimate, nz_=12 would do fine.
+    // however, vector I and J *can* be larger than nz.
+    // if so, the idea is to sum values in repeated entries.
+    // clever way for defining PDE matrices!
+    int nz_ = 20; 
     int *Ti, *Tj;
     double *Tx;
     
@@ -20,6 +43,8 @@ int main(void)
     double *Ax;
     
     int nz;
+    
+    int status;
     // ----------------   matrix A ---------------------------------------------
     make_vector(Ti, nz_);
     make_vector(Tj, nz_);
@@ -59,7 +84,9 @@ int main(void)
     // ----------------   UMFPACK magic ----------------------------------------
     make_vector(x,n);
     // get permutation matrices
-    umfpack_di_symbolic(n, n, Ap, Ai, Ax, &Symbolic, NULL, NULL);
+    status = umfpack_di_symbolic(n, n, Ap, Ai, Ax, &Symbolic, NULL, NULL);
+    if (status != UMFPACK_OK)
+          error_and_exit(status, __FILE__, __LINE__);
     // LU decomposition
     umfpack_di_numeric(Ap, Ai, Ax, Symbolic, &Numeric, NULL, NULL);
     // get x with simple matrix-multiply from LU

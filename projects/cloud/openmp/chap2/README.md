@@ -17,7 +17,7 @@ gfortran -fopenmp file.f90
 
 ### Simple openMP construct
 
-```fortran
+```fortran90
 use omp_lib
 
 integer :: it, sum_

@@ -12,12 +12,10 @@ TARGET_SIMPLE = umfpack-simple
 TARGET_COOL = umfpack-cool
 
 # declare OFILES variable to handle names
-# 
 OFILES_SIMPLE = umfpack-simple.o ../../../src/c/xmalloc.o ../../../src/c/sparse.o
 OFILES_COOL = umfpack-cool.o ../../../src/c/xmalloc.o
 
 # declare LIBS variable to handle libs
-# 
 LIBS = -L../../../../SuiteSparse/lib -lumfpack
 
 # choose compiler
@@ -28,12 +26,10 @@ CC = gcc
 # 
 CFLAGS = -Wall -pedantic -std=c99 -O2
 
-# compile SIMPLE
-# 
+# compile SIMPLE 
 # $(TARGET_SIMPLE) : $(OFILES_SIMPLE)
 # 	$(CC) $(OFILES_SIMPLE) -o $@ $(LIBS)
 # compile COOL
-# 
 $(TARGET_COOL) : $(OFILES_COOL)
 	$(CC) $(OFILES_COOL) -o $@ $(LIBS)
 # clean

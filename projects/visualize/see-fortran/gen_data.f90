@@ -21,7 +21,6 @@ program get_data
  integer two_d(nrows,ncols)
  ! -----------------------------------------------------------------------------
  ! 1D vector
- ! true source init 
  do it=1,nt
    t(it)=dble(it-1)*dt
    one_d(it)=dsin(t(it))
