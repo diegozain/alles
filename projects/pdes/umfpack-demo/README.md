@@ -110,5 +110,3 @@ $> ./a.out
 [Programming Projects in C for Students of Engineering, Science, and Mathematics](https://userpages.umbc.edu/~rostamia/cbook/). *Rouben Rostamian*. SIAM, 2014.
 
 ---
-
-[![](../pics/sparse-simple.png)](./)
