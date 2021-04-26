@@ -37,18 +37,36 @@ A = sparse(I+1,J+1,V);
 %
 % build of P is like so,
 % 
-% 0. P is of size columns of A plus 1,
-% 1. count repeated entries in J,
-% 2. sum these repetitions recursively and put partial results in P.
+% 1. P is of size columns of A plus 1,
+% 2. count repeated entries in J,
+% 3. sum these repetitions recursively and put partial results in P.
+% 
+% as a result, the last entry of P is the number of non-zero elements of A.
 
 % init P
-P = zeros(1,n+1);
+% P = zeros(1,n+1);
 % count repeated entries in J
-2 4 1 2 2
+% 2 4 1 2 2
 % sum them recursively and store (starts at 0)
-0, 2, 2+4=6, 6+1=7, 7+2=9, 9+2=11
+% 0, 2, 2+4=6, 6+1=7, 7+2=9, 9+2=11
+% 
+% for this example:
+% P = [0 2 6 7 9 11];
 
-P = [0 2 6 7 9 11];
+nz_ = numel(I);
+P = zeros(n+1,1);
+P(1)=0;
+ij = 1;
+for in=1:n
+ p_=1;
+ while ( ij<nz_ && J(ij)==J(ij+1) )
+  p_ = p_+1;
+  ij = ij+1;
+ end
+ ij=ij+1;
+ P(in+1) = P(in) + p_;
+end
+nz = P(n+1);
 
 % gives the CSS form by I, P and V:
 
@@ -91,13 +109,17 @@ $> ./umpfpack-cool
 
 Implements *Umfpack* in *Fortran*. Builds on ```umfpack-cool.c```.
 
-The error & warning handles of ```umfpack-cool.c``` are not implemented here. It is very difficult to find clear documentation of porting *Umfpack* to *Fortran* online.
+The error & warning handles of ```umfpack-cool.c``` are not implemented here. 
+
+It is very difficult to find clear documentation for porting *Umfpack* to *Fortran* online.
 
 The "porting" is done via the *C* wrapper ```SuiteSparse/UMFPACK/Demo/umf4_f77wrapper.c```.
 
 Not all features of *Umfpack.c* are in *Umfpack.f*. For example, the matrix has to already be in CSS format. 
 
-Even more annoyingly, the names of the functions change when using *Umfpack.f*. For a dictionary of this nonsense, see the *Umfpack User Guide, Chapter 7* (in ```SuiteSparse/UMFPACK/Doc```).
+Even more annoyingly, the names of the functions change when using *Umfpack.f*. 
+
+For a dictionary of this nonsense, see the *Umfpack User Guide, Chapter 7* (in ```SuiteSparse/UMFPACK/Doc```).
 
 ```bash
 $> gfortran -c umfpack_cool.f90
