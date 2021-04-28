@@ -55,6 +55,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Pixelating pics](projects/sque-exp/pixelate/) (for face-recognition-free profile pics)
 	* [Haar wavelet compression](projects/sque-exp/haar/)
 	* [Fast Fourier Transform](projects/sque-exp/fourier/)
+	* [Big Mat](projects/sque-exp/bigmat-matlab/)
 
 * Wave processing
 
