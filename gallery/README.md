@@ -58,6 +58,8 @@ Each image links to its project.
 [![](../projects/pdes/pics/eikonal_2d.png)](../projects/pdes/eikonal/)
 #### Umfpack demo
 [![](../projects/pdes/pics/sparse-simple.png)](../projects/pdes/umfpack-demo/)
+#### Helmholtz-Hodge Decomposition
+[![](../projects/pdes/pics/hhd.png)](../projects/pdes/hhd/)
 
 ## Squeezing and expanding matrices
 

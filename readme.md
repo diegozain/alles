@@ -47,6 +47,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Korteweg De Vries](projects/pdes/korteweg/)
 	* [Eikonal solver](projects/pdes/eikonal/)
 	* [Umfpack demo](projects/pdes/umfpack-demo/)
+	* [Helmholtz-Hodge Decomposition](projects/pdes/hhd/)
 
 * Squeezing and expanding matrices
 

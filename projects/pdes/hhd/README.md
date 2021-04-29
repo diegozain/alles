@@ -4,7 +4,7 @@ April 2021 @ Colorado School of Mines
 
 ## Discrete implementation of the Helmholtz-Hodge Decomposition
 
-[![](../pics/hdd-.png)](./)
+[![](../pics/hhd.png)](./)
 
 __These scripts are an example of solving the Helmholtz-Hodge Decomposition on a two-dimensional vector field.__
 
@@ -59,4 +59,4 @@ where g is the Green function that solves the Laplace equation on Ω with a sour
 
 ---
 
-[![](../pics/hdd.png)](./)
+[![](../pics/hhd-.png)](./)
