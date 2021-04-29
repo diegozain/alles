@@ -24,6 +24,10 @@ close all
 % 
 % lam = (vp.^2-2*vs.^2).*rho;
 % mu  = rho.*vs^2;
+% 
+% lam & mu kg/m/s^2
+% rho      kg/m^3
+% vp & vs  m/s
 % ------------------------------------------------------------------------------
 % 
 % the wave solver used here is identical to:

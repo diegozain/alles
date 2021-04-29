@@ -11,7 +11,7 @@ __This script is an example of density inversion at depth, jointly using gravity
 ```matlab
 the gravity field u = (ux,uy,uz) at point ro is given by,
 
-u = G int_V( rho(r) * (r-ro) / ||r-ro||^3 )
+u = G ∫_V ( ρ(r) * (r-ro) / ||r-ro||^3 )
 
 G is the gravitational constant
 where V is the integration volume
