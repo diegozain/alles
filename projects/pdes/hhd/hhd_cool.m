@@ -19,16 +19,11 @@ x=linspace(-1, 1,nx);
 dx=x(2)-x(1);
 dy=y(2)-y(1);
 % ------------------------------------------------------------------------------
-[Dy,Dx] = Dx_Dz(ny,nx);
-Dx=(1/dx)*Dx;
-Dy=(1/dy)*Dy;
-% ------------------------------------------------------------------------------
 [xx,yy] = meshgrid(x,y);
 
 ux =   sin(pi*xx).*cos(pi*yy) + sin(pi*yy).*cos(pi*xx) + 0.5*ones(ny,nx);
 % uy = - sin(pi*yy).*cos(pi*xx) + sin(pi*xx).*cos(pi*yy) - ones(ny,nx);
 uy =   -sin(pi*xx).*cos(pi*yy) - sin(pi*yy).*cos(pi*xx) + 0.5*ones(ny,nx);
-
 % ------------------------------------------------------------------------------
 figure;
 
@@ -48,9 +43,6 @@ set(gca,'ytick',[]);
 title('True uy')
 simple_figure()
 % ------------------------------------------------------------------------------
-ux = ux(:);
-uy = uy(:);
-% ------------------------------------------------------------------------------
 % 
 % 
 %                       helmholtz-hodge decomposition
@@ -60,11 +52,13 @@ uy = uy(:);
 tic;
 
 % compute derivatives
-uxx = Dx*ux;
-uyy = Dy*uy;
+uxx = differentiate_plane(ux.',dx);
+uxx = uxx.';
+uyy = differentiate_plane(uy,dy);
 
-uxy = Dy*ux;
-uyx = Dx*uy;
+uxy = differentiate_plane(ux,dy);
+uyx = differentiate_plane(uy.',dx);
+uyx = uyx.';
 
 divu = uxx + uyy;
 rotu = uyx - uxy;
@@ -91,23 +85,22 @@ for ix_=1:nx
   % manage singularity at source location
   g(iy_,ix_) = 0;
   % get phi_ values (integral is clunky: just sum)
-  a = g(:).*divu;
-  phi_(iy_,ix_) = sum(a)*dx*dy;
+  a = g.*divu;
+  phi_(iy_,ix_) = sum(a(:))*dx*dy;
   % get psi_ values (integral is clunky: just sum)
-  b = g(:).*rotu;
-  psi_(iy_,ix_) = sum(b)*dx*dy;
+  b = g.*rotu;
+  psi_(iy_,ix_) = sum(b(:))*dx*dy;
  end
 end
-
-phi_=phi_(:);
-psi_=psi_(:);
 % ------------------------------------------------------------------------------
 % rebuild
-phi_x = Dx*phi_;
-phi_y = Dy*phi_;
+phi_x = differentiate_plane(phi_.',dx);
+phi_x = phi_x.';
+phi_y = differentiate_plane(phi_,dy);
 
-psi_x = Dx*psi_;
-psi_y = Dy*psi_;
+psi_x = differentiate_plane(psi_.',dx);
+psi_x = psi_x.';
+psi_y = differentiate_plane(psi_,dy);
 
 hx = ux - phi_x - psi_y;
 hy = uy - phi_y + psi_x;
@@ -116,29 +109,16 @@ ux = phi_x + psi_y + hx;
 uy = phi_y - psi_x + hy;
 % ------------------------------------------------------------------------------
 % get derivatives 
-hxx = Dx*hx;
-hyy = Dy*hy;
+hxx = differentiate_plane(hx.',dx);
+hxx = hxx.';
+hyy = differentiate_plane(hy,dy);
 
-hxy = Dy*hx;
-hyx = Dx*hy;
+hxy = differentiate_plane(hx,dy);
+hyx = differentiate_plane(hy.',dx);
+hyx = hyx.';
 
 divh = hxx + hyy;
 roth = hyx - hxy;
-% ------------------------------------------------------------------------------
-ux=reshape(ux,ny,nx);
-uy=reshape(uy,ny,nx);
-
-phi_=reshape(phi_,ny,nx);
-psi_=reshape(psi_,ny,nx);
-
-phi_x=reshape(phi_x,ny,nx);
-phi_y=reshape(phi_y,ny,nx);
-
-psi_x=reshape(psi_x,ny,nx);
-psi_y=reshape(psi_y,ny,nx);
-
-hx=reshape(hx,ny,nx);
-hy=reshape(hy,ny,nx);
 
 toc;
 % ------------------------------------------------------------------------------

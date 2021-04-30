@@ -1,5 +1,6 @@
 # Helmholtz-Hodge Decomposition
 diego domenzain
+
 April 2021 @ Colorado School of Mines
 
 ## Discrete implementation of the Helmholtz-Hodge Decomposition
@@ -47,16 +48,18 @@ The idea is to incorporate open-flow boundary conditions in a *natural way*, wha
 
 This accomplished by "solving" for φ and ψ by putting ∇⋅∇ on the other side of the equality as ∫ _g_ ⋅ dΩ,
 
-φ(xo) = ∫ _g_ ∇ ⋅ **u** dΩ
+φ(**xo**) = ∫ _g_ ∇ ⋅ **u** dΩ
 
-ψ(xo) = - ∫ _g_ ∇⋅**J** **u** dΩ
+ψ(**xo**) = - ∫ _g_ ∇⋅**J** **u** dΩ
 
-where g is the Green function that solves the Laplace equation on Ω with a source at xo.
+where g is the Green function that solves the Laplace equation on Ω with a source at **xo**.
 
 ## References
 1. **The Natural Helmholtz-Hodge Decomposition for Open-Boundary Flow Analysis**. *Harsh Bhatia, Valerio Pascucci, Peer-Timo Bremer*. IEEE Transactions on Visualization and Computer Graphics, 2014.
 1. **The Helmholtz-Hodge Decomposition — A Survey**. *Harsh Bhatia, Gregory Norgard, Valerio Pascucci, Peer-Timo Bremer*. IEEE Transactions on Visualization and Computer Graphics, 2013.
 
 ---
+
+Below are φ and ψ.
 
 [![](../pics/hhd-.png)](./)
