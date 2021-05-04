@@ -54,6 +54,10 @@ This accomplished by "solving" for φ and ψ by putting ∇⋅∇ on the other s
 
 where g is the Green function that solves the Laplace equation on Ω with a source at **xo**.
 
+## Note
+
+I am not entirely sure the boundaries are well recovered. I should check that.
+
 ## References
 1. **The Natural Helmholtz-Hodge Decomposition for Open-Boundary Flow Analysis**. *Harsh Bhatia, Valerio Pascucci, Peer-Timo Bremer*. IEEE Transactions on Visualization and Computer Graphics, 2014.
 1. **The Helmholtz-Hodge Decomposition — A Survey**. *Harsh Bhatia, Gregory Norgard, Valerio Pascucci, Peer-Timo Bremer*. IEEE Transactions on Visualization and Computer Graphics, 2013.

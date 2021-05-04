@@ -38,6 +38,7 @@ If running *Matlab* projects, please set paths first by running the script:
 
 	* Spanning trees
 	* [Dijkstra algorithm](projects/graph-alg/dijkstra/)
+	* [Mesher](projects/graph-alg/mesher/)
 
 * Partial differential equations
 
@@ -56,7 +57,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Pixelating pics](projects/sque-exp/pixelate/) (for face-recognition-free profile pics)
 	* [Haar wavelet compression](projects/sque-exp/haar/)
 	* [Fast Fourier Transform](projects/sque-exp/fourier/)
-	* [Big Mat](projects/sque-exp/bigmat-matlab/)
+	* [Big Mat](projects/sque-exp/bigmat-matlab/) (pass-by-reference in Matlab)
 
 * Wave processing
 

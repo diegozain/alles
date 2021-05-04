@@ -1,5 +1,6 @@
 clear
 close all
+addpath('src/');
 % ------------------------------------------------------------------------------
 % diego domenzain
 % 
@@ -24,6 +25,8 @@ dy=y(2)-y(1);
 ux =   sin(pi*xx).*cos(pi*yy) + sin(pi*yy).*cos(pi*xx) + 0.5*ones(ny,nx);
 % uy = - sin(pi*yy).*cos(pi*xx) + sin(pi*xx).*cos(pi*yy) - ones(ny,nx);
 uy =   -sin(pi*xx).*cos(pi*yy) - sin(pi*yy).*cos(pi*xx) + 0.5*ones(ny,nx);
+
+clear xx yy
 % ------------------------------------------------------------------------------
 figure;
 
@@ -50,48 +53,7 @@ simple_figure()
 % 
 % ------------------------------------------------------------------------------
 tic;
-
-% compute derivatives
-uxx = differentiate_plane(ux.',dx);
-uxx = uxx.';
-uyy = differentiate_plane(uy,dy);
-
-uxy = differentiate_plane(ux,dy);
-uyx = differentiate_plane(uy.',dx);
-uyx = uyx.';
-
-divu = uxx + uyy;
-rotu = uyx - uxy;
-% ------------------------------------------------------------------------------
-% solve
-% ------------------------------------------------------------------------------
-% 
-% unfourtantely, this one does not work :(
-% 
-% L = Dx*Dx + Dy*Dy;
-% 
-% phi_ = L \ divu;
-% psi_ = L \ rotu;
-% ------------------------------------------------------------------------------
-phi_=zeros(ny,nx);
-psi_=zeros(ny,nx);
-
-for ix_=1:nx
- for iy_=1:ny
-  % compute green's solution with source at (xo,yo)
-  xo=x(ix_);
-  yo=y(iy_);
-  g = - (1/2/pi)*log( sqrt( ( xx-xo ).^2 + ( yy-yo ).^2 ) );
-  % manage singularity at source location
-  g(iy_,ix_) = 0;
-  % get phi_ values (integral is clunky: just sum)
-  a = g.*divu;
-  phi_(iy_,ix_) = sum(a(:))*dx*dy;
-  % get psi_ values (integral is clunky: just sum)
-  b = g.*rotu;
-  psi_(iy_,ix_) = sum(b(:))*dx*dy;
- end
-end
+[phi_,psi_] = hhd(ux,uy,x,y);
 % ------------------------------------------------------------------------------
 % rebuild
 phi_x = differentiate_plane(phi_.',dx);

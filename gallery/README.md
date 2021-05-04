@@ -39,6 +39,8 @@ Each image links to its project.
 #### Spanning trees
 #### Dijkstra algorithm
 [![](../projects/graph-alg/pics/dijkstra-10nodes.png)](../projects/graph-alg/dijkstra/)
+#### Mesher
+[![](../projects/graph-alg/pics/mesh-grid-graph-indexes.png)](../projects/graph-alg/mesher/)
 
 ## Partial differential equations
 
