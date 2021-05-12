@@ -16,6 +16,10 @@ C     Copyright 1984-2011 The MathWorks, Inc.
 C     
 C======================================================================
 C     Gateway routine
+C      nlhs: # of input arguments
+C      plhs: output matrix
+C      nrhs: # of output arguments
+C      prhs: input matrix
       subroutine mexFunction(nlhs, plhs, nrhs, prhs)
 
 C     Declarations

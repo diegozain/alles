@@ -40,9 +40,9 @@ J = [0 -1]
     [1  0]
 ```
 
-## Boundary conditions
+## Approach 1
 
-There are a couple of different approaches for finding φ and ψ. Here, I follow the work cited in the References.
+There are a couple of different approaches for finding φ and ψ. Here, I follow *Harsh Bhatia et al*.
 
 The idea is to incorporate open-flow boundary conditions in a *natural way*, whatever that means.
 
@@ -54,9 +54,29 @@ This accomplished by "solving" for φ and ψ by putting ∇⋅∇ on the other s
 
 where g is the Green function that solves the Laplace equation on Ω with a source at **xo**.
 
-## Note
+**Note:** I am not entirely sure the boundaries are well recovered. I should check that.
 
-I am not entirely sure the boundaries are well recovered. I should check that.
+All these implement this idea:
+```
+hhd_simple.m (60 seconds)
+hhd_cool.m   (60 seconds)
+hhd_cooler.m the integral operator is coded in Fortran-Mex (no speed-up 😢)
+hhd_faster.m the integral operator is stored in memory (0.01 seconds but lots of memory)
+``` 
+
+## Approach 2
+
+Discretize the operator ∇⋅∇ and solve for:
+
+∇⋅∇ φ = ∇ ⋅ **u**
+
+∇⋅∇ ψ = -∇⋅**J** **u**
+
+This one implements this idea,
+```
+hhd_fast.m (0.5 seconds, light on memory)
+```
+The Laplacian operator is built using the *alles/projects/graph-alg/mesher/* project.
 
 ## References
 1. **The Natural Helmholtz-Hodge Decomposition for Open-Boundary Flow Analysis**. *Harsh Bhatia, Valerio Pascucci, Peer-Timo Bremer*. IEEE Transactions on Visualization and Computer Graphics, 2014.

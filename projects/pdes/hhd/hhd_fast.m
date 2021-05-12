@@ -1,6 +1,7 @@
 clear
 close all
 addpath('src/');
+addpath('../../graph-alg/mesher/src/');
 % ------------------------------------------------------------------------------
 % diego domenzain
 % 
@@ -60,8 +61,23 @@ simple_figure()
 % 
 % 
 % ------------------------------------------------------------------------------
+a=ones(ny,nx);
+% in this case, n_g2m = nx*ny because there are no holes in the domain
+n_g2m = n_g2m_(a,nx,ny); 
+[graph2mesh,mesh2graph] = g2m_m2g(a,nx,ny,n_g2m);
+neigh_mesh = neigh_mesh_(a,nx,ny,n_g2m,graph2mesh);
+neigh_graph= neigh_graph_(neigh_mesh,mesh2graph,n_g2m);
+neigh_type = neigh_type_(a,nx,ny,n_g2m,graph2mesh);
+[n_ij,n_IJ]= nIJ(n_g2m,neigh_type);
+[I,J] = IJ_(n_g2m,n_ij,n_IJ,neigh_graph);
+V = div_c_grad(n_g2m,n_ij,n_IJ,neigh_type,I,J,1);
+L = sparse(I,J,V);
+
+clear n_g2m;
+clear a graph2mesh mesh2graph neigh_mesh neigh_graph neigh_type n_ij n_IJ I J;
+% ------------------------------------------------------------------------------
 tic;
-[phi_,psi_] = hhd(ux,uy,x,y);
+[phi_,psi_] = hhd_L(ux,uy,dx,dy,nx,ny,L);
 % ------------------------------------------------------------------------------
 % rebuild
 phi_x = differentiate_plane(phi_.',dx);

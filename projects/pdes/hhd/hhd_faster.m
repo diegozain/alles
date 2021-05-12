@@ -1,6 +1,7 @@
 clear
 close all
 addpath('src/');
+addpath('../../graph-alg/mesher/src/');
 % ------------------------------------------------------------------------------
 % diego domenzain
 % 
@@ -11,8 +12,8 @@ addpath('src/');
 % Harsh Bhatia, Valerio Pascucci, Peer-Timo Bremer. 
 % IEEE Transactions on Visualization and Computer Graphics, 2014.
 % ------------------------------------------------------------------------------
-nx=200;
-ny=200;
+nx=50;
+ny=50;
 % ------------------------------------------------------------------------------
 y=linspace(-1, 1,ny);
 x=linspace(-1, 1,nx);
@@ -60,8 +61,26 @@ simple_figure()
 % 
 % 
 % ------------------------------------------------------------------------------
+[xx,yy] = meshgrid(x,y);
+
+L_=zeros(nx*ny,nx*ny);
+
+for ix_=1:nx
+ for iy_=1:ny
+  % compute green's solution with source at (xo,yo)
+  xo=x(ix_);
+  yo=y(iy_);
+  g = - (1/2/pi)*log( sqrt( ( xx-xo ).^2 + ( yy-yo ).^2 ) );
+  % manage singularity at source location
+  g(iy_,ix_) = 0;
+  % get integral operator
+  il = sub2ind([ny,nx],iy_,ix_);
+  L_(:,il) = g(:);
+ end
+end
+% ------------------------------------------------------------------------------
 tic;
-[phi_,psi_] = hhd(ux,uy,x,y);
+[phi_,psi_] = hhd_L_(ux,uy,dx,dy,nx,ny,L_);
 % ------------------------------------------------------------------------------
 % rebuild
 phi_x = differentiate_plane(phi_.',dx);

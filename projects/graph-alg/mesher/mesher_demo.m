@@ -77,9 +77,14 @@ addpath('src');
 % 
 % that is, columns 1, 2, 3, and 4 represent neighbors right, up, left and down.
 % ------------------------------------------------------------------------------
-% setup a simple example
+% -- setup a simple example
+% % crooked with a hole
 % a = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1];
+% crooked but hole is bigger
 a = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
+% full with no holes
+a = [1 1 1 1 1 1 1; 1 1 1 1 1 1 1; 1 1 1 1 1 1 1; 1 1 1 1 1 1 1; 1 1 1 1 1 1 1];
+% a=ones(100,100);
 [nz,nx]=size(a);
 % ------------------------------------------------------------------------------
 % this is only for easy reference:
@@ -162,6 +167,12 @@ neigh_type = neigh_type_(a,nx,nz,n_g2m,graph2mesh);
 % and then each neighbor of i (in the graph) in the subsequent entries.
 % ------------------------------------------------------------------------------
 [I,J] = IJ_(n_g2m,n_ij,n_IJ,neigh_graph);
+% ------------------------------------------------------------------------------
+% this next section can be substituted by 
+% 
+% V = div_c_grad(n_g2m,n_ij,n_IJ,neigh_type,I,J,c);
+% 
+% but as noted in src/div_c_grad.m this function needs to include more things!
 % ------------------------------------------------------------------------------
 V = zeros(n_IJ,1);
 il = 1;

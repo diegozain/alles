@@ -79,6 +79,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* Plot output from *C*
 	* [Plot output from *Fortran*](projects/visualize/see-fortran/)
 	* Plot output from *Julia*
+	* [*Fortran* in *Matlab*](projects/visualize/finmatlab/)
 	
 * Deep learning
 	
