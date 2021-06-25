@@ -1,4 +1,4 @@
-function y = geom_median(r,guess)
+function y = geom_median(r)
 % diego domenzain
 % spring 2018 @ TUDelft
 % ------------------------------------------------------------------------------

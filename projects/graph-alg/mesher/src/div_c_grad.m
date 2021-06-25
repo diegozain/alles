@@ -40,7 +40,7 @@ for i_g2m=1:n_g2m
         % J(ii) gives neighbor of ith node.
         % 
         % the harmonic average would be:
-        % sig_ij_ = ( 2*sig(J(il)) * sig(J(ii)) ) / ( sig(J(il)) + sig(J(ii)) )
+        % c_ij_ = ( 2*c(J(il)) * c(J(ii)) ) / ( c(J(il)) + c(J(ii)) )
     end
     % robin nodes are summed to 'ith'
     for i_nei=1:4

@@ -25,7 +25,6 @@ function [I,J] = IJ_(n_g2m,n_ij,n_IJ,neigh_graph)
 % J needs to have the number i in the first entry, 
 % and then each neighbor of i (in the graph) in the subsequent entries.
 % ------------------------------------------------------------------------------
-% I
 I = zeros(n_IJ,1);
 J = zeros(n_IJ,1);
 il = 1;

@@ -11,9 +11,11 @@ __how could people be as close together while still distancing themselves?__
 A similar problem called _circle packing_ has been solved in the literature.
 This problem aims to enclose _n_ circles of the same radii in the smallest possible circle.
 
-[Circle packing in Wikipedia](https://en.wikipedia.org/wiki/Circle_packing_in_a_circle)
-[Awesome and long list of known circle packings](http://hydra.nat.uni-magdeburg.de/packing/cci/)
-Graham, Ronald L., et al. _Dense packings of congruent circles in a circle._ Discrete Mathematics 181.1-3 (1998): 139-154.
+* [Circle packing in Wikipedia](https://en.wikipedia.org/wiki/Circle_packing_in_a_circle)
+
+* [Awesome and long list of known circle packings](http://hydra.nat.uni-magdeburg.de/packing/cci/)
+
+* Graham, Ronald L., et al. _Dense packings of congruent circles in a circle._ Discrete Mathematics 181.1-3 (1998): 139-154.
 
 The approach for solving the _circle packing_ problem is to 
 

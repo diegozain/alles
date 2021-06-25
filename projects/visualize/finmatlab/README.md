@@ -8,6 +8,15 @@ Taken from [the *Matlab* docs](https://www.mathworks.com/help/matlab/matlab_exte
 
 See [here](https://www.mathworks.com/help/matlab/matlab_external/table-of-mex-file-source-code-files.html) for more examples.
 
+An example with matrix I/O can be found in 
+```
+projects/pdes/hdd/src/hhd_solve.F
+```
+which is used in 
+```
+projects/pdes/hdd/src/hhd_.m & projects/pdes/hdd/hhd_cooler.m
+```
+
 ## Basic technicalities 
 
 Main *Fortran* routine is,

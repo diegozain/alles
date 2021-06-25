@@ -61,7 +61,7 @@ All these implement this idea:
 hhd_simple.m (60 seconds)
 hhd_cool.m   (60 seconds)
 hhd_cooler.m the integral operator is coded in Fortran-Mex (no speed-up 😢)
-hhd_faster.m the integral operator is stored in memory (0.01 seconds but lots of memory)
+hhd_faster.m the integral operator is stored in memory (lots of memory, my computer did not like it)
 ``` 
 
 ## Approach 2
