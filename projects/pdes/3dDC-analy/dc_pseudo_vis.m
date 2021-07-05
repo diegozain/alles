@@ -5,9 +5,26 @@ clc
 addpath('src');
 % ------------------------------------------------------------------------------
 % total number of electrodes
-nelectrodes=18; % 32; 
+nelectrodes=14; % 32; 
+% ------------------------------------------------------------------------------
 % declare all electrode positions
+% ------------------------------------------------------------------------------
+% boring setup for borehole stuff
 electrodes=[1*ones(nelectrodes/2,1) (linspace(1,nelectrodes*0.5,nelectrodes/2)).'; 4*ones(nelectrodes/2,1) (linspace(1,nelectrodes*0.5,nelectrodes/2)).'];
+
+xmin=min(electrodes(:,1));
+xmax=max(electrodes(:,1));
+zmin=min(electrodes(:,2));
+zmax=max(electrodes(:,2));
+% ------------------------------------------------------------------------------
+% % awesome version for random shit
+% xmin=1;
+% xmax=2;
+% zmin=1;
+% zmax=2;
+% 
+% electrodes=[xmin+(xmax-xmin)*rand(nelectrodes/2,1) zmin+(zmax-zmin)*rand(nelectrodes/2,1); xmin+(xmax-xmin)*rand(nelectrodes/2,1) zmin+(zmax-zmin)*rand(nelectrodes/2,1)];
+% ------------------------------------------------------------------------------
 % # of electrodes that will be Tx
 nTx=nelectrodes/2;
 % ------------------------------------------------------------------------------
@@ -37,8 +54,8 @@ end
 hold off;
 axis image;
 axis ij
-xlim([0.75,4.25])
-ylim([0,nelectrodes*0.5+1])
+xlim([xmin-1,xmax+1])
+ylim([0,zmax+1])
 xlabel('Length (m)')
 ylabel('Depth (m)')
 title('All AB.MN pseudo locations')
@@ -94,62 +111,8 @@ for iklu=1:nklu
   % 
   % so far, the clusters are of size:
   % 3, 5, 6, 9, 10, 14, 15, 19, 20, 21, 28, 36, 45, 50, 55, 66, 78
-  if (nklu_==3)
-    colo=[0.5,0,0];
-    msize=10;
-  elseif (nklu_==5)
-    colo=[1,0,0];
-    msize=15;
-  elseif (nklu_==6)
-    colo=[0,0.5,0];
-    msize=20;
-  elseif (nklu_==9)
-    colo=[0,1,0];
-    msize=22;
-  elseif (nklu_==10)
-    colo=[0,0,0.5];
-    msize=24;
-  elseif (nklu_==14)
-    colo=[0,0,1];
-    msize=26;
-  elseif (nklu_==15)
-    colo=[0.5,0.5,0];
-    msize=28;
-  elseif (nklu_==19)
-    colo=[1,0.5,0];
-    msize=30;
-  elseif (nklu_==20)
-    colo=[1,1,0];
-    msize=32;
-  elseif (nklu_==21)
-    colo=[1,1,0.5];
-    msize=34;
-  elseif (nklu_==28)
-    colo=[0.5,0,0.5];
-    msize=36;
-  elseif (nklu_==36)
-    colo=[1,0,0.5];
-    msize=38;
-  elseif (nklu_==45)
-    colo=[1,0,1];
-    msize=40;
-  elseif (nklu_==50)
-    colo=[1,0.5,1];
-    msize=42;
-  elseif (nklu_==55)
-    colo=[0,0.5,0.5];
-    msize=44;
-  elseif (nklu_==66)
-    colo=[0,1,0.5];
-    msize=46;
-  elseif (nklu_==78)
-    colo=[0,1,1];
-    msize=48;
-  else
-    colo=[0,0,0];
-    msize=50;
-    fprintf('new cluster size! =%i\n',nklu_)
-  end
+  msize = nklu_*3;
+  colo=[0.0941,0.3961,0.8667];
 
   plot(pseud(klusters_{iklu},1),pseud(klusters_{iklu},2),'.','markersize',msize,'color',colo)
 
@@ -163,8 +126,8 @@ end
 hold off;
 axis ij
 axis image;
-xlim([0.75,4.25])
-ylim([0,nelectrodes*0.5+1])
+xlim([xmin-1,xmax+1])
+ylim([0,zmax+1])
 xlabel('Length (m)')
 ylabel('Depth (m)')
 title('Repeated locations')
@@ -196,8 +159,8 @@ end
 hold off;
 axis image;
 axis ij
-xlim([0.75,4.25])
-ylim([0,nelectrodes*0.5+1])
+xlim([xmin-1,xmax+1])
+ylim([0,zmax+1])
 xlabel('Length (m)')
 ylabel('Depth (m)')
 title('Pseudo sections')
@@ -210,8 +173,11 @@ simple_figure()
 nx = 6e2;
 nz = 6e2;
 
-x=linspace(0,5,nx);
-z=linspace(0,nelectrodes*0.5+1,nz);
+% x=linspace(xmin-1,xmax+1,nx);
+% z=linspace(0,zmax+1,nz);
+
+x=linspace(xmin-0.25,xmax+0.25,nx);
+z=linspace(zmin-0.25,zmax+0.25,nz);
 
 [X,Z] = meshgrid(x,z);
 
@@ -219,7 +185,8 @@ dx=x(2)-x(1);
 dz=z(2)-z(1);
 % ------------------------------------------------------------------------------
 figure;
-for iexample=1:12
+% for iexample=1:12
+for iexample=1:18
   % choose abmn configuration
   iabmn=randi(nabmn);
 
@@ -231,17 +198,64 @@ for iexample=1:12
   % ----------------------------------------------------------------------------
   psi_  = sensitivity_3dDC(X,Z,dx,dz,source_p,source_n,rec_p,rec_n);
   % ----------------------------------------------------------------------------
-  subplot(2,6,iexample)
+  % subplot(2,6,iexample)
+  subplot(3,6,iexample)
   fancy_imagesc(psi_,x,z)
   colormap(rainbow2_cb(1))
-  caxis(5e-3*[-1 1])
+  % caxis(5e-3*[-1 1])
+  caxis(3e-4*[-max(psi_(:)) max(psi_(:))])
   colorbar('off')
-  hold on;
-  plot(pseud(iabmn,1),pseud(iabmn,2),'.','markersize',40,'color',[0.1529,0.7686,0.0980])
-  plot(pseud(iabmn,1),pseud(iabmn,2),'w.','markersize',20)
-  hold off;
+  % hold on;
+  % plot(pseud(iabmn,1),pseud(iabmn,2),'.','markersize',40,'color',[0.1529,0.7686,0.0980])
+  % plot(pseud(iabmn,1),pseud(iabmn,2),'w.','markersize',20)
+  % hold off;
   set(gca,'xtick',[])
   set(gca,'ytick',[])
 end
 simple_figure()
+% ------------------------------------------------------------------------------
+% 
+% visualize just all mn with one common ab 
+% 
+% ------------------------------------------------------------------------------
+tic;
+s_i_r_d_std = dc_bundle( abmn(:,1:2),ones(nabmn,1),abmn(:,3:4),ones(nabmn,1),zeros(nabmn,1) );
+toc;
+nsources = size(s_i_r_d_std,2);
+% ------------------------------------------------------------------------------
+fprintf(' -- just finished bundling abmn -- \n\n')
+% ------------------------------------------------------------------------------
+figure;
+% isources=randi(nsources,12,1);
+isources=randi(nsources,2,1);
+% for iexample=1:12
+for iexample=1:2
+  % choose abmn configuration
+  isource=isources(iexample);
+  src = s_i_r_d_std{ isource }{ 1 }(1:2);
+  recs= s_i_r_d_std{ isource }{ 2 }(:,1:2);
+  psi_  = sensitivity_3dDC(X,Z,dx,dz,electrodes(src(1),:),electrodes(src(2),:),electrodes(recs(:,1),:),electrodes(recs(:,2),:));
+  % ----------------------------------------------------------------------------
+  % % to smooth within a wavelength lo,
+  % % ax=1/lo; az=1/lo;
+  % % ax=ax*dx;
+  % % az=az*dz;
+  % ax=1;
+  % az=1;
+  % ax=ax*dx;
+  % az=az*dz;
+  % psi_ = smooth2d(psi_,ax,az);
+  % ----------------------------------------------------------------------------
+  % subplot(2,6,iexample)
+  % subplot(3,4,iexample)
+  subplot(1,2,iexample)
+  fancy_imagesc(psi_,x,z)
+  colormap(rainbow2_cb(1))
+  % caxis(7e-2*[-1 1])
+  caxis(1e-4*[-max(psi_(:)) max(psi_(:))])
+  colorbar('off')
+  set(gca,'xtick',[])
+  set(gca,'ytick',[])
+  simple_figure()
+end
 % ------------------------------------------------------------------------------

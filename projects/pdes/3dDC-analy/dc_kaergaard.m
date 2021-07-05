@@ -43,7 +43,7 @@ ymin = 0;
 xyunique = unique(electrodes(:,1:2),'rows');
 % ------------------------------------------------------------------------------
 figure;
-
+% 3d plot
 subplot(1,2,1)
 scatter3(electrodes(:,1),electrodes(:,2),electrodes(:,3),50,(1:nelectrodes),'filled')
 colormap(rainbow2_cb(1))
@@ -59,6 +59,7 @@ zlabel('Depth (m)')
 title('Electrode positions xyz')
 simple_figure();
 
+% 2d-xy plot
 subplot(1,2,2)
 plot(xyunique(:,1),xyunique(:,2),'k.','markersize',30)
 axis ij

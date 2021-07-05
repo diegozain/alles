@@ -10,16 +10,20 @@ nrepeat=0;
 nklu =0;
 nklu_=2;
 klu  =0;
+klu_ =0;
 klu_tmp=0;
 klusters=[];
 
 iabmn_=2;
 for iabmn=1:(nabmn-1)
+  % this ensures we dont count repetitions twice
+  klu = find(repeated==iabmn);
+  klu = numel(klu);
  for iiabmn=iabmn_:nabmn
     % this ensures we dont count repetitions twice
-    klu = find(repeated==iiabmn);
-    klu = numel(klu);
-    if (norm(pseud(iabmn,:)-pseud(iiabmn,:)) < 1e-3 && klu < 1)
+    klu_= find(repeated==iiabmn);
+    klu_= numel(klu_);
+    if (norm(pseud(iabmn,:)-pseud(iiabmn,:)) < 1e-3 && klu < 1 && klu_ < 1)
       % ------------------------------------------------------------------------
       % repeated elements (step 1)
       % ------------------------------------------------------------------------
@@ -28,11 +32,12 @@ for iabmn=1:(nabmn-1)
       nrepeat=nrepeat+2;
       
       repeated = [repeated; iabmn; iiabmn];
-      nrep_=find(repeated==iabmn);
-      nrep_=numel(nrep_);
       
-      nrep__=find(repeated==iiabmn);
-      nrep__=numel(nrep__);
+      nrep_ = find(repeated==iabmn);
+      nrep_ = numel(nrep_);
+      
+      nrep__= find(repeated==iiabmn);
+      nrep__= numel(nrep__);
       
       % prune list
       if (nrep_ > 1)
@@ -61,14 +66,14 @@ for iabmn=1:(nabmn-1)
       % iabmn & iiabmn 24 29 <-- switch
       % iabmn & iiabmn 24 34
       
-      if (klu_tmp~=iabmn)
+      if (klu_tmp ~= iabmn)
         nklu    = nklu+1;
         klu_tmp = iabmn;
         
-        klusters=[klusters; nklu_];
-        nklu_=2;
+        klusters= [klusters; nklu_];
+        nklu_   = 2;
       else
-        nklu_=nklu_+1;
+        nklu_   = nklu_+1;
       end
       % ------------------------------------------------------------------------
     end
@@ -91,9 +96,6 @@ for iklu=1:nklu
   klusters_{iklu} = repeated(iklu_:(klusters(iklu__)+iklu_-1));
   iklu_ =iklu_+klusters(iklu__);
   iklu__=iklu__+1;
-  % an error here means the double precission when comparing 
-  % pseud locations is not enough.
-  % in that case, you need to space the electrodes further appart.
 end
 % to check, this should output all coordinates equal
 % pseud(klusters_{iklu},:)

@@ -31,3 +31,6 @@ test/
 kate/
 outside-code/
 kaergaard-data/
+
+*.fwr
+*.rap

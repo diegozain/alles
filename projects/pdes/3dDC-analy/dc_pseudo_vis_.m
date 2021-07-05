@@ -5,19 +5,27 @@ clc
 addpath('src');
 % ------------------------------------------------------------------------------
 % total number of electrodes
-nelectrodes=18; % 32; 
+nelectrodes  = 48; % 64 48
 % ------------------------------------------------------------------------------
-% declare all electrode positions
-electrodes=[1*ones(nelectrodes/2,1) (linspace(1,nelectrodes*0.5,nelectrodes/2)).'; 4*ones(nelectrodes/2,1) (linspace(1,nelectrodes*0.5,nelectrodes/2)).'];
+fprintf('total # of electrodes = %i\n',nelectrodes)
 % ------------------------------------------------------------------------------
+ielect_start = 4;
+ielect_inter = 4;
 % electrode indexes that will be Tx
-Tx_ = uint32((3:3:9).');
+Tx_ = uint32((ielect_start:ielect_inter:(nelectrodes*0.5)).');
 % electrode indexes that will be Rx
-Rx_ = uint32((10:18).');
+Rx_ = uint32(((nelectrodes*0.5 + 1):nelectrodes).');
 % ------------------------------------------------------------------------------
 % get all abmn pairs
 abmn = xbore_getall_(Tx_,Rx_);
 nabmn= size(abmn,1);
+% ------------------------------------------------------------------------------
+% declare all electrode positions
+xmin = 1;
+xmax = 4;
+zmin = 1;
+zmax = 1 * nelectrodes*0.5;
+electrodes=[xmin*ones(nelectrodes/2,1) (linspace(zmin,zmax,nelectrodes/2)).'; xmax*ones(nelectrodes/2,1) (linspace(zmin,zmax,nelectrodes/2)).'];
 % ------------------------------------------------------------------------------
 fprintf('total # of abmn quadruples = %i\n',nabmn)
 % ------------------------------------------------------------------------------
@@ -31,18 +39,17 @@ fprintf(' -- just finished all pseudo locations -- \n\n')
 figure;
 subplot(1,3,1)
 hold on;
-for ie=1:nelectrodes
-plot(electrodes(ie,1),electrodes(ie,2),'k.','markersize',40)
-end
-for iabmn=1:nabmn
-plot(pseud(iabmn,1),pseud(iabmn,2),'r.','markersize',20)
-% plot(pseud(iabmn,1),pseud(iabmn,2),'.')
-end
+
+plot(electrodes(Rx_(:),1),electrodes(Rx_(:),2),'k.','markersize',40)
+plot(electrodes(Tx_(:),1),electrodes(Tx_(:),2),'.','markersize',40,'color',[0.5,0.5,0.5])
+
+plot(pseud(:,1),pseud(:,2),'.','color',[0.9098,0.2196,0.1451],'markersize',20)
+
 hold off;
 axis ij;
 axis image;
-xlim([0.75,4.25])
-ylim([0,nelectrodes*0.5+1])
+xlim([xmin-2,xmax+2])
+ylim([0,zmax+2])
 xlabel('Length (m)')
 ylabel('Depth (m)')
 title('All AB.MN pseudo locations')
@@ -55,11 +62,12 @@ simple_figure()
 % 
 % #3 proceeds to make a vector 'klusters' where entries are how many elements 
 % repeated elements belong to a cluster (they are ordered that way).
+% 
 % example (not real example):
 % 
-% repeated = [2; 4; 6; 10; 11; 15]
+% repeated    = [2; 4; 6; 10; 11; 15]
 % if clusters = [2 4] , [6 10 11 15], then
-% klusters = [2; 4]
+%    klusters = [2; 4]
 % ------------------------------------------------------------------------------
 tic;
 [klusters_,repeated] = xbore_clusters(abmn,pseud);
@@ -74,9 +82,8 @@ fprintf('total # of clusters        = %i\n\n',nklu)
 % ------------------------------------------------------------------------------
 subplot(1,3,2)
 hold on;
-for ie=1:nelectrodes
-plot(electrodes(ie,1),electrodes(ie,2),'.','markersize',40,'color',[0.5,0.5,0.5])
-end
+plot(electrodes(Rx_(:),1),electrodes(Rx_(:),2),'k.','markersize',40)
+plot(electrodes(Tx_(:),1),electrodes(Tx_(:),2),'.','markersize',40,'color',[0.5,0.5,0.5])
 % iabmn=1;
 for iklu=1:nklu 
   % fprintf('cluster #%i\n',iklu)
@@ -93,77 +100,23 @@ for iklu=1:nklu
   % 
   % so far, the clusters are of size:
   % 3, 5, 6, 9, 10, 14, 15, 19, 20, 21, 28, 36, 45, 50, 55, 66, 78
-  if (nklu_==3)
-    colo=[0.5,0,0];
-    msize=10;
-  elseif (nklu_==5)
-    colo=[1,0,0];
-    msize=15;
-  elseif (nklu_==6)
-    colo=[0,0.5,0];
-    msize=20;
-  elseif (nklu_==9)
-    colo=[0,1,0];
-    msize=22;
-  elseif (nklu_==10)
-    colo=[0,0,0.5];
-    msize=24;
-  elseif (nklu_==14)
-    colo=[0,0,1];
-    msize=26;
-  elseif (nklu_==15)
-    colo=[0.5,0.5,0];
-    msize=28;
-  elseif (nklu_==19)
-    colo=[1,0.5,0];
-    msize=30;
-  elseif (nklu_==20)
-    colo=[1,1,0];
-    msize=32;
-  elseif (nklu_==21)
-    colo=[1,1,0.5];
-    msize=34;
-  elseif (nklu_==28)
-    colo=[0.5,0,0.5];
-    msize=36;
-  elseif (nklu_==36)
-    colo=[1,0,0.5];
-    msize=38;
-  elseif (nklu_==45)
-    colo=[1,0,1];
-    msize=40;
-  elseif (nklu_==50)
-    colo=[1,0.5,1];
-    msize=42;
-  elseif (nklu_==55)
-    colo=[0,0.5,0.5];
-    msize=44;
-  elseif (nklu_==66)
-    colo=[0,1,0.5];
-    msize=46;
-  elseif (nklu_==78)
-    colo=[0,1,1];
-    msize=48;
-  else
-    colo=[0,0,0];
-    msize=50;
-    fprintf('new cluster size! =%i\n',nklu_)
-  end
+  msize = nklu_*3;
+  colo=[0.0941,0.3961,0.8667];
 
   plot(pseud(klusters_{iklu},1),pseud(klusters_{iklu},2),'.','markersize',msize,'color',colo)
 
-  for iklu_=1:nklu_
-    elec=electrodes(abmn(klusters_{iklu}(iklu_),:),:);
-    plot(elec(:,1),elec(:,2),'k.','markersize',40)
-    % pause;
-    plot(elec(:,1),elec(:,2),'.','markersize',40,'color',[0.5,0.5,0.5])
-  end
+  % for iklu_=1:nklu_
+  %   elec=electrodes(abmn(klusters_{iklu}(iklu_),:),:);
+  %   plot(elec(:,1),elec(:,2),'k.','markersize',40)
+  %   % pause;
+  %   plot(elec(:,1),elec(:,2),'.','markersize',40,'color',[0.5,0.5,0.5])
+  % end
 end
 hold off;
 axis ij;
 axis image;
-xlim([0.75,4.25])
-ylim([0,nelectrodes*0.5+1])
+xlim([xmin-2,xmax+2])
+ylim([0,zmax+2])
 xlabel('Length (m)')
 ylabel('Depth (m)')
 title('Repeated locations')
@@ -178,15 +131,16 @@ simple_figure()
 subplot(1,3,3)
 hold on;
 % plot electrodes
-scatter(electrodes(:,1),electrodes(:,2),150,'k','filled')
+plot(electrodes(Rx_(:),1),electrodes(Rx_(:),2),'k.','markersize',40)
+plot(electrodes(Tx_(:),1),electrodes(Tx_(:),2),'.','markersize',40,'color',[0.5,0.5,0.5])
 % plot all pseudo positions (including repetitions)
-scatter(pseud(:,1),pseud(:,2),100,'r','filled')
+scatter(pseud(:,1),pseud(:,2),70,'r','filled')
 % plot only repeated positions (clusters)
 for iklu=1:nklu 
   % fprintf('cluster #%i\n',iklu)
   nklu_=size(klusters_{iklu},1);
   % first, let's paint white all the repeated locs we already plotted
-  scatter(pseud(klusters_{iklu},1),pseud(klusters_{iklu},2),100,'w','filled')
+  scatter(pseud(klusters_{iklu},1),pseud(klusters_{iklu},2),70,'w','filled')
   % ----------------------------------------------------------------------------
   path_circs   = strcat('../../../data/cci_coords/cci',num2str(nklu_),'.txt');
   dense_circle = load(path_circs);
@@ -201,8 +155,8 @@ end
 hold off;
 axis ij;
 axis image;
-xlim([0.75,4.25])
-ylim([0,nelectrodes*0.5+1])
+xlim([xmin-2,xmax+2])
+ylim([0,zmax+2])
 xlabel('Length (m)')
 ylabel('Depth (m)')
 title('Pseudo sections')
@@ -217,8 +171,8 @@ simple_figure()
 nx = 6e2;
 nz = 6e2;
 
-x=linspace(0,5,nx);
-z=linspace(0,nelectrodes*0.5+1,nz);
+x=linspace(xmin-2,xmax+2,nx);
+z=linspace(0,zmax+2,nz);
 
 [X,Z] = meshgrid(x,z);
 
@@ -226,7 +180,7 @@ dx=x(2)-x(1);
 dz=z(2)-z(1);
 % ------------------------------------------------------------------------------
 figure;
-for iexample=1:4
+for iexample=1:16
   % choose abmn configuration
   iabmn=randi(nabmn);
 
@@ -237,11 +191,12 @@ for iexample=1:4
   rec_n = electrodes(abmn(iabmn,4),:);
   % ----------------------------------------------------------------------------
   psi_  = sensitivity_3dDC(X,Z,dx,dz,source_p,source_n,rec_p,rec_n);
+  psi_  = normali(psi_);
   % ----------------------------------------------------------------------------
-  subplot(2,2,iexample)
+  subplot(2,8,iexample)
   fancy_imagesc(psi_,x,z)
   colormap(rainbow2_cb(1))
-  caxis(5e-3*[-1 1])
+  caxis(5e-4*[-1 1])
   colorbar('off')
   hold on;
   plot(pseud(iabmn,1),pseud(iabmn,2),'.','markersize',40,'color',[0.1529,0.7686,0.0980])

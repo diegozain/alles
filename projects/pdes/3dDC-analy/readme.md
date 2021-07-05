@@ -3,7 +3,7 @@ diego domenzain
 June 2021 @ Aarhus University 
 
 ## 👓 Sensitivity
-For an **abmn** quadruple, the sensitivity is:
+For an **abmn** quadrupole, the sensitivity is:
 
 👓 = ∇φ ⋅ ∇ v 
 
@@ -19,7 +19,7 @@ See Line's [.pdf](https://github.com/LineMeldgaardMadsen/ERT-XBH-sensitivity/blo
 
 ### Localizing the sensitivities 👓 ⤍ ⚫
 
-The location is the [geometric median](https://en.wikipedia.org/wiki/Geometric_median) of **abmn** quadruples.
+The location is the [geometric median](https://en.wikipedia.org/wiki/Geometric_median) of the **abmn** quadrupole positions in 3d space.
 
 [![](../pics/pseudo-sensitivity.png)](./)
 
@@ -29,7 +29,7 @@ The location is the [geometric median](https://en.wikipedia.org/wiki/Geometric_m
 is a matrix of size ```nelectrodes```× 3. With entries of *xyz* coordinates, and indexes pointing to all electrodes.
 
 ```abmn```
-is a matrix of size ```nabmn```× 4. With entries of indexes of ```electrodes```, and indexes pointing to all ABMN quadruples.
+is a matrix of size ```nabmn```× 4. With entries of indexes of ```electrodes```, and indexes pointing to all ABMN quadrupoles.
 
 ```pseud```
 is a matrix of size ```nabmn```× 3. With entries of *xyz* coordinates, and indexes pointing to ```abmn```.
@@ -63,10 +63,33 @@ Now you do this,
   * ```data```
 * recompute ```klusters_```.
 
-
-
-### AB.MN quadruples 🍀
+### AB.MN quadrupoles 🍀
 
 [![](../pics/example-sensitivities.png)](./)
 
 [![](../pics/pseudo-14electrodes.png)](./)
+
+### Code 📝
+
+* ```dc_pseudo_vis.m``` simple example script. Assumes all electrodes in Tx borehole can be **ab** pairs.
+* ```dc_pseudo_vis_.m``` fancier example script. It can handle case when only *some* electrodes of Tx borehole can be **ab** pairs.
+* ```dc_kaergaard.m``` simple example to visualize with field data.
+
+## 🎯 Analytical forward model vs AarhusInv
+
+The method for computing the analytical solutions is the method of images.
+
+### Code 📝
+
+* ```dc_analy_data.m``` homogeneous and two layered solution in 3d (only a 2d slice is computed). The entire 2d xz-slice is computed. *This script is a proof of concept*.
+* ```dc_analy_data.m``` two layered solution in 3d (only a 2d slice is computed). Just the data points are computed. *This script is a proof of concept*.
+* ```dc_analy_rip.m``` two layered solution in 3d (only a 2d slice is computed). 
+  * Takes as input a modified version of the ```.rip``` (or ```.rap```) file, 
+  * then it compares the ```.rip``` (or ```.rap```) output to the analytical solution for **one** quadrupole.
+* ```dc_analy_rip_.m``` two layered solution in 3d (only a 2d slice is computed). 
+  * Takes as input a modified version of the ```.rip``` (or ```.rap```) file, 
+  * then it compares the ```.rip``` (or ```.rap```) output to the analytical solution for **all** quadrupoles.
+* ```abmn2aainv.m```
+* ```dc_aainv_vis.m```
+
+## Visualize IP data

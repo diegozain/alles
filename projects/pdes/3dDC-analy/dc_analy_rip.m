@@ -5,7 +5,7 @@ clc
 % 
 % 1. load data and electrode positions
 % 2. bundle all that into cell struct
-% 3. compute analytic data one abmn quadruple
+% 3. compute analytic data one for abmn quadruple
 % 
 % ------------------------------------------------------------------------------
 addpath('src');
