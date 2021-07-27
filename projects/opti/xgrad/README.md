@@ -22,16 +22,16 @@ There are three possibilities,
 * __a__ gets to be like __b__ (and __b__ is fixed),
 * __b__ gets to be like __a__ (and __a__ is fixed).
 
-These inversions are done with gradient descent. 
+These inversions are done with gradient descent.
 
 ## The scripts
 
 * ```xgrad_ex_circs.m``` perform these inversions on two discs for __a__ and __b__.
-* ```xgrad_ex_circs.m``` performs these inversions on a disc and a square for __a__ and __b__.
+* ```xgrad_ex_circ_box.m``` performs these inversions on a disc and a square for __a__ and __b__.
 
 ---
 
-This is the result of making both __a__ and __b__ look like each other. Note how both shapes are deformed: 
+This is the result of making both __a__ and __b__ look like each other. Note how both shapes are deformed:
 
 the __New a__ and the __New b__ agree in shape on a weird shape.
 
