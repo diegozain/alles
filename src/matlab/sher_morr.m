@@ -1,4 +1,4 @@
-function B_ = sher_morr(B,q,y)
+function B_ = sher_morr(B_,q,y)
   % diego domenzain
   % spring 2017 @ BSU
   % ----------------------------------------------------------------------------
@@ -17,6 +17,6 @@ function B_ = sher_morr(B,q,y)
 r = 1 / (q'*y);
 I = eye(length(q),'single');
 
-B_ = (I - r*(q*y')) *B* (I - r*(y*q')) + r*(q*q'); 
+B_ = (I - r*(q*y')) *B_* (I - r*(y*q')) + r*(q*q'); 
 
 end 

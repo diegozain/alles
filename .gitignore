@@ -30,7 +30,10 @@ fortran_supplement_ver_1.1.pdf
 test/
 kate/
 outside-code/
+
+riprap/
 kaergaard-data/
+selwyn/
 
 *.fwr
 *.rap

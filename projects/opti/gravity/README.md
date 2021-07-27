@@ -1,6 +1,5 @@
 # Gravity inversion
-diego domenzain
-September 2020 @ Colorado School of Mines
+diego domenzain. September 2020 @ Colorado School of Mines
 
 ## What is gravity inversion?
 

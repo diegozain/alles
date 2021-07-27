@@ -16,11 +16,14 @@ klusters=[];
 
 iabmn_=2;
 for iabmn=1:(nabmn-1)
-  % this ensures we dont count repetitions twice
+  % this ensures we dont count repetitions twice.
+  % not really legit, but fixes the bug when one pseudo-loc is in more 
+  % than one cluster.
   klu = find(repeated==iabmn);
   klu = numel(klu);
  for iiabmn=iabmn_:nabmn
-    % this ensures we dont count repetitions twice
+    % this ensures we dont count repetitions twice.
+    % legit algorithm.
     klu_= find(repeated==iiabmn);
     klu_= numel(klu_);
     if (norm(pseud(iabmn,:)-pseud(iiabmn,:)) < 1e-3 && klu < 1 && klu_ < 1)

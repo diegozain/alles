@@ -1,5 +1,6 @@
-# 3d DC & IP data visualization
+# DC x-borehole data visualization
 diego domenzain
+
 June 2021 @ Aarhus University 
 
 ## 👓 Sensitivity
@@ -71,25 +72,7 @@ Now you do this,
 
 ### Code 📝
 
-* ```dc_pseudo_vis.m``` simple example script. Assumes all electrodes in Tx borehole can be **ab** pairs.
-* ```dc_pseudo_vis_.m``` fancier example script. It can handle case when only *some* electrodes of Tx borehole can be **ab** pairs.
-* ```dc_kaergaard.m``` simple example to visualize with field data.
+* ```pseudo_vis.m``` simple example script. Assumes all electrodes in Tx borehole can be **ab** pairs.
+* ```pseudo_vis_.m``` fancier example script. It can handle case when only *some* electrodes of Tx borehole can be **ab** pairs.
+* ```kaergaard_vis.m``` simple example to visualize with field data.
 
-## 🎯 Analytical forward model vs AarhusInv
-
-The method for computing the analytical solutions is the method of images.
-
-### Code 📝
-
-* ```dc_analy_data.m``` homogeneous and two layered solution in 3d (only a 2d slice is computed). The entire 2d xz-slice is computed. *This script is a proof of concept*.
-* ```dc_analy_data.m``` two layered solution in 3d (only a 2d slice is computed). Just the data points are computed. *This script is a proof of concept*.
-* ```dc_analy_rip.m``` two layered solution in 3d (only a 2d slice is computed). 
-  * Takes as input a modified version of the ```.rip``` (or ```.rap```) file, 
-  * then it compares the ```.rip``` (or ```.rap```) output to the analytical solution for **one** quadrupole.
-* ```dc_analy_rip_.m``` two layered solution in 3d (only a 2d slice is computed). 
-  * Takes as input a modified version of the ```.rip``` (or ```.rap```) file, 
-  * then it compares the ```.rip``` (or ```.rap```) output to the analytical solution for **all** quadrupoles.
-* ```abmn2aainv.m```
-* ```dc_aainv_vis.m```
-
-## Visualize IP data
