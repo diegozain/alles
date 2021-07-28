@@ -1,5 +1,8 @@
 function step_alphas = hd_step_a(uo,uh,g_alphas,Ob,k_alphas_,k_alphas__,nparabo,type_obj,t,alphas,betas,fos,h,nt_,nt__)
-% % --- pica. pica doesnt work for this inverse problem :( 
+% ------------------------------------------------------------------------------
+% diego domenzain. jul 2021, @ AU.
+% ------------------------------------------------------------------------------
+% % --- pica. pica doesnt work for this inverse problem :(
 % alphas_     = alphas + k_alphas*g_alphas;
 % uh_         = hd_fwd(t,alphas_,betas,fos,h,nt_,nt__);
 % step_alphas = k_alphas * ((uh_.' * error_) / (uh_.' * uh_));
@@ -16,7 +19,7 @@ for iparabo=1:nparabo
   uh_ = hd_fwd(t,alphas_,betas,fos,h,nt_,nt__);
   % obj
   [Ob,error_] = hd_obj(uo,uh_,type_obj);
-  
+
   Ob_(iparabo+1) = Ob;
 end
 k_alphas = [0;k_alphas];
@@ -33,6 +36,7 @@ else
   [~,istep] = min(Ob_);
   step_alphas = k_alphas(istep);
 end
+% % -- debug
 % figure;
 % plot(k_alphas,Ob_,'r.-','markersize',30);
 end
