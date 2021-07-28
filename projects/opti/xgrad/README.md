@@ -33,18 +33,22 @@ These inversions are done with gradient descent.
 
 This is the result of making both __a__ and __b__ look like each other. Note how both shapes are deformed:
 
-the __New a__ and the __New b__ agree in shape on a weird shape.
+* the __New a__ and the __New b__ agree in shape on a weird shape.
 
 [![](../pics/xgrad-ab.png)](./)
 
 This is the result of making __a__ look like __b__. Note how __a__ changes and __b__ remains constant:
 
-the __New a__ now looks more like __b__ and the shape is not deformed.
+* the __New a__ now looks more like __b__ and the shape is not deformed.
 
 [![](../pics/xgrad-a.png)](./)
 
 This is the result of making __b__ look like __a__. Note how __b__ changes and __a__ remains constant:
 
-the __New b__ now looks more like __a__ and the shape is not deformed.
+* the __New b__ now looks more like __a__ and the shape is not deformed.
 
 [![](../pics/xgrad-b.png)](./)
+
+Finally, lets look at these last two results together.
+
+[![](../pics/xgrad-a-b.png)](./)
