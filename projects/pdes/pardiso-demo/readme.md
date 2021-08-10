@@ -10,7 +10,7 @@ $> cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell
 ---
 
 ```
-pardiso-mio
+pardiso-demo
       |--- *you should be here*
 
 $> ifort /Qmkl [name of file].f
