@@ -76,3 +76,8 @@ Now you do this,
 * ```pseudo_vis_.m``` fancier example script. It can handle case when only *some* electrodes of Tx borehole can be **ab** pairs.
 * ```kaergaard_vis.m``` simple example to visualize with field data.
 
+
+
+
+
+[![](../pics/all-recs.png)](./)
