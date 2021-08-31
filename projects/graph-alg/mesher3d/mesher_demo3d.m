@@ -69,45 +69,83 @@ addpath('src');
 %
 % the way the neigh_mesh, neigh_graph, and neigh_type refer to the neighbors of node 'i' (i.e. in row 'i') is by,
 %
-%      2
-%      |
+%      2  6
+%      | /
 % 3 -- i -- 1
-%      |
-%      4
+%    / |
+%   5  4
 %
-% that is, columns 1, 2, 3, and 4 represent neighbors right, up, left and down.
+% that is, columns 1, 2, 3, 4, 5 and 6,
+% represent neighbors right, up, left, down, front and back.
 % ------------------------------------------------------------------------------
 % -- setup a simple example
-% % crooked with a hole
-% a = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1];
 % crooked but hole is bigger
-a = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
-% % full with no holes
-% a = [1 1 1 1 1 1 1; 1 1 1 1 1 1 1; 1 1 1 1 1 1 1; 1 1 1 1 1 1 1; 1 1 1 1 1 1 1];
-% a=ones(100,100);
-[nz,nx]=size(a);
+ay1 = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
+ay2 = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
+ay3 = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
+ay4 = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
+a_ = cat(3,ay1,ay2,ay3,ay4);
+a_ = permute(a_,[3,2,1]);
+
+[ny,nx,nz]=size(a_);
 % ------------------------------------------------------------------------------
 % this is only for easy reference:
-a_index = 1:(nx*nz);
-a_index = reshape(a_index,[nz,nx]);
+a_index = 1:(nx*ny*nz);
+a_index = reshape(a_index,[nz,nx,ny]);
+a_index = permute(a_index,[3,2,1]);
+
+amat3d = zeros(ny*nx*nz,4);
+a = zeros(ny*nx*nz,1);
+for iyxz = 1:ny*nx*nz
+  % get z coordinate
+  iz = mod(iyxz,nz);
+  if (iz==0)
+    iz=nz;
+  end
+  % iyxz = (iy-1)*nx*nz + (ix-1)*nz + iz  ... (*)
+  ixz = mod(iyxz,nx*nz);
+  if (ixz==0)
+    ixz=nx*nz;
+  end
+  % ixz = (ix-1)*nz + iz from (*)
+  % get x coordinate
+  ix = ((ixz-iz)/nz) + 1;
+  % get y coordinate from (*)
+  iy = ((iyxz-ixz)/(nx*nz)) + 1;
+
+  amat3d(iyxz,:)  = [iy,ix,iz,a_(iy,ix,iz)];
+  % amat3d(iyxz,:)  = [iy,ix,iz,a_index(iy,ix,iz)];
+
+  a(iyxz,:) = a_(iy,ix,iz);
+end
+% ------------------------------------------------------------------------------
+figure;
+scatter3(amat3d(:,2),amat3d(:,1),amat3d(:,3),200*abs(amat3d(:,4))+1,amat3d(:,4),'filled')
+set(gca,'ZDir','reverse');
+axis image;
+axis tight;
+xlabel('x')
+ylabel('y')
+zlabel('z')
+simple_figure()
 % ------------------------------------------------------------------------------
 % get the number of nodes in the graph
-n_g2m = n_g2m_(a,nx,nz);
+n_g2m = n_g2m_3d_(a,nx,ny,nz);
 % ------------------------------------------------------------------------------
 % make two dictionaries,
 % graph2mesh : indexes are graph nodes, entries are mesh nodes
 % mesh2graph : indexes are mesh nodes, entries are graph nodes
-[graph2mesh,mesh2graph] = g2m_m2g(a,nx,nz,n_g2m);
+[graph2mesh,mesh2graph] = g2m_m2g_3d(a,nx,ny,nz,n_g2m);
 % ------------------------------------------------------------------------------
 % each node has neighbors.
 % neigh_mesh : row indexes are graph nodes.
 %              row entries are neighbors of that node, in the mesh.
-neigh_mesh = neigh_mesh_(a,nx,nz,n_g2m,graph2mesh);
+neigh_mesh = neigh_mesh_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
 % ------------------------------------------------------------------------------
 % each node has neighbors.
 % neigh_graph : row indexes are graph nodes.
 %               row entries are neighbors of that node, in the graph.
-neigh_graph = neigh_graph_(neigh_mesh,mesh2graph,n_g2m);
+neigh_graph = neigh_graph_3d_(neigh_mesh,mesh2graph,n_g2m);
 % ------------------------------------------------------------------------------
 % each node has a special type in a mesh-grid.
 % neighbors that are (in the mesh):
@@ -125,7 +163,7 @@ neigh_graph = neigh_graph_(neigh_mesh,mesh2graph,n_g2m);
 %
 % we define : (type,BC) = (1,inner) (-1,neumann) (0,robin)
 % ------------------------------------------------------------------------------
-neigh_type = neigh_type_(a,nx,nz,n_g2m,graph2mesh);
+neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
 % ------------------------------------------------------------------------------
 %
 %       this part is for building the PDE operator L acting on the graph
@@ -154,7 +192,8 @@ neigh_type = neigh_type_(a,nx,nz,n_g2m,graph2mesh);
 % n_ij : holds the info of how many entries in I (and J) belong to each node i.
 %        it is an array of size n_g2m by 1.
 % ------------------------------------------------------------------------------
-[n_ij,n_IJ] = nIJ(n_g2m,neigh_type);
+[n_ij,n_IJ] = nIJ_3d(n_g2m,neigh_type);
+% %{
 % ------------------------------------------------------------------------------
 % now we need to build I and J.
 %
@@ -166,11 +205,11 @@ neigh_type = neigh_type_(a,nx,nz,n_g2m,graph2mesh);
 % J needs to have the number i in the first entry,
 % and then each neighbor of i (in the graph) in the subsequent entries.
 % ------------------------------------------------------------------------------
-[I,J] = IJ_(n_g2m,n_ij,n_IJ,neigh_graph);
+[I,J] = IJ_3d_(n_g2m,n_ij,n_IJ,neigh_graph);
 % ------------------------------------------------------------------------------
 % this next section can be substituted by
 %
-% V = div_c_grad(n_g2m,n_ij,n_IJ,neigh_type,I,J,c);
+% V = div_c_grad_3d(n_g2m,n_ij,n_IJ,neigh_type,I,J,c);
 %
 % but as noted in src/div_c_grad.m this function needs to include more things!
 % ------------------------------------------------------------------------------
@@ -201,7 +240,7 @@ for i_g2m=1:n_g2m
         % sig_ij_ = ( 2*sig(J(il)) * sig(J(ii)) ) / ( sig(J(il)) + sig(J(ii)) )
     end
     % robin nodes are summed to 'ith'
-    for i_nei=1:4
+    for i_nei=1:6
         if (neigh_type(J(il),i_nei) == 0)
             ith = ith +1;
             % NOTE: the +1 should be replaced by the appropriate entry.
@@ -222,6 +261,7 @@ for i_g2m=1:n_g2m
 end
 % ------------------------------------------------------------------------------
 L = sparse(I,J,V);
+%{
 % ------------------------------------------------------------------------------
 % this is how we would solve for the electric potential 'u'
 %       -∇⋅σ ∇ u = s
@@ -314,3 +354,4 @@ set(gca,'xtick',[])
 set(gca,'ytick',[])
 simple_figure()
 % ------------------------------------------------------------------------------
+%}
