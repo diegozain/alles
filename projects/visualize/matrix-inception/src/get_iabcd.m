@@ -14,7 +14,7 @@ function [ia,ib,ic,id] = get_iabcd(iabcd,na,nb,nc,nd)
 %      /_____________/  |
 %     |  1           |  |
 %     |  2           |  |
-% nd  |  3           |  /
+% nd  |  3    😵    |  /
 %     |  etc         | / nb
 %     |______________|/
 %           nc
@@ -28,7 +28,7 @@ function [ia,ib,ic,id] = get_iabcd(iabcd,na,nb,nc,nd)
 %      /_____________/  |
 %     |  1           |  |
 %     |  2           |  |
-% nd  |  3           |  /
+% nd  |  3    😵    |  /
 %     |  etc         | / nb
 %     |______________|/
 %           nc
