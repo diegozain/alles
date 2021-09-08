@@ -1,9 +1,24 @@
-# Mesh on a grid
+# Mesh on a 3d grid :game_die:
 diego domenzain
 
-August 2021 @ Aarhus University
+August 2021 
 
-## Mesh with neighbor information
+```
+          .--------------------.
+         / |   🐜      🌳🐛  /|
+        /  |                 / |
+       /🌴        🏃        /  |
+      .--------------------.   |
+      |    |          🐙   |   |
+      |    . --------------|---.
+   z  |   /                |  /
+      |  /   🐟            | / y
+      | /               👽 |/
+      .--------------------.
+                  x
+```
+
+## Mesh with neighbor information :two_women_holding_hands:
 
 __Given a rectangular gridded mesh where only a certain region is wanted for modeling, how do we extract this wanted region?__
 

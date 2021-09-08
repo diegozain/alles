@@ -2,32 +2,13 @@ function V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_type,graph2mesh,x,y,z,sigm,alphas
 % diego domenzain
 % august 2021
 % ------------------------------------------------------------------------------
-alphas = alphas(x,y,z,sources_,pts_robin)
-  alphas = zeros(nprobin,1);
 
-  ipx = ;
-  alpha_r = 0;
-  alpha_cos=0;
-  for isource=1:nsource
-    isx = ;
-    radi_po = sqrt( (x(isx)-x(ipx))^2 + (y(isy)-y(ipy))^2 + (z(isz)-z(ipz))^2 );
-    ca_po   = abs(z(isz) - z(ipz));
-
-    isx = ;
-    radi_ne = sqrt( (x(isx)-x(ipx))^2 + (y(isy)-y(ipy))^2 + (z(isz)-z(ipz))^2 );
-    ca_ne   = abs(z(isz) - z(ipz));
-
-    alpha_r  = alpha_r + radi_ne - radi_po;
-    alpha_cos= alpha_cos + (ca_ne/radi_ne^3) - (ca_po/radi_po^3);
-  end
-  alphas(iprobin) = alpha_r * alpha_cos;
 
 iyxz = graph2mesh(J(il))
 iyxz_= graph2mesh(J(ii))
-[dx,dy,dz]= deltas(iyxz,iyxz_nei,x,y,z)
-  [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
-  [ix_,iy_,iz_] = get_ixyz(iyxz_nei,nx,ny,nz)
-
+[dx,dy,dz]    = deltas(iyxz,iyxz_nei,x,y,z)
+[ix,iy,iz]    = get_ixyz(iyxz,nx,ny,nz);
+[ix_,iy_,iz_] = get_ixyz(iyxz_nei,nx,ny,nz)
 
 % diego domenzain
 % August 2021 @ Aarhus University

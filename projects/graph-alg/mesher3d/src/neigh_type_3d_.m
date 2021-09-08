@@ -1,6 +1,6 @@
 function neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh)
 % diego domenzain
-% August 2021 
+% August 2021
 %
 % ------------------------------------------------------------------------------
 % each node has a special type in a mesh-grid.
@@ -16,6 +16,14 @@ function neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh)
 %
 % neigh_type : row indexes are graph nodes.
 %              row entries are the type of neighbor for that node.
+%                   2  6
+%                   | /
+%              3 -- i -- 1
+%                 / |
+%                5  4
+%              
+%              that is, columns 1, 2, 3, 4, 5 and 6,
+%              represent neighbors right, up, left, down, front and back.
 %
 % we define : (type,BC) = (1,inner) (-1,neumann) (0,robin)
 % ------------------------------------------------------------------------------
@@ -45,21 +53,7 @@ for i_g2m = 1:n_g2m
     i_ba = iyxz + nz*nx;
     % --------------------------------------------------------------------------
     % get cube index coordinates of all 6 neighbors
-    % get z coordinate
-    iz = mod(iyxz,nz);
-    if (iz==0)
-      iz=nz;
-    end
-    % iyxz = (iy-1)*nx*nz + (ix-1)*nz + iz  ... (*)
-    ixz = mod(iyxz,nx*nz);
-    if (ixz==0)
-      ixz=nx*nz;
-    end
-    % ixz = (ix-1)*nz + iz from (*)
-    % get x coordinate
-    ix = ((ixz-iz)/nz) + 1;
-    % get y coordinate from (*)
-    iy = ((iyxz-ixz)/(nx*nz)) + 1;
+    [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
     % --------------------------------------------------------------------------
     % now access matrix cube 'a'
     % --------------------------------------------------------------------------
