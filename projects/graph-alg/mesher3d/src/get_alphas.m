@@ -1,4 +1,4 @@
-function alphas = get_alphas(x,y,z,sources,pts_robin)
+function alphas = get_alphas(x,y,z,srcs_xyz,robin_xyz)
 % diego domenzain
 % ?.2021
 % ------------------------------------------------------------------------------
@@ -19,29 +19,38 @@ function alphas = get_alphas(x,y,z,sources,pts_robin)
 %                  x
 %
 % ------------------------------------------------------------------------------
-% sources   : (nsources) × (xyz) × (±)
-% pts_robin : (nprobin) × (xyz)
+% compute α to get the right boundary conditions at subsurface nodes
+% when solving:
+%                      -∇ ⋅ σ ∇ ϕ = s
+%
+% this function 'get_alphas' assumes 'srcs_xyz' is a set of srcs_xyz done at the
+% same moment (i.e. an 'ab' pair, but also supports multi-source schemes).
 % ------------------------------------------------------------------------------
-nprobin= size(pts_robin,1);
+% srcs_xyz  : (nsources) × (xyz) × (±)
+% robin_xyz : (nprobin) × (xyz)
+%
+% both of these contain indexes in the mesh, NOT the graph.
+% ------------------------------------------------------------------------------
+nprobin= size(robin_xyz,1);
 alphas = zeros(nprobin,1);
 for iprobin=1:nprobin
-  ipx = pts_robin(iprobin,1);
-  ipy = pts_robin(iprobin,2);
-  ipz = pts_robin(iprobin,3);
+  ipx = robin_xyz(iprobin,1);
+  ipy = robin_xyz(iprobin,2);
+  ipz = robin_xyz(iprobin,3);
 
   alpha_r = 0;
   alpha_cos=0;
   for isource=1:nsource
     % ⚪ positive source
-    isx = sources(isource,1,1);
-    isy = sources(isource,2,1);
-    isz = sources(isource,3,1);
+    isx = srcs_xyz(isource,1,1);
+    isy = srcs_xyz(isource,2,1);
+    isz = srcs_xyz(isource,3,1);
     radi_po = sqrt( (x(isx)-x(ipx))^2 + (y(isy)-y(ipy))^2 + (z(isz)-z(ipz))^2 );
     ca_po   = abs(z(isz) - z(ipz));
     % ⚫ negative source
-    isx = sources(isource,1,2);
-    isy = sources(isource,2,2);
-    isz = sources(isource,3,2);
+    isx = srcs_xyz(isource,1,2);
+    isy = srcs_xyz(isource,2,2);
+    isz = srcs_xyz(isource,3,2);
     radi_ne = sqrt( (x(isx)-x(ipx))^2 + (y(isy)-y(ipy))^2 + (z(isz)-z(ipz))^2 );
     ca_ne   = abs(z(isz) - z(ipz));
     % α = Σ ∓ r(s±) ⋅ Σ ∓ ca(s±) / r(s±)^3

@@ -1,7 +1,35 @@
-function robin_graph = robin_graph_3d_(n_g2m,nx,ny,nz,neigh_type)
+function [robin_xyz,robin_mesh,robin_graph] = robin_graph_3d_(n_g2m,nx,ny,nz,graph2mesh,mesh2graph,neigh_type)
 % diego domenzain
 % ? 2021
 % ------------------------------------------------------------------------------
+% ⚫ get nodes that are of type Robin in the mesh.
+%
+% when 'neigh_type' is built, it is initialized as all robin and then corrects
+% for each node which type it is.
+% this is because getting the robin nodes themselves is tricky.
+%
+% so here we need to count robin nodes inside 'neigh_type', but that itself is
+% tricky because some robin nodes can appear more than once in this list.
+%
+% 1. count how many nodes are of type robin in 'neigh_type':
+%                                                        ▶️ nprobin.
+% 2. make a list of size nprobin and fill it in with the actual node id.
+% 3. each node in this list carries info on which neighbors are robin:
+%                                                        ▶️ robin_mesh.
+% 4. take this unique list and also save their xyz index coordinates:
+%                                                        ▶️ robin_xyz.
+% ------------------------------------------------------------------------------
+% ▶️
+% robin_mesh : robin nodes in the mesh 🎲. of size nprobin × 2.
+%              in the second column you find which side is robin.
+%              for example, a corner node will be repeated 3 times in robin_mesh
+%              and the second column will perhaps read 3,4,5, meaning
+%              left, down, front neighbors are robin.
+% robin_xyz  : robin nodes in the mesh cube 🎲. of size nprobin × 4.
+%              the 4rth column is the second column of robin_mesh.
+% robin_graph: robin nodes in the graph 🍇. of size nprobin × 1.
+% ------------------------------------------------------------------------------
+% ◀️
 % neigh_type : row indexes are graph nodes.
 %              row entries are the type of neighbor for that node.
 %                   2  6
@@ -23,35 +51,35 @@ for i_g2m=1:n_g2m
   i_fw = neigh_type(i_g2m,5);
   i_bw = neigh_type(i_g2m,6);
 
-  if (i_ri==-1)
+  if (i_ri==0)
     iyxz = graph2mesh(i_g2m);
     nprobin = nprobin + 1;
   end
-  if (i_up==-1)
+  if (i_up==0)
     iyxz = graph2mesh(i_g2m);
     nprobin = nprobin + 1;
   end
-  if (i_le==-1)
+  if (i_le==0)
     iyxz = graph2mesh(i_g2m);
     nprobin = nprobin + 1;
   end
-  if (i_do==-1)
+  if (i_do==0)
     iyxz = graph2mesh(i_g2m);
     nprobin = nprobin + 1;
   end
-  if (i_fw==-1)
+  if (i_fw==0)
     iyxz = graph2mesh(i_g2m);
     nprobin = nprobin + 1;
   end
-  if (i_bw==-1)
+  if (i_bw==0)
     iyxz = graph2mesh(i_g2m);
     nprobin = nprobin + 1;
   end
 end
 % ------------------------------------------------------------------------------
-robin_mesh = zeros(nprobin,1,'uint32');
-
-for i_g2m=1:nprobin
+robin_mesh = zeros(nprobin,2,'uint32');
+iprobin=1;
+for i_g2m=1:n_g2m
   i_ri = neigh_type(i_g2m,1);
   i_up = neigh_type(i_g2m,2);
   i_le = neigh_type(i_g2m,3);
@@ -59,39 +87,53 @@ for i_g2m=1:nprobin
   i_fw = neigh_type(i_g2m,5);
   i_bw = neigh_type(i_g2m,6);
 
-  if (i_ri==-1)
+  if (i_ri==0)
     iyxz = graph2mesh(i_g2m);
-    robin_mesh(iprobin) = iyxz + nz;
+    robin_mesh(iprobin,1) = iyxz;
+    robin_mesh(iprobin,2) = 1;
+    iprobin = iprobin + 1;
   end
-  if (i_up==-1)
+  if (i_up==0)
     iyxz = graph2mesh(i_g2m);
-    robin_mesh(iprobin) = iyxz - 1;
+    robin_mesh(iprobin,1) = iyxz;
+    robin_mesh(iprobin,2) = 2;
+    iprobin = iprobin + 1;
   end
-  if (i_le==-1)
+  if (i_le==0)
     iyxz = graph2mesh(i_g2m);
-    robin_mesh(iprobin) = iyxz - nz;
+    robin_mesh(iprobin,1) = iyxz;
+    robin_mesh(iprobin,2) = 3;
+    iprobin = iprobin + 1;
   end
-  if (i_do==-1)
+  if (i_do==0)
     iyxz = graph2mesh(i_g2m);
-    robin_mesh(iprobin) = iyxz + 1;
+    robin_mesh(iprobin,1) = iyxz;
+    robin_mesh(iprobin,2) = 4;
+    iprobin = iprobin + 1;
   end
-  if (i_fw==-1)
+  if (i_fw==0)
     iyxz = graph2mesh(i_g2m);
-    robin_mesh(iprobin) = iyxz - nz*nx;
+    robin_mesh(iprobin,1) = iyxz;
+    robin_mesh(iprobin,2) = 5;
+    iprobin = iprobin + 1;
   end
-  if (i_bw==-1)
+  if (i_bw==0)
     iyxz = graph2mesh(i_g2m);
-    robin_mesh(iprobin) = iyxz + nz*nx;
+    robin_mesh(iprobin,1) = iyxz;
+    robin_mesh(iprobin,2) = 6;
+    iprobin = iprobin + 1;
   end
 end
 % ------------------------------------------------------------------------------
-robin_mesh = unique(robin_mesh);
-nprobin = numel(robin_mesh);
+% translate to the graph 🍇
+robin_graph = mesh2graph(robin_mesh(:,1));
 % ------------------------------------------------------------------------------
-robin_mesh_xyz = zeros(nprobin,3,'uint32');
+% translate to coordinates in the mesh 🎲
+robin_xyz = zeros(nprobin,4,'uint32');
 for iprobin=1:nprobin
-  iyxz = robin_mesh(iprobin);
+  iyxz = robin_mesh(iprobin,1);
   [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
-  robin_mesh_xyz(iprobin,:) = [ix,iy,iz];
+  robin_xyz(iprobin,1:3) = [iy,ix,iz];
+  robin_xyz(iprobin,4) = robin_mesh(iprobin,2);
 end
 end

@@ -93,41 +93,24 @@ a_ = permute(a_,[3,2,1]);
 a_index = 1:(nx*ny*nz);
 a_index = reshape(a_index,[nz,nx,ny]);
 a_index = permute(a_index,[3,2,1]);
+% this is the mask 😷 in the mesh
+amat3d_mask = zeros(ny*nx*nz,4,'uint32');
+% this is the 3d mesh 🎲 with numering scheme
+amat3d_mesh= zeros(ny*nx*nz,4,'uint32');
 
-amat3d = zeros(ny*nx*nz,4);
+% this is the actual 3d matrix 🎲 in the mesh in just one column
 a = zeros(ny*nx*nz,1);
 for iyxz = 1:ny*nx*nz
-  % get z coordinate
-  iz = mod(iyxz,nz);
-  if (iz==0)
-    iz=nz;
-  end
-  % iyxz = (iy-1)*nx*nz + (ix-1)*nz + iz  ... (*)
-  ixz = mod(iyxz,nx*nz);
-  if (ixz==0)
-    ixz=nx*nz;
-  end
-  % ixz = (ix-1)*nz + iz from (*)
-  % get x coordinate
-  ix = ((ixz-iz)/nz) + 1;
-  % get y coordinate from (*)
-  iy = ((iyxz-ixz)/(nx*nz)) + 1;
+  % get x,y,z coordinate
+  [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
 
-  amat3d(iyxz,:)  = [iy,ix,iz,a_(iy,ix,iz)];
-  % amat3d(iyxz,:)  = [iy,ix,iz,a_index(iy,ix,iz)];
+  % this is just for vis 🎨
+  amat3d_mask(iyxz,:)  = [iy,ix,iz,a_(iy,ix,iz)];
+  amat3d_mesh(iyxz,:) = [iy,ix,iz,a_index(iy,ix,iz)];
 
+  % 3d matrix 🎲 in the mesh in just one column
   a(iyxz,:) = a_(iy,ix,iz);
 end
-% ------------------------------------------------------------------------------
-figure;
-scatter3(amat3d(:,2),amat3d(:,1),amat3d(:,3),200*abs(amat3d(:,4))+1,amat3d(:,4),'filled')
-set(gca,'ZDir','reverse');
-axis image;
-axis tight;
-xlabel('x')
-ylabel('y')
-zlabel('z')
-simple_figure()
 % ------------------------------------------------------------------------------
 % get the number of nodes in the graph
 n_g2m = n_g2m_3d_(a,nx,ny,nz);
@@ -164,6 +147,77 @@ neigh_graph = neigh_graph_3d_(neigh_mesh,mesh2graph,n_g2m);
 % we define : (type,BC) = (1,inner) (-1,neumann) (0,robin)
 % ------------------------------------------------------------------------------
 neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
+% ------------------------------------------------------------------------------
+% get robin nodes
+[robin_xyz,robin_mesh,robin_graph] = robin_graph_3d_(n_g2m,nx,ny,nz,graph2mesh,mesh2graph,neigh_type);
+
+nprobin = size(robin_mesh,1);
+% ------------------------------------------------------------------------------
+%
+%                              🎨 vis 🎨
+%
+% ------------------------------------------------------------------------------
+% this is the 3d graph 🍇 with indexing scheme
+amat3d_graph = zeros(n_g2m,4,'uint32');
+for i_g2m=1:n_g2m
+  % get x,y,z coordinate
+  iyxz = graph2mesh(i_g2m);
+  [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
+  % 3d graph 🍇 with indexing scheme
+  amat3d_graph(i_g2m,:) = [iy,ix,iz,i_g2m];
+end
+% ------------------------------------------------------------------------------
+figure;
+scatter3(amat3d_mask(:,2),amat3d_mask(:,1),amat3d_mask(:,3),500*abs(amat3d_mask(:,4))+1,amat3d_mask(:,4),'filled')
+colormap('lines');
+set(gca,'ZDir','reverse');
+axis image;
+axis tight;
+xlabel('x')
+ylabel('y')
+zlabel('z')
+title('Mesh-mask 😷')
+simple_figure()
+
+figure;
+subplot(1,2,1);
+scatter3(amat3d_mesh(:,2),amat3d_mesh(:,1),amat3d_mesh(:,3),500*ones(ny*nx*nz,1),amat3d_mesh(:,4),'filled')
+colormap(rainbow2_cb(1));
+colorbar;
+set(gca,'ZDir','reverse');
+axis image;
+axis tight;
+xlabel('x')
+ylabel('y')
+zlabel('z')
+title('Mesh 🎲')
+simple_figure()
+
+subplot(1,2,2);
+scatter3(amat3d_graph(:,2),amat3d_graph(:,1),amat3d_graph(:,3),500*ones(n_g2m,1),amat3d_graph(:,4),'filled')
+colormap(rainbow2_cb(1));
+colorbar;
+set(gca,'ZDir','reverse');
+axis image;
+axis tight;
+xlabel('x')
+ylabel('y')
+zlabel('z')
+title('Graph 🍇')
+simple_figure()
+
+figure;
+scatter3(robin_xyz(:,2),robin_xyz(:,1),robin_xyz(:,3),500*ones(nprobin,1),robin_xyz(:,4),'filled')
+colormap(rainbow2_cb(1));
+colorbar;
+set(gca,'ZDir','reverse');
+axis image;
+axis tight;
+xlabel('x')
+ylabel('y')
+zlabel('z')
+title('Robin in mesh 🎲')
+simple_figure()
 % ------------------------------------------------------------------------------
 %
 %       this part is for building the PDE operator L acting on the graph
@@ -207,9 +261,23 @@ neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
 % ------------------------------------------------------------------------------
 [I,J] = IJ_3d_(n_g2m,n_ij,n_IJ,neigh_graph);
 % ------------------------------------------------------------------------------
+% srcs_xyz = zeros(1,3,2,'uint32');
+% srcs_xyz(1,1,1) = 2;
+% srcs_xyz(1,2,1) = 2;
+% srcs_xyz(1,3,1) = 1;
+%
+% srcs_xyz(1,1,2) = 3;
+% srcs_xyz(1,2,2) = 2;
+% srcs_xyz(1,3,2) = 1;
+% % ------------------------------------------------------------------------------
+% alphas = get_alphas(x,y,z,srcs_xyz,robin_xyz);
+% % ------------------------------------------------------------------------------
+
+%{
+% ------------------------------------------------------------------------------
 % this next section can be substituted by
 %
-% V = div_c_grad_3d(n_g2m,n_ij,n_IJ,neigh_type,I,J,c);
+% V = V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_type,graph2mesh,x,y,z,sigm,alphas);
 %
 % but as noted in src/div_c_grad.m this function needs to include more things!
 % ------------------------------------------------------------------------------
@@ -261,7 +329,6 @@ for i_g2m=1:n_g2m
 end
 % ------------------------------------------------------------------------------
 L = sparse(I,J,V);
-%{
 % ------------------------------------------------------------------------------
 % this is how we would solve for the electric potential 'u'
 %       -∇⋅σ ∇ u = s

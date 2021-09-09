@@ -1,4 +1,4 @@
-# Mesh on a 3d grid :game_die:
+# Mesh on a 3d grid :game_die: :grapes:
 diego domenzain
 
 August 2021 
@@ -16,6 +16,9 @@ August 2021
       | /               👽 |/
       .--------------------.
                   x
+                  
+xyz
+(iy,ix,iz)
 ```
 
 ## Mesh with neighbor information :two_women_holding_hands:
@@ -28,9 +31,9 @@ This code answers this question by finding three key constructs:
 1. find their neighbors,
 1. find what type of neighbors they are.
 
-The words **mesh** or **mesh-grid** refer to the existing rectangular gridded mesh.
+The words **mesh** or **mesh-grid** :game_die: refer to the existing rectangular gridded mesh.
 
-The word **graph** refers to the region of interest inside the mesh-grid.
+The word **graph** :grapes: refers to the region of interest inside the mesh-grid.
 
 The *Matlab* code uses lots of ```for, while``` and ```if``` **on purpose**. It is meant to be **pseudocode** for *Fortran*.
 
