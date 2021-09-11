@@ -1,4 +1,4 @@
-function [robin_xyz,robin_mesh,robin_graph] = robin_graph_3d_(n_g2m,nx,ny,nz,graph2mesh,mesh2graph,neigh_type)
+function [robin_xyz,robin_mesh,robin_mesh_] = robins_3d_(n_g2m,nx,ny,nz,graph2mesh,neigh_type)
 % diego domenzain
 % ? 2021
 % ------------------------------------------------------------------------------
@@ -27,7 +27,12 @@ function [robin_xyz,robin_mesh,robin_graph] = robin_graph_3d_(n_g2m,nx,ny,nz,gra
 %              left, down, front neighbors are robin.
 % robin_xyz  : robin nodes in the mesh cube 🎲. of size nprobin × 4.
 %              the 4rth column is the second column of robin_mesh.
-% robin_graph: robin nodes in the graph 🍇. of size nprobin × 1.
+% robin_mesh_: robin nodes in the mesh 🎲. of size nprobin_ × 2.
+%              this one doesnt have repetitions. the second column counts
+%              how many entries are repeated in robin_mesh.
+% ------------------------------------------------------------------------------
+% robin_graph: robin nodes in the graph 🍇. of size nprobin × 1:
+%                                robin_graph = mesh2graph(robin_mesh(:,1));
 % ------------------------------------------------------------------------------
 % ◀️
 % neigh_type : row indexes are graph nodes.
@@ -125,15 +130,39 @@ for i_g2m=1:n_g2m
   end
 end
 % ------------------------------------------------------------------------------
-% translate to the graph 🍇
-robin_graph = mesh2graph(robin_mesh(:,1));
+robin_node_=0;
+nprobin_   =0;
+for iprobin=1:nprobin
+  robin_node = robin_mesh(iprobin,1);
+  if (robin_node>robin_node_)
+    nprobin_ = nprobin_ + 1;
+  end
+  robin_node_=robin_node;
+end
+
+robin_mesh_=zeros(nprobin_,2,'uint32');
+robin_node_=0;
+robin_count=1;
+iprobin_=0;
+for iprobin=1:nprobin
+  robin_node = robin_mesh(iprobin,1);
+  if (robin_node>robin_node_)
+    iprobin_ = iprobin_ + 1;
+    robin_count=1;
+  else
+    robin_count=robin_count+1;
+  end
+  robin_mesh_(iprobin_,1) = robin_node;
+  robin_mesh_(iprobin_,2) = robin_count;
+  robin_node_=robin_node;
+end
 % ------------------------------------------------------------------------------
 % translate to coordinates in the mesh 🎲
 robin_xyz = zeros(nprobin,4,'uint32');
 for iprobin=1:nprobin
   iyxz = robin_mesh(iprobin,1);
   [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
-  robin_xyz(iprobin,1:3) = [iy,ix,iz];
+  robin_xyz(iprobin,1:3) = [ix,iy,iz];
   robin_xyz(iprobin,4) = robin_mesh(iprobin,2);
 end
 end

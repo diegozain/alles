@@ -149,5 +149,5 @@ I leave those for another project. Here, I show ```L``` assuming  σ = Δx = Δy
 
 ### Tiny example (*Matlab*)
 
-[![](../pics/mesh.png)](./)
+[![](../pics/mesh-graph-3d.png)](./)
 

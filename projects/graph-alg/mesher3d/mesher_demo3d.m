@@ -79,7 +79,6 @@ addpath('src');
 % represent neighbors right, up, left, down, front and back.
 % ------------------------------------------------------------------------------
 % -- setup a simple example
-% crooked but hole is bigger
 ay1 = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
 ay2 = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
 ay3 = [0 0 0 1 1 0 0; 0 1 1 1 1 0 0; 1 1 1 1 1 1 1; 1 1 0 0 0 1 1; 1 1 1 1 1 1 1];
@@ -149,13 +148,25 @@ neigh_graph = neigh_graph_3d_(neigh_mesh,mesh2graph,n_g2m);
 neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
 % ------------------------------------------------------------------------------
 % get robin nodes
-[robin_xyz,robin_mesh,robin_graph] = robin_graph_3d_(n_g2m,nx,ny,nz,graph2mesh,mesh2graph,neigh_type);
-
-nprobin = size(robin_mesh,1);
+[robin_xyz,robin_mesh,robin_mesh_] = robins_3d_(n_g2m,nx,ny,nz,graph2mesh,neigh_type);
 % ------------------------------------------------------------------------------
 %
 %                              🎨 vis 🎨
 %
+% ------------------------------------------------------------------------------
+% translate to the graph 🍇 (optional)
+robin_graph = mesh2graph(robin_mesh(:,1));
+
+% just for vis
+nprobin_ = size(robin_mesh_,1);
+% translate to coordinates in the mesh 🎲
+robin_xyz_ = zeros(nprobin_,4,'uint32');
+for iprobin_=1:nprobin_
+  iyxz = robin_mesh_(iprobin_,1);
+  [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
+  robin_xyz_(iprobin_,1:3) = [iy,ix,iz];
+  robin_xyz_(iprobin_,4) = robin_mesh_(iprobin_,2);
+end
 % ------------------------------------------------------------------------------
 % this is the 3d graph 🍇 with indexing scheme
 amat3d_graph = zeros(n_g2m,4,'uint32');
@@ -183,7 +194,8 @@ figure;
 subplot(1,2,1);
 scatter3(amat3d_mesh(:,2),amat3d_mesh(:,1),amat3d_mesh(:,3),500*ones(ny*nx*nz,1),amat3d_mesh(:,4),'filled')
 colormap(rainbow2_cb(1));
-colorbar;
+hcb = colorbar;
+ylabel(hcb,'Index in mesh-cube');
 set(gca,'ZDir','reverse');
 axis image;
 axis tight;
@@ -196,7 +208,8 @@ simple_figure()
 subplot(1,2,2);
 scatter3(amat3d_graph(:,2),amat3d_graph(:,1),amat3d_graph(:,3),500*ones(n_g2m,1),amat3d_graph(:,4),'filled')
 colormap(rainbow2_cb(1));
-colorbar;
+hcb = colorbar;
+ylabel(hcb,'Index in graph');
 set(gca,'ZDir','reverse');
 axis image;
 axis tight;
@@ -207,9 +220,11 @@ title('Graph 🍇')
 simple_figure()
 
 figure;
-scatter3(robin_xyz(:,2),robin_xyz(:,1),robin_xyz(:,3),500*ones(nprobin,1),robin_xyz(:,4),'filled')
+subplot(1,2,1);
+scatter3(robin_xyz_(:,2),robin_xyz_(:,1),robin_xyz_(:,3),500*ones(nprobin_,1),robin_xyz_(:,4),'filled')
 colormap(rainbow2_cb(1));
-colorbar;
+hcb = colorbar;
+ylabel(hcb,'# of 🐦 entries');
 set(gca,'ZDir','reverse');
 axis image;
 axis tight;
@@ -261,17 +276,45 @@ simple_figure()
 % ------------------------------------------------------------------------------
 [I,J] = IJ_3d_(n_g2m,n_ij,n_IJ,neigh_graph);
 % ------------------------------------------------------------------------------
-% srcs_xyz = zeros(1,3,2,'uint32');
-% srcs_xyz(1,1,1) = 2;
-% srcs_xyz(1,2,1) = 2;
-% srcs_xyz(1,3,1) = 1;
+%                         🐦 α's for robin bc 🐦
+% ------------------------------------------------------------------------------
+dx=0.5; % m
+dy=0.5; % m
+dz=0.5; % m
+
+x=(0:(nx-1))*dx; x=x.';
+y=(0:(ny-1))*dy; y=y.';
+z=(0:(nz-1))*dz; z=z.';
+% ------------------------------------------------------------------------------
 %
-% srcs_xyz(1,1,2) = 3;
-% srcs_xyz(1,2,2) = 2;
-% srcs_xyz(1,3,2) = 1;
-% % ------------------------------------------------------------------------------
-% alphas = get_alphas(x,y,z,srcs_xyz,robin_xyz);
-% % ------------------------------------------------------------------------------
+% srcs_xyz  : (nsources) × (xyz) × (±) . indexes in the mesh cube 🎲
+srcs_xyz = zeros(1,3,2,'uint32');
+srcs_xyz(1,1,1) = 3; % x index of a
+srcs_xyz(1,2,1) = 2; % y index of a
+srcs_xyz(1,3,1) = 2; % z index of a
+
+srcs_xyz(1,1,2) = 6; % x index of b
+srcs_xyz(1,2,2) = 2; % y index of b
+srcs_xyz(1,3,2) = 3; % z index of b
+% ------------------------------------------------------------------------------
+alphas = get_alphas(x,y,z,srcs_xyz,robin_xyz);
+% ------------------------------------------------------------------------------
+nprobin= size(robin_xyz,1);
+
+subplot(1,2,2);
+scatter3(robin_xyz(:,1),robin_xyz(:,2),robin_xyz(:,3),500*ones(nprobin,1),alphas,'filled')
+colormap(rainbow2_cb(1));
+hcb = colorbar;
+ylabel(hcb,'α');
+set(gca,'ZDir','reverse');
+axis image;
+axis tight;
+xlabel('x')
+ylabel('y')
+zlabel('z')
+title('α 🐦')
+simple_figure()
+% ------------------------------------------------------------------------------
 
 %{
 % ------------------------------------------------------------------------------
@@ -279,7 +322,7 @@ simple_figure()
 %
 % V = V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_type,graph2mesh,x,y,z,sigm,alphas);
 %
-% but as noted in src/div_c_grad.m this function needs to include more things!
+% but as noted in src/dcipL3d.m this function needs to include more things!
 % ------------------------------------------------------------------------------
 V = zeros(n_IJ,1);
 il = 1;

@@ -1,17 +1,6 @@
-function V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_type,graph2mesh,x,y,z,sigm,alphas)
+function V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_type,graph2mesh,mesh2graph,x,y,z,sigm,alphas)
 % diego domenzain
 % august 2021
-% ------------------------------------------------------------------------------
-
-
-iyxz = graph2mesh(J(il))
-iyxz_= graph2mesh(J(ii))
-[dx,dy,dz]    = deltas(iyxz,iyxz_nei,x,y,z)
-[ix,iy,iz]    = get_ixyz(iyxz,nx,ny,nz);
-[ix_,iy_,iz_] = get_ixyz(iyxz_nei,nx,ny,nz)
-
-% diego domenzain
-% August 2021 @ Aarhus University
 % ------------------------------------------------------------------------------
 %
 % discretization of
@@ -26,6 +15,13 @@ iyxz_= graph2mesh(J(ii))
 % • Robin boundary conditions are NOT implemented,
 %   only Neumann (no-flow) are implemented.
 % ------------------------------------------------------------------------------
+% iyxz = graph2mesh(J(il))
+% iyxz_= graph2mesh(J(ii))
+% [dx,dy,dz]    = deltas(iyxz,iyxz_nei,x,y,z)
+% [ix,iy,iz]    = get_ixyz(iyxz,nx,ny,nz);
+% [ix_,iy_,iz_] = get_ixyz(iyxz_nei,nx,ny,nz)
+% ------------------------------------------------------------------------------
+
 V = zeros(n_IJ,1);
 il = 1;
 il_= 0;
