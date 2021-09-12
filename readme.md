@@ -1,9 +1,9 @@
-# alles
+# :four_leaf_clover: alles
 
 diego domenzain
 2020
 
-__All small projects that need a place to live *but are not part of a large project*, live here.__
+:house: __All small projects that need a place to live *but are not part of a large project*, live here.__
 
 [![](projects/pdes/pics/eikonal-funny.png)](gallery/)
 
@@ -20,14 +20,15 @@ If running *Matlab* projects, please set paths first by running the script:
 
 * Optimization 
 
-	* [Gedanken of joint inversion](projects/opti/gedanken/)
-	* [Gravity inversion](projects/opti/gravity/)
-	* [Cross-gradient inversion](projects/opti/xgrad/)
-	* Logistic regression
-	* Snow slip
-	* [Dense circle packing](projects/opti/dense-circ/)
-	* [Markowitz portfolio](projects/opti/markowitz/)
-	* Decision trees & Random forests
+  * [Gedanken of joint inversion](projects/opti/gedanken/)
+  * [Gravity inversion](projects/opti/gravity/)
+  * [Cross-gradient inversion](projects/opti/xgrad/)
+  * Logistic regression
+  * Snow slip
+  * [Dense circle packing](projects/opti/dense-circ/)
+  * [Markowitz portfolio](projects/opti/markowitz/)
+  * Decision trees & Random forests
+  * [Bayesian optimization](projects/opti/baye-opti/)
 
 * Dimensionality reduction
 
@@ -75,7 +76,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [OpenMP](projects/cloud/openmp/)
 	
 * Visualize
- 
+
 	* Plot output from *C*
 	* [Plot output from *Fortran*](projects/visualize/see-fortran/)
 	* Plot output from *Julia*

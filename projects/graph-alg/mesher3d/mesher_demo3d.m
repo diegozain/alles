@@ -104,7 +104,7 @@ for iyxz = 1:ny*nx*nz
   [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
 
   % this is just for vis 🎨
-  amat3d_mask(iyxz,:)  = [iy,ix,iz,a_(iy,ix,iz)];
+  amat3d_mask(iyxz,:) = [iy,ix,iz,a_(iy,ix,iz)];
   amat3d_mesh(iyxz,:) = [iy,ix,iz,a_index(iy,ix,iz)];
 
   % 3d matrix 🎲 in the mesh in just one column
@@ -194,8 +194,9 @@ figure;
 subplot(1,2,1);
 scatter3(amat3d_mesh(:,2),amat3d_mesh(:,1),amat3d_mesh(:,3),500*ones(ny*nx*nz,1),amat3d_mesh(:,4),'filled')
 colormap(rainbow2_cb(1));
-hcb = colorbar;
-ylabel(hcb,'Index in mesh-cube');
+hcb = colorbar('southoutside');
+hcb.TickLength = 0;
+xlabel(hcb,'Index in mesh-cube');
 set(gca,'ZDir','reverse');
 axis image;
 axis tight;
@@ -208,8 +209,9 @@ simple_figure()
 subplot(1,2,2);
 scatter3(amat3d_graph(:,2),amat3d_graph(:,1),amat3d_graph(:,3),500*ones(n_g2m,1),amat3d_graph(:,4),'filled')
 colormap(rainbow2_cb(1));
-hcb = colorbar;
-ylabel(hcb,'Index in graph');
+hcb = colorbar('southoutside');
+hcb.TickLength = 0;
+xlabel(hcb,'Index in graph');
 set(gca,'ZDir','reverse');
 axis image;
 axis tight;
@@ -223,8 +225,9 @@ figure;
 subplot(1,2,1);
 scatter3(robin_xyz_(:,2),robin_xyz_(:,1),robin_xyz_(:,3),500*ones(nprobin_,1),robin_xyz_(:,4),'filled')
 colormap(rainbow2_cb(1));
-hcb = colorbar;
-ylabel(hcb,'# of 🐦 entries');
+hcb = colorbar('southoutside');
+hcb.TickLength = 0;
+xlabel(hcb,'# of 🐦 entries');
 set(gca,'ZDir','reverse');
 axis image;
 axis tight;
@@ -297,15 +300,29 @@ srcs_xyz(1,1,2) = 6; % x index of b
 srcs_xyz(1,2,2) = 2; % y index of b
 srcs_xyz(1,3,2) = 3; % z index of b
 % ------------------------------------------------------------------------------
+iy = srcs_xyz(1,2,1);
+ix = srcs_xyz(1,1,1);
+iz = srcs_xyz(1,3,1);
+iyxz = (iy-1)*nx*nz + (ix-1)*nz + iz;
+a_in_g = mesh2graph(iyxz);
+
+iy = srcs_xyz(1,2,2);
+ix = srcs_xyz(1,1,2);
+iz = srcs_xyz(1,3,2);
+iyxz = (iy-1)*nx*nz + (ix-1)*nz + iz;
+b_in_g = mesh2graph(iyxz);
+% ------------------------------------------------------------------------------
 alphas = get_alphas(x,y,z,srcs_xyz,robin_xyz);
 % ------------------------------------------------------------------------------
 nprobin= size(robin_xyz,1);
+nsource= size(srcs_xyz,1);
 
 subplot(1,2,2);
-scatter3(robin_xyz(:,1),robin_xyz(:,2),robin_xyz(:,3),500*ones(nprobin,1),alphas,'filled')
+scatter3(robin_xyz(:,1),robin_xyz(:,2),robin_xyz(:,3),300*ones(nprobin,1),alphas,'filled')
 colormap(rainbow2_cb(1));
-hcb = colorbar;
-ylabel(hcb,'α');
+hcb = colorbar('southoutside');
+hcb.TickLength = 0;
+xlabel(hcb,'α');
 set(gca,'ZDir','reverse');
 axis image;
 axis tight;

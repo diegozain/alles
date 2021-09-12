@@ -46,11 +46,11 @@ for iprobin=1:nprobin
   irobx = robin_xyz(iprobin,1);
   iroby = robin_xyz(iprobin,2);
   irobz = robin_xyz(iprobin,3);
-
+  % type of robin node.
   irob_ = robin_xyz(iprobin,4);
 
-  alpha_r = 0;
-  alpha_cos=0;
+  alpha_r  = 0;
+  alpha_cos= 0;
   for isource=1:nsource
     % ---
     % ⚪ positive source
