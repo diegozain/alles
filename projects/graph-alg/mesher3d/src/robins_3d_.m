@@ -24,7 +24,7 @@ function [robin_xyz,robin_mesh,robin_mesh_] = robins_3d_(n_g2m,nx,ny,nz,graph2me
 %              in the second column you find which side is robin.
 %              for example, a corner node will be repeated 3 times in robin_mesh
 %              and the second column will perhaps read 3,4,5, meaning
-%              left, down, front neighbors are robin.
+%              left ←, down ↓, front ⦿ neighbors are robin.
 % robin_xyz  : robin nodes in the mesh cube 🎲. of size nprobin × 4.
 %              the 4rth column is the second column of robin_mesh.
 % robin_mesh_: robin nodes in the mesh 🎲. of size nprobin_ × 2.

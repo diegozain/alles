@@ -154,9 +154,6 @@ neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
 %                              🎨 vis 🎨
 %
 % ------------------------------------------------------------------------------
-% translate to the graph 🍇 (optional)
-robin_graph = mesh2graph(robin_mesh(:,1));
-
 % just for vis
 nprobin_ = size(robin_mesh_,1);
 % translate to coordinates in the mesh 🎲
@@ -332,6 +329,16 @@ zlabel('z')
 title('α 🐦')
 simple_figure()
 % ------------------------------------------------------------------------------
+sig=ones(n_g2m,1);
+
+% translate to the graph 🍇
+nprobin     = size(robin_mesh,1);
+robin_graph = zeros(nprobin,2);
+robin_graph(:,1) = mesh2graph(robin_mesh(:,1));
+robin_graph(:,2) = robin_mesh(:,2);
+% counter array
+n_ar = robin_mesh_(:,2);
+
 
 %{
 % ------------------------------------------------------------------------------
