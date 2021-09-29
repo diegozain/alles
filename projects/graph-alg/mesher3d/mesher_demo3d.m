@@ -147,14 +147,13 @@ neigh_graph = neigh_graph_3d_(neigh_mesh,mesh2graph,n_g2m);
 % ------------------------------------------------------------------------------
 neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
 % ------------------------------------------------------------------------------
-% get robin nodes
-[robin_xyz,robin_mesh,robin_mesh_] = robins_3d_(n_g2m,nx,ny,nz,graph2mesh,neigh_type);
-% ------------------------------------------------------------------------------
 %
 %                              🎨 vis 🎨
 %
 % ------------------------------------------------------------------------------
-% just for vis
+% get robin nodes
+[robin_xyz,robin_mesh,robin_mesh_] = robins_3d_(n_g2m,nx,ny,nz,graph2mesh,neigh_type);
+% ------------------------------------------------------------------------------
 nprobin_ = size(robin_mesh_,1);
 % translate to coordinates in the mesh 🎲
 robin_xyz_ = zeros(nprobin_,4,'uint32');
@@ -235,7 +234,7 @@ title('Robin in mesh 🎲')
 simple_figure()
 % ------------------------------------------------------------------------------
 %
-%       this part is for building the PDE operator L acting on the graph
+%     🔷 this part is for building the PDE operator L acting on the graph 🔺
 %
 % ------------------------------------------------------------------------------
 % we need L to be defined as a sparse matrix,
@@ -262,7 +261,6 @@ simple_figure()
 %        it is an array of size n_g2m by 1.
 % ------------------------------------------------------------------------------
 [n_ij,n_IJ] = nIJ_3d(n_g2m,neigh_type);
-% %{
 % ------------------------------------------------------------------------------
 % now we need to build I and J.
 %
@@ -276,7 +274,9 @@ simple_figure()
 % ------------------------------------------------------------------------------
 [I,J] = IJ_3d_(n_g2m,n_ij,n_IJ,neigh_graph);
 % ------------------------------------------------------------------------------
+%
 %                         🐦 α's for robin bc 🐦
+%
 % ------------------------------------------------------------------------------
 dx=0.5; % m
 dy=0.5; % m
@@ -309,6 +309,9 @@ iz = srcs_xyz(1,3,2);
 iyxz = (iy-1)*nx*nz + (ix-1)*nz + iz;
 b_in_g = mesh2graph(iyxz);
 % ------------------------------------------------------------------------------
+% 🐦
+[robin_graph,robin_xyz,n_ar] = robins_3d(n_g2m,nx,ny,nz,graph2mesh,mesh2graph,neigh_type);
+% α
 alphas = get_alphas(x,y,z,srcs_xyz,robin_xyz);
 % ------------------------------------------------------------------------------
 nprobin= size(robin_xyz,1);
@@ -329,71 +332,16 @@ zlabel('z')
 title('α 🐦')
 simple_figure()
 % ------------------------------------------------------------------------------
+%
+%
+%                            🔷  build L  🔺
+%
+%
+% ------------------------------------------------------------------------------
+% declare σ
 sig=ones(n_g2m,1);
-
-% translate to the graph 🍇
-nprobin     = size(robin_mesh,1);
-robin_graph = zeros(nprobin,2);
-robin_graph(:,1) = mesh2graph(robin_mesh(:,1));
-robin_graph(:,2) = robin_mesh(:,2);
-% counter array
-n_ar = robin_mesh_(:,2);
-
-
-%{
 % ------------------------------------------------------------------------------
-% this next section can be substituted by
-%
-% V = V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_type,graph2mesh,x,y,z,sigm,alphas);
-%
-% but as noted in src/dcipL3d.m this function needs to include more things!
-% ------------------------------------------------------------------------------
-V = zeros(n_IJ,1);
-il = 1;
-il_= 0;
-for i_g2m=1:n_g2m
-    % -- end of line
-    il_ = il_ + n_ij(i_g2m)+1;
-    % -- in line
-    % V
-    ith = 0;
-    for ii=(il+1):il_
-        % sum for ith entry
-        ith = ith +1;
-        % neighbors entries
-        V(ii) = -1;
-        % NOTE: the +1 and -1 should be replaced (each) with a product of:
-        % 1. material properties (i.e. harmonic averages of conductivity),
-        % 2. and dx_j / dz_j terms.
-        %
-        % to do so, use J.
-        % for example, inside this loop:
-        % J(il) gives the ith node,
-        % J(ii) gives neighbor of ith node.
-        %
-        % the harmonic average would be:
-        % sig_ij_ = ( 2*sig(J(il)) * sig(J(ii)) ) / ( sig(J(il)) + sig(J(ii)) )
-    end
-    % robin nodes are summed to 'ith'
-    for i_nei=1:6
-        if (neigh_type(J(il),i_nei) == 0)
-            ith = ith +1;
-            % NOTE: the +1 should be replaced by the appropriate entry.
-            % J(il) gives the ith node,
-            % neigh_type(J(il),i_nei) gives neighbor of ith node.
-            %
-            % WARNING: be careful with the corners!!
-            % 'bottom' corners are characterized by having two 0 entries in:
-            %     neigh_type(J(il),1:4)
-            % 'top' corners are characterized by having one 0 and one -1 in:
-            %     neigh_type(J(il),1:4)
-        end
-    end
-    % ith entry
-    V(il) = ith;
-    % -- begining of next line
-    il = il_ + 1;
-end
+V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_mesh,graph2mesh,robin_graph,alphas,n_ar,sig,x,y,z);
 % ------------------------------------------------------------------------------
 L = sparse(I,J,V);
 % ------------------------------------------------------------------------------
@@ -402,90 +350,39 @@ L = sparse(I,J,V);
 % ------------------------------------------------------------------------------
 % source
 s=zeros(n_g2m,1);
-s(4)=1;
-s(19)=-1;
+s(a_in_g)= 1;
+s(b_in_g)=-1;
 % solve
 u=L\s;
-% for plotting
-u_=nan(nz,nx);
-u_(graph2mesh)=u;
-u_plot=[u_;nan(1,nx)];
-u_plot=[u_plot,nan(nz+1,1)];
 % ------------------------------------------------------------------------------
 %
-%                              visualize results
+%                               🎨 vis 🎨
 %
 % ------------------------------------------------------------------------------
-fprintf(' -------------- mesh under consideration -------------- \n')
-a
-
-fprintf(' -------------- indexes of mesh ----------------------- \n')
-a_index
-
-fprintf(' -------------- graph -> mesh ------------------------- \n')
-graph2mesh
-
-fprintf(' -------------- mesh -> graph ------------------------- \n')
-mesh2graph
-
-fprintf(' -------------- neighbors in mesh --------------------- \n')
-neigh_mesh
-
-fprintf(' -------------- neighbors in graph --------------------- \n')
-neigh_graph
-
-fprintf(' -------------- type of neighbors ---------------------- \n')
-neigh_type
-% ------------------------------------------------------------------------------
-figure;
-fancy_imagesc(a)
-colorbar('off')
-title('Mesh-grid')
-set(gca,'xtick',[])
-set(gca,'ytick',[])
-simple_figure()
+% this is in the 3d graph 🍇
+u3d = zeros(n_g2m,4);
+for i_g2m=1:n_g2m
+  % get x,y,z coordinate
+  iyxz = graph2mesh(i_g2m);
+  [ix,iy,iz] = get_ixyz(iyxz,nx,ny,nz);
+  % 🎨
+  u3d(i_g2m,1:3)= [iy,ix,iz];
+  u3d(i_g2m,4)  = u(i_g2m);
+end
 
 figure;
-
-subplot(121)
-fancy_imagesc(a_index)
-colormap(rainbow2_cb(1))
-title('Mesh-grid indexes')
-set(gca,'xtick',[])
-set(gca,'ytick',[])
+% scatter3(u3d(:,2),u3d(:,1),u3d(:,3),500*ones(n_g2m,1),u3d(:,4),'filled')
+scatter3(u3d(:,2),u3d(:,1),u3d(:,3),500*abs(u3d(:,4)),u3d(:,4),'filled')
+colormap(rainbow2_cb(1));
+hcb = colorbar('southoutside');
+hcb.TickLength = 0;
+xlabel(hcb,'(🌝)');
+set(gca,'ZDir','reverse');
+axis image;
+axis tight;
+xlabel('x')
+ylabel('y')
+zlabel('z')
+title('ϕ 🔌')
 simple_figure()
 % ------------------------------------------------------------------------------
-% this is just for visualizing
-a_graph = nan(nz,nx);
-a_graph(graph2mesh) = (1:n_g2m);
-% pcolor does not plot the edges for some weird reason I do not understand
-a_graph_plot = [a_graph;nan(1,nx)];
-a_graph_plot = [a_graph_plot , nan(nz+1,1)];
-
-% figure;
-subplot(122)
-fancy_pcolor(a_graph_plot)
-colormap(rainbow2_cb(1))
-title('Mesh-graph indexes')
-set(gca,'xtick',[])
-set(gca,'ytick',[])
-simple_figure()
-% ------------------------------------------------------------------------------
-figure;
-fancy_imagesc(L);
-colormap(rainbow2_cb(1))
-title('L graph-operator')
-set(gca,'xtick',[])
-set(gca,'ytick',[])
-simple_figure()
-% ------------------------------------------------------------------------------
-figure;
-fancy_pcolor(u_plot)
-colormap(rainbow2_cb(1))
-colorbar('off')
-title('Mesh-graph field')
-set(gca,'xtick',[])
-set(gca,'ytick',[])
-simple_figure()
-% ------------------------------------------------------------------------------
-%}

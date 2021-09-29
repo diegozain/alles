@@ -1,12 +1,12 @@
-# DC x-borehole data visualization
+# DC x•borehole data visualization
 diego domenzain
 
-June 2021 @ Aarhus University 
+June 2021
 
 ## 👓 Sensitivity
 For an **abmn** quadrupole, the sensitivity is:
 
-👓 = ∇φ ⋅ ∇ v 
+👓 = ∇φ ⋅ ∇ v
 
 where,
 
@@ -16,7 +16,7 @@ where,
 
 See Line's [.pdf](https://github.com/LineMeldgaardMadsen/ERT-XBH-sensitivity/blob/main/Catalogue_2D%20ERT_sensitivity.pdf) for more info.
 
-## 👀 Visualize cross-borehole data 
+## 👀 Visualize cross-borehole data
 
 ### Localizing the sensitivities 👓 ⤍ ⚫
 
@@ -50,15 +50,15 @@ And then you're like *no problem,  it's cool*.
 Let ```ielectrode_[a,b,m,n]``` be the electrodes indexes where ```ielectrode``` appears in ```abmn``` as a, b, m, or n.
 
 ```
-ielectrode_a = abmn(find(abmn(:,1)==ielectrode_a),:);
-ielectrode_b = abmn(find(abmn(:,2)==ielectrode_b),:);
-ielectrode_m = abmn(find(abmn(:,3)==ielectrode_m),:);
-ielectrode_n = abmn(find(abmn(:,4)==ielectrode_n),:);
+ielectrode_a = find(abmn(:,1)==ielectrode);
+ielectrode_b = find(abmn(:,2)==ielectrode);
+ielectrode_m = find(abmn(:,3)==ielectrode);
+ielectrode_n = find(abmn(:,4)==ielectrode);
 ```
 Now you do this,
 
-* delete ```ielectrode``` from ```electrodes```, 
-* delete the collection ```ielectrode_[a,b,m,n]``` from: 
+* delete ```ielectrode``` from ```electrodes```,
+* delete the collection ```ielectrode_[a,b,m,n]``` from:
   * ```abmn```
   * ```pseud```
   * ```data```

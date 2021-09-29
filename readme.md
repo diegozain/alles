@@ -18,7 +18,7 @@ If running *Matlab* projects, please set paths first by running the script:
 
 ## Content
 
-* Optimization 
+* Optimization
 
   * [Gedanken of joint inversion](projects/opti/gedanken/)
   * [Gravity inversion](projects/opti/gravity/)
@@ -49,6 +49,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Korteweg De Vries](projects/pdes/korteweg/)
 	* [Eikonal solver](projects/pdes/eikonal/)
 	* [Umfpack demo](projects/pdes/umfpack-demo/)
+  * [Pardiso demo](projects/pdes/pardiso-demo/)
 	* [Helmholtz-Hodge Decomposition](projects/pdes/hhd/)
 
 * Squeezing and expanding matrices
@@ -68,29 +69,29 @@ If running *Matlab* projects, please set paths first by running the script:
 	* Hyperbolic and linear semblance
 	* [Beamforming](projects/wave-proc/beamforming/) (to find direction of signal)
 	* Seismic beachball
-	
+
 * Cloud computing
 
 	* Slurm
 	* AWS
 	* [OpenMP](projects/cloud/openmp/)
-	
+
 * Visualize
 
 	* Plot output from *C*
 	* [Plot output from *Fortran*](projects/visualize/see-fortran/)
 	* Plot output from *Julia*
 	* [*Fortran* in *Matlab*](projects/visualize/finmatlab/)
-	
+
 * Deep learning
-	
+
 	* [pic2pic](projects/deep-learning/pic2pic/). Smooth to rough squares
-	
+
 ---
 
 Some are written in *Matlab*, some in *C*, some in *Fortran*, some in *Julia*, some use *Python* packages.
 
-Some were written by me, some I found in books (as exercises), some are a collage of stuff taken from the internet. Most are proof of concept by example. 
+Some were written by me, some I found in books (as exercises), some are a collage of stuff taken from the internet. Most are proof of concept by example.
 
 __Not all are perfect but they all work. *They are toy examples*.__
 

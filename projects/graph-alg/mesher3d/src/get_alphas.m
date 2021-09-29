@@ -43,6 +43,11 @@ nsource= size(srcs_xyz,1);
 
 alphas = zeros(nprobin,1);
 for iprobin=1:nprobin
+  % 🐛
+  if iprobin==23
+    blblb=0;
+  end
+
   irobx = robin_xyz(iprobin,1);
   iroby = robin_xyz(iprobin,2);
   irobz = robin_xyz(iprobin,3);

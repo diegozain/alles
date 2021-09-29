@@ -1,26 +1,25 @@
-function V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_mesh,graph2mesh,robin_graph,alphas,n_ar,sig,x,y,z)
+function V = dcipS3d(n_g2m,n_ij,n_IJ,I,J,neigh_mesh,graph2mesh,robin_graph,alphas,n_ar,sig,phi,x,y,z)
 % diego domenzain
 % august 2021
 % ------------------------------------------------------------------------------
-% s,σ 👉 ϕ
+% σ 👈 ϕ,s
 %
 % discretization of
-%         - ∇ ⋅ σ ∇ ϕ = s
-%                   L ≈ - ∇ ⋅ σ ∇
 %
-% where
-%       L = sparse(I,J,V);
+%                   S ≈ - ((∇σ L) ϕ)⊤
+%
+%
 % ------------------------------------------------------------------------------
 %
 % the ith row of matrix L has the following form,
 %
-%       L(i,:) = [ δik·σi + Σj (δij · σ⋆ij)        (-δij · σ⋆ij) ]
-%                         ith entry                  jth entries
+%   S(i,:) = [ -δik·ϕi + Σj (ϕj - ϕi)·δij·∂i(σ⋆ij)      (ϕi - ϕj)·δji·∂i(σ⋆ij) ]
+%                         ith entry                          jth entries
 %
 % 'j' runs over all inner neighbors of node 'i'.
 % 'k' runs over all boundary neighbors of node 'i'.
 %
-%           σ⋆ij = 2·σi·σj / (σi + σj)              harmonic average
+%       ∂i(σ⋆ij) = 2·σj^2 / (σi + σj)^2              harmonic average
 %            δij = Δij / Δ⟂ij                   inner & air-ground nodes
 %            δik = Δki·αi                subsurface boundary nodes (0 otherwise)
 %            δik = Δk1·c1 + Δk2·c2              corner nodes (0 otherwise)
@@ -46,8 +45,10 @@ function V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_mesh,graph2mesh,robin_graph,alpha
 % y          • y discretization 🎲
 % z          • z discretization 🎲
 % ------------------------------------------------------------------------------
-%    L(i_g2m,:) = [ δik·σi + Σj (δij · σ⋆ij)        (-δij · σ⋆ij) ]
-%                         ith entry                  jth entries
+% S(i,:) = [ -δik·ϕi + Σj (ϕj - ϕi)·δij·∂i(σ⋆ij)      (ϕi - ϕj)·δji·∂i(σ⋆ij) ]
+%                       ith entry                          jth entries
+%
+% ∂i(σ⋆ij) = 2·σj^2 / (σi + σj)^2
 % ------------------------------------------------------------------------------
 V = zeros(n_IJ,1);
 % ------------------------------------------------------------------------------
@@ -68,17 +69,17 @@ for i_g2m=1:n_g2m
     % -- end of row in L
     il_ = il_ + n_ij(i_g2m)+1;
     % -- in row of L
-    % 'ith' will be the entry of L(i_g2m,i_g2m).
+    % 'ith' will be the entry of S(i_g2m,i_g2m).
     %  here the value is reset to zero.
     ith = 0;
     % ◼ loop thru inner neighbors of 'i_g2m',
     %    whose position in I, J, & V is indexed by 'ij',
     %    → asign values to,
     %
-    %                    L(i_g2m , ij) = -δij · σ⋆ij
+    %                    S(i_g2m , ij) = (ϕi - ϕj)·δji·∂i(σ⋆ij)
     %
-    %    → and do the inner neighbor sum for the entry L(i_g2m,i_g2m),
-    %                                                            Σj (δij · σ⋆ij)
+    %    → and do the inner neighbor sum for the entry S(i_g2m,i_g2m),
+    %                                                  Σj (ϕj - ϕi)·δij·∂i(σ⋆ij)
     %    inside this loop:
     %      • J(il) gives the ith node in the graph,
     %      • J(ij) gives inner neighbor of ith node in the graph.
@@ -89,11 +90,13 @@ for i_g2m=1:n_g2m
         iyxz_= graph2mesh(J(ij));
         dij  = deltas3d(J(il),neigh_mesh,iyxz,iyxz_,x,y,z);
 
-        sig_ij_ = ( 2*sig(J(il)) * sig(J(ij)) ) / ( sig(J(il)) + sig(J(ij)) );
-        % sum for the entry L(i_g2m , i_g2m)
-        ith = ith + dij*sig_ij_;
-        % entry of L(i_g2m , ij)
-        V(ij) = -dij*sig_ij_;
+        % ∂i(σ⋆ij) = 2·σj^2 / (σi + σj)^2
+        sig_ij_ = 2*(sig(J(ij)))^2 / ( sig(J(il)) + sig(J(ij)) )^2;
+
+        % sum for the entry S(i_g2m , i_g2m)
+        ith = ith + dij*sig_ij_*(phi(J(ij)) - phi(J(il)));
+        % entry of S(i_g2m , ij)
+        V(ij) = dij*sig_ij_*(phi(J(il)) - phi(J(ij)));
     end
     % ◻ loop thru robin neighbors of 'i_g2m',
     %    whose position in I, J, & V does not exist!
@@ -102,8 +105,8 @@ for i_g2m=1:n_g2m
     %    if the number you find is 0,
     %    then position i_nei is robin for 'i_g2m'.
     %
-    %    → gives the second part of the entry L(i_g2m,i_g2m),
-    %                                                    δik·σi
+    %    → gives the second part of the entry S(i_g2m,i_g2m),
+    %                                                    -δik·ϕi
     %    inside this loop:
     %      • J(il) gives the ith node in the graph.
     %
@@ -124,16 +127,16 @@ for i_g2m=1:n_g2m
         iyxz = graph2mesh(J(il));
         dik = deltas_robin3d(iyxz,i_nei,x,y,z);
 
-        ith = ith + dik*alphai;
+        ith = ith - dik*alphai*phi(J(il));
       end
       % beginning of next robin node
       iar = iar_ + 1;
       iprobin_ = iprobin_ + 1;
     end
     % ⚫ now that we have all the information about the ith entry,
-    %    i.e. L(i_g2m,i_g2m), we can plug it in.
+    %    i.e. S(i_g2m,i_g2m), we can plug it in.
     %
-    %             L(i_g2m,i_g2m) = δik·σi + Σj (δij · σ⋆ij)
+    %             S(i_g2m,i_g2m) = -δik·ϕi + Σj (ϕj - ϕi)·δij·∂i(σ⋆ij)
     % --
     V(il) = ith;
     % -- begining of next row in L

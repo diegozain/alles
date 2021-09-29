@@ -137,13 +137,43 @@ The last step is to build the entries ```V``` of ```L``` using ```J``` and ```ne
 
 In general, ```L``` could be any differential operator you could think of. In particular, I assume ```L``` is the left-hand side of this PDE,
 
--∇⋅σ ∇ u = s
+-∇⋅σ ∇ ϕ = s
 
-where σ is conductivity, 'u' is the sought-after field, and 's' is the source term.
+where σ is conductivity, ϕ is the sought-after field, and 's' is the source term.
 
-In practice, we need 3D material properties σ, and geometry parameters Δx, Δy and Δz. 
+### Fortran to-do list
 
-I leave those for another project. Here, I show ```L``` assuming  σ = Δx = Δy = Δz = 1.
+```matlab
+% build mask 😷 as a 3d matrix 🎲 in the mesh in just one column
+[ny,nx,nz]=size(a_);
+a(iyxz,:) = a_(iy,ix,iz);
+
+% build structs for handling 🎲 and 🍇
+n_g2m = n_g2m_3d_(a,nx,ny,nz);
+[graph2mesh,mesh2graph] = g2m_m2g_3d(a,nx,ny,nz,n_g2m);
+neigh_mesh = neigh_mesh_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
+neigh_graph= neigh_graph_3d_(neigh_mesh,mesh2graph,n_g2m);
+neigh_type = neigh_type_3d_(a,nx,ny,nz,n_g2m,graph2mesh);
+[n_ij,n_IJ]= nIJ_3d(n_g2m,neigh_type);
+[I,J] = IJ_3d_(n_g2m,n_ij,n_IJ,neigh_graph);
+
+% build source
+% srcs_xyz  : (nsources) × (xyz) × (±) . indexes in the mesh cube 🎲
+
+% build 🐦 & α's
+[robin_graph,robin_xyz,n_ar] = robins_3d(n_g2m,nx,ny,nz,graph2mesh,mesh2graph,neigh_type);
+alphas = get_alphas(x,y,z,srcs_xyz,robin_xyz);
+
+% build matrix L 🔷🔺
+V = dcipL3d(n_g2m,n_ij,n_IJ,I,J,neigh_mesh,graph2mesh,robin_graph,alphas,n_ar,sig,x,y,z);
+L = sparse(I,J,V);
+
+% solve for u using 🌴
+
+% build matrix S 🔺🔷
+V = dcipS3d(n_g2m,n_ij,n_IJ,I,J,neigh_mesh,graph2mesh,robin_graph,alphas,n_ar,sig,phi,x,y,z);
+S = sparse(I,J,V);
+```
 
 ---
 

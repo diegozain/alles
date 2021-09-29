@@ -1,4 +1,4 @@
-# Pardiso via oneAPI 🏝
+# *Pardiso* via *oneAPI* 🏝
 
 diego domenzain
 
