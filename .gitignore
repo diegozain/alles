@@ -24,6 +24,9 @@ __pycache__/
 fort.*
 
 *.o
+*.obj
+*.mod
+*.exe
 
 fortran_supplement_ver_1.1.pdf
 
