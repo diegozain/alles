@@ -29,6 +29,7 @@ If running *Matlab* projects, please set paths first by running the script:
   * [Markowitz portfolio](projects/opti/markowitz/)
   * Decision trees & Random forests
   * [Bayesian optimization](projects/opti/baye-opti/)
+  * [Relative coordinates](projects/opti/rela-coords/))
 
 * Dimensionality reduction
 
@@ -69,6 +70,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* Hyperbolic and linear semblance
 	* [Beamforming](projects/wave-proc/beamforming/) (to find direction of signal)
 	* Seismic beachball
+  * [Harmonic denoising](projects/wave-proc/harmonic-denoising/)
 
 * Cloud computing
 
