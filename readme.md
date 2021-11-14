@@ -29,7 +29,7 @@ If running *Matlab* projects, please set paths first by running the script:
   * [Markowitz portfolio](projects/opti/markowitz/)
   * Decision trees & Random forests
   * [Bayesian optimization](projects/opti/baye-opti/)
-  * [Relative coordinates](projects/opti/rela-coords/))
+  * [Relative coordinates](projects/opti/rela-coords/)
 
 * Dimensionality reduction
 
@@ -50,7 +50,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Korteweg De Vries](projects/pdes/korteweg/)
 	* [Eikonal solver](projects/pdes/eikonal/)
 	* [Umfpack demo](projects/pdes/umfpack-demo/)
-  * [Pardiso demo](projects/pdes/pardiso-demo/)
+	* [Pardiso demo](projects/pdes/pardiso-demo/)
 	* [Helmholtz-Hodge Decomposition](projects/pdes/hhd/)
 
 * Squeezing and expanding matrices

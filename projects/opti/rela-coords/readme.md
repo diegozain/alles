@@ -6,4 +6,4 @@ Given measurements of relative distances between 4 points, return cartesian coor
 
 ---
 
-![](..\pics\rela-coords.png)
+![](../pics/rela-coords.png)
