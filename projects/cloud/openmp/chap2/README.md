@@ -83,3 +83,5 @@ print *, ' run-time was ',run_time,'secs'
     * yes, with ```schedule(static or dynamic, ichunks)```
     * ```schedule(static,1)``` is **cyclic**
     * ```schedule(static)```   is **block**
+
+[![](../../pics/serial-parallel.png)](./)

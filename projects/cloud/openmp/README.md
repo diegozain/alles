@@ -1,4 +1,4 @@
-# OpenMP
+# ⬜⬛◻️◼️ openMP
 diego domenzain
 
 March 2021 @ Colorado School of Mines
@@ -32,6 +32,19 @@ gfortran -fopenmp file.f90
 My old Mac doesn't have openMP enabled for *C*, so the *C* implementation might not be complete.
 
 *Fortran* is doing ok though. 
+
+🏡 **windows parenthesis**
+
+Get ```ifort``` set up:
+```bash
+cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
+```
+
+compile with ```openmp``` & run:
+```bash
+ifort /Qopenmp integral_parallel_block.f90
+.\integral_parallel_block.exe
+```
 
 ---
 
