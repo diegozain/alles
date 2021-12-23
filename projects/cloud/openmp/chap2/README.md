@@ -1,9 +1,9 @@
-# openMP
+# ⬜⬛◻️◼️ openMP
 diego domenzain
 
 March 2021 @ Colorado School of Mines
 
-## The OpenMP Common Core - Chapter II
+## 2️⃣ The OpenMP Common Core - Chapter II
 
 Parallelize the integral:
 
@@ -15,7 +15,20 @@ gfortran -fopenmp file.f90
 ./a.out
 ```
 
-### Simple openMP construct
+🏡 **windows parenthesis**
+
+Get ```ifort``` set up:
+```bash
+cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
+```
+
+compile with ```openmp``` & run:
+```bash
+ifort /Qopenmp integral_parallel_block.f90
+.\integral_parallel_block.exe
+```
+
+### 👷 simple openMP construct
 
 ```fortran90
 use omp_lib
@@ -25,7 +38,7 @@ integer, parameter :: num_steps=100
 real*8 :: start_time, run_time
 integer, parameter :: nthreads=4
 
-! starts chronometer 
+! starts chronometer
 start_time = omp_get_wtime()
 
 ! sets number of threads
@@ -48,7 +61,7 @@ run_time = omp_get_wtime() - start_time
 print *, ' run-time was ',run_time,'secs'
 ```
 
-### Walking through the chapter
+### 🚶 walking through the chapter
 
 1. do it in **serial**: ```integral_serial.f90```
 1. do it in **parallel cyclic**: ```integral_parallel_cyclic.f90```
@@ -61,7 +74,7 @@ print *, ' run-time was ',run_time,'secs'
 1. all these parallel constructs do similar stuff:
     * define ```omp parallel``` block,
     * get **ID** and **num. of threads**,
-    * use **ID** and **num. of threads** to break up for loop in **cyclic** or **block**,
+    * use **ID** and **num. of threads** to break up ```for``` loop in **cyclic** or **block**,
     * place a **critical construct** to avoid **false sharing**.
 1. the **ID/num of threads/cyclic or block/critical** declaration can be handled by openMP on its own: ```integral_parallel_for.f90```
 1. what about the **partial sums** that had to be defined to make the parallel scheme work? : ```integral_parallel_redu.f90```
