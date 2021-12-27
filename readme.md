@@ -41,6 +41,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* Spanning trees
 	* [Dijkstra algorithm](projects/graph-alg/dijkstra/)
 	* [Mesher](projects/graph-alg/mesher/)
+  * [Graph signal processing](projects/graph-alg/graph-signal/)
 
 * Partial differential equations
 

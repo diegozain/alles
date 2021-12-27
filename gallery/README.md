@@ -41,18 +41,20 @@ Each image links to its project.
 [![](../projects/graph-alg/pics/dijkstra-10nodes.png)](../projects/graph-alg/dijkstra/)
 #### Mesher
 [![](../projects/graph-alg/pics/mesh-grid-graph-indexes.png)](../projects/graph-alg/mesher/)
+#### Graph signal processing
+[![](../projects/graph-alg/pics/graph-filtered.png)](../projects/graph-alg/graph-signal/)
 
 ## Partial differential equations
 
 #### Wave-advection
 [![](../projects/pdes/pics/wave_2d_material.png)](../projects/pdes/wave-adv/)
-	
+
 [![](../projects/pdes/pics/wave_2d.png)](../projects/pdes/wave-adv/)
 #### Elastic SV wave equation (with CPML & free surface BC)
 [![](../projects/pdes/pics/elastic_2d_free_surface.png)](../projects/pdes/elastic/)
 #### Heat equation
 [![](../projects/pdes/pics/heat_2d_material.png)](../projects/pdes/heat/)
-	
+
 [![](../projects/pdes/pics/heat_2d.png)](../projects/pdes/heat/)
 #### Korteweg De Vries
 [![](../projects/pdes/pics/korteweg_.png)](../projects/pdes/korteweg/)
@@ -84,7 +86,9 @@ Each image links to its project.
 #### Hyperbolic and linear semblance
 #### Beamforming (to find direction of signal)
 [![](../projects/wave-proc/pics/beamform_data.png)](../projects/wave-proc/beamforming/)[![](../projects/wave-proc/pics/beamform_velo-angle.png)](../projects/wave-proc/beamforming/)
-### Seismic beachball
+#### Seismic beachball
+#### Harmonic denoising
+[![](../projects/wave-proc/pics/harmodenoi-synt.png)](../projects/wave-proc/harmonic-denoising/)
 
 ## Cloud computing
 
@@ -93,7 +97,7 @@ Each image links to its project.
 #### OpenMP
 [![](../projects/cloud/pics/serial-parallel.png)](../projects/cloud/openmp/)
 
-## Visualize 
+## Visualize
 
 ### Plot output from *C*
 ### Plot output from *Fortran*
