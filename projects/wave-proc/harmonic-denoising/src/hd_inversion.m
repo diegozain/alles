@@ -1,6 +1,6 @@
 function [alphas,betas,fos] = hd_inversion(uo,niter,t,alphas,betas,fos,h,nt_,nt__)
 % ------------------------------------------------------------------------------
-% diego domenzain. jul 2021, @ AU.
+% diego domenzain. jul 2021
 % ------------------------------------------------------------------------------
 % uo     : observed data with harmonic noise
 % niter  : # of iterations
@@ -34,15 +34,16 @@ nparabo_ab=1e2;
 
 % % - field data
 % % fo
+% % 100% duty cycle, but for 50% is also ok 😐
 % k_fos_    =1e-9;
-% k_fos__   =1e-8; % 1e-6
-% nparabo_fos=1e2;
+% k_fos__   =1e-4;
+% nparabo_fos=2e1;
 % % α & β
 % k_alphas_ =1e-8;
 % k_alphas__=1e-2;% 1e-3;
 % k_betas_  =1e-8;
 % k_betas__ =1e-2;% 5e-3;
-% nparabo_ab=1e2;
+% nparabo_ab=2e1;
 % ------------------------------------------------------------------------------
 % -- memory over iterations
 % fo

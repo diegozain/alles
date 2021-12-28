@@ -1,4 +1,5 @@
 function uh = hd_fwd(t,alphas,betas,fos,h,nt_,nt__)
+% diego domenzain
 
 nt = numel(t);
 nb = numel(fos);
@@ -20,7 +21,7 @@ for ib=1:nb
 
   cos_bloc = cos( argu_ );
   sin_bloc = sin( argu_ );
-  
+
   uh_=zeros(nt,1);
   uh_(indexes_t) = cos_bloc * alphas(indexes_h) + sin_bloc * betas(indexes_h);
 

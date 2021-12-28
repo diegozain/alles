@@ -1,6 +1,6 @@
 function [nb,nt_,nt__] = hd_nbnt_(nt,fo,dt,nb)
 % ------------------------------------------------------------------------------
-% diego domenzain. jul 2021, @ AU.
+% diego domenzain. jul 2021
 % ------------------------------------------------------------------------------
 % nt : total number of time samples
 % fo : central frequncy to look for         ( nt__ = ceil(1/fo/dt) )
