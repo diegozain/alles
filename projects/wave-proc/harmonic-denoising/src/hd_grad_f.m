@@ -10,18 +10,20 @@ error_  = error_.';
 g_fos   = zeros(nb,1);
 
 for ib=1:nb
-  % time-interval times
+  % time-interval times of size (nt_ × 1)
   indexes_t = (1 + (ib-1)*(nt_-nt__)):(nt_+ (ib-1)*(nt_-nt__));
-  % harmonic interval
+  % harmonic interval of size (1 × nh)
   indexes_h = (1 + (ib-1)*nh):(nh + (ib-1)*nh);
 
-  % argument
+  % argument of size nt_ × nh
   argu_     = 2*pi* (fos(ib)*t(indexes_t)) * h;
-  % cosine block
+  % cosine block of size nt_ × nh
   cos_bloc_ = (-2*pi*t(indexes_t)*h).*sin( argu_ );
-  cos_bloc__= cos_bloc_ * alphas(indexes_h);
-  % sine block
+  % sine block of size nt_ × nh
   sin_bloc_ = (2*pi*t(indexes_t)*h).*cos( argu_ );
+  % multiply by vec of size nh,
+  % result is a vec of size nt_
+  cos_bloc__= cos_bloc_ * alphas(indexes_h);
   sin_bloc__= sin_bloc_ * betas(indexes_h);
 
   % dot product

@@ -164,7 +164,7 @@ subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
   double precision, intent(in) :: alphas(nb*nh), betas(nb*nh), fos(nb), h(nh)
   double precision, intent(in out) :: uh(nt)
 
-  integer :: it_, ih, indexes_h(nh), indexes_t(nt_)
+  integer :: ib, it_, ih, indexes_h(nh), indexes_t(nt_)
   double precision :: argu, cos_bloc(nt_,nh), sin_bloc(nt_,nh), uh_(nt)
   double precision, parameter :: pi=3.14159265358979
   ! ----------------------------------------------------------------------------
@@ -214,11 +214,137 @@ subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
   enddo
 end subroutine hd_fwd
 ! ------------------------------------------------------------------------------
-subroutine hd_grad_f()
-  
+subroutine hd_grad_f(g_fos,error_,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
+  integer, intent(in) :: nt, nb, nh, nt_, nt__
+  double precision, intent(in) :: error_(nt), t(nt)
+  double precision, intent(in) :: alphas(nb*nh), betas(nb*nh), fos(nb), h(nh)
+  double precision, intent(in out) :: g_fos(nb)
+
+  integer :: ib, it_, ih, indexes_h(nh), indexes_t(nt_)
+  double precision :: argu, argu_, cos_bloc_(nt_,nh), sin_bloc_(nt_,nh)
+  double precision :: cos_bloc__(nt_), sin_bloc__(nt_)
+  double precision, parameter :: pi=3.14159265358979
   ! ----------------------------------------------------------------------------
+  do ib=1,nb
+    ! time-interval times
+    ! indexes_t = (1 + (ib-1)*(nt_-nt__)):(nt_+ (ib-1)*(nt_-nt__));
+    do it_=1,nt_
+      indexes_t(it_) = it_ + (ib-1)*(nt_-nt__)
+    enddo
+    ! harmonic interval
+    ! indexes_h = (1 + (ib-1)*nh):(nh + (ib-1)*nh);
+    do ih=1,nh
+      indexes_h(ih) = ih + (ib-1)*nh
+    enddo
 
+    ! each bloc is a matrix of size nt_ × nh
+    do it_=1,nt_
+      do ih=1,nh
+        argu =  2*pi*fos(ib)*t(indexes_t(it_)) * h(ih)
+        argu_= -2*pi*t(indexes_t(it_)) * h(ih)
+        cos_bloc_(it_,ih) =  argu_*dsin(argu)
+        sin_bloc_(it_,ih) = -argu_*dcos(argu)
+      enddo
+    enddo
+    ! multiply by vec of size nh,
+    ! result is a vec of size nt_
+    do it_=1,nt_
+      argu = 0
+      argu_= 0
+      do ih=1,nh
+        argu = argu + cos_bloc_(it_,nh) * alphas(indexes_h(ih))
+        argu_= argu_+ sin_bloc_(it_,nh) * betas(indexes_h(ih))
+      enddo
+      cos_bloc__(it_) = argu
+      sin_bloc__(it_) = argu_
+    enddo
 
+    ! dot product
+    ! g_fos(ib) = error_(indexes_t) * (cos_bloc__ + sin_bloc__);
+    argu = 0
+    do it_=1,nt_
+      argu = argu + error_(indexes_t(it_)) * (cos_bloc__(it_) + sin_bloc__(it_))
+    enddo
+    g_fos(ib) = argu
+  enddo
 end subroutine hd_grad_f
+! ------------------------------------------------------------------------------
+subroutine hd_grad_a(g_alphas,error_,t,fos,h,nt,nb,nh,nt_,nt__)
+  integer, intent(in) :: nt, nb, nh, nt_, nt__
+  double precision, intent(in) :: error_(nt), t(nt)
+  double precision, intent(in) :: fos(nb), h(nh)
+  double precision, intent(in out) :: g_alphas(nb*nh)
+
+  integer :: ib, ibh, it_, ih, index_t, nbh
+  double precision :: argu, cos_bloc_, dotter
+  double precision, parameter :: pi=3.14159265358979
+  ! ----------------------------------------------------------------------------
+  nbh = nb*nh
+  do ibh=1,nbh
+   ! translate one for-loop into two for-loops
+   ih = mod(ibh,nh)
+   if (ih==0) then
+     ih=nh
+   endif
+   ib = ((ibh - ih) / nh) + 1
+
+   ! time-interval times
+   ! indexes_t = (1 + (ib-1)*(nt_-nt__)):(nt_+ (ib-1)*(nt_-nt__));
+   ! &
+   ! cosine block
+   ! bloc is a matrix of size nt_ × 1
+   ! &
+   ! dot product
+   dotter = 0
+   do it_=1,nt_
+     index_t = it_ + (ib-1)*(nt_-nt__)
+
+     argu = 2*pi*fos(ib)*t(index_t) * h(ih)
+     cos_bloc_ = dcos(argu)
+
+     dotter = dotter + error_(index_t) * cos_bloc_
+   enddo
+   g_alphas(ibh) = dotter
+ enddo
+end subroutine hd_grad_a
+! ------------------------------------------------------------------------------
+subroutine hd_grad_b(g_betas,error_,t,fos,h,nt,nb,nh,nt_,nt__)
+  integer, intent(in) :: nt, nb, nh, nt_, nt__
+  double precision, intent(in) :: error_(nt), t(nt)
+  double precision, intent(in) :: fos(nb), h(nh)
+  double precision, intent(in out) :: g_betas(nb*nh)
+
+  integer :: ib, ibh, it_, ih, index_t, nbh
+  double precision :: argu, sin_bloc_, dotter
+  double precision, parameter :: pi=3.14159265358979
+  ! ----------------------------------------------------------------------------
+  nbh = nb*nh
+  do ibh=1,nbh
+   ! translate one for-loop into two for-loops
+   ih = mod(ibh,nh)
+   if (ih==0) then
+     ih=nh
+   endif
+   ib = ((ibh - ih) / nh) + 1
+
+   ! time-interval times
+   ! indexes_t = (1 + (ib-1)*(nt_-nt__)):(nt_+ (ib-1)*(nt_-nt__));
+   ! &
+   ! sine block
+   ! bloc is a matrix of size nt_ × 1
+   ! &
+   ! dot product
+   dotter = 0
+   do it_=1,nt_
+     index_t = it_ + (ib-1)*(nt_-nt__)
+
+     argu = 2*pi*fos(ib)*t(index_t) * h(ih)
+     sin_bloc_ = dsin(argu)
+
+     dotter = dotter + error_(index_t) * sin_bloc_
+   enddo
+   g_betas(ibh) = dotter
+ enddo
+end subroutine hd_grad_b
 ! ------------------------------------------------------------------------------
 end module harmodenoiser
