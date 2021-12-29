@@ -173,6 +173,10 @@ subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
     ! each block is of size nt_ × nh
     ! cos_bloc = cos( 2*pi*fo*t*h )
 
+    ! initialize uh_
+    do it_=1,nt
+      uh_(it_) = 0
+    enddo
     ! time-interval times
     ! indexes_t = (1 + (ib-1)*(nt_-nt__)):(nt_+ (ib-1)*(nt_-nt__));
     do it_=1,nt_
@@ -191,10 +195,6 @@ subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
         cos_bloc(it_,ih) = dcos(argu)
         sin_bloc(it_,ih) = dsin(argu)
       enddo
-    enddo
-
-    do it_=1,nt
-      uh_(it_) = 0
     enddo
 
     ! uh_(indexes_t) = cos_bloc * alphas(indexes_h) + sin_bloc * betas(indexes_h);
@@ -346,5 +346,147 @@ subroutine hd_grad_b(g_betas,error_,t,fos,h,nt,nb,nh,nt_,nt__)
    g_betas(ibh) = dotter
  enddo
 end subroutine hd_grad_b
+! ------------------------------------------------------------------------------
+subroutine hd_obj(objfnc_,error_,data_, datao_, OBJ, nd)
+  integer, intent(in) :: nd
+  double precision, intent(in) :: data_(nd), datao_(nd)
+  integer, intent(in) :: OBJ
+  double precision, intent(in out) :: objfnc_, error_(nd)
+  ! ----------------------------------------------------------------------------
+  ! OBJ =
+  !       0 : sum of squared residuals        Θ = ∑ e
+  !       1 : log( sum of squared residuals ) Θ = ∑ log(e)
+  !       2 : entropy                         Θ = - ∑ e^2 ⋅ log( e^2 )
+  ! ----------------------------------------------------------------------------
+  objfnc_ = 0
+
+  do id_=1,nd
+    error_(id_) = data_(id_) - datao_(id_)
+    objfnc_ = objfnc_ + error_(id_)**2
+  enddo
+
+  if (OBJ == 1) then
+    objfnc_ = log(objfnc_)
+    do id_=1,nd
+      error_(id_) = - (1/objfnc_) * error_(id_)
+    enddo
+  elseif (OBJ == 2) then
+    objfnc_ = 0
+    do id_=1,nd
+      objfnc_ = objfnc_ - (error_(id_)**2) * log(error_(id_)**2)
+    enddo
+    do id_=1,nd
+      error_(id_) = - error_(id_) - error_(id_)*log(error_(id_)**2)
+    enddo
+  endif
+end subroutine hd_obj
+! ------------------------------------------------------------------------------
+subroutine hd_step_f(step_fos,uo,g_fos,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__,&
+  nparabo,OBJ,k_fos_,k_fos__)
+  integer, intent(in) :: nt, nb, nh, nt_, nt__, nparabo, OBJ
+  double precision, intent(in) :: uo(nt), t(nt), g_fos(nb)
+  double precision, intent(in) :: alphas(nb*nh), betas(nb*nh), fos(nb), h(nh)
+  double precision, intent(in) :: k_fos_,k_fos__
+  double precision, intent(in out) :: step_fos
+
+  double precision :: Ob_(nparabo), k_fos(nparabo), fos_(nb)
+  double precision :: uh_(nt), error_(nt)
+  integer :: iparabo, ib, iOb, iOb_(nparabo)
+  ! ----------------------------------------------------------------------------
+  ! --- build perturbations
+  k_fos = logspace(dlog10(k_fos_),dlog10(k_fos__),nparabo)
+  ! compute many objective function values
+  do iparabo=1,nparabo
+    ! perturb
+    ! fo_ = fo ⊙ exp(-k·g_fo ⊙ fo)
+    do ib=1,nb
+      fos_(ib) = fos(ib)*exp(- k_fos(iparabo)*g_fos(ib)*fos(ib))
+    enddo
+    ! fwd
+    call hd_fwd(uh_,t,alphas,betas,fos_,h,nt,nb,nh,nt_,nt__)
+    ! obj
+    call hd_obj(Ob, error_, uh_, uo, OBJ, nt)
+    Ob_(iparabo) = Ob
+  enddo
+  ! -- brute line-search
+  do iOb=1,nparabo
+    iOb_(iOb) = iOb
+  enddo
+  call quicksort(Ob_,iOb_,nparabo)
+  iOb = iOb_(1) ! min index
+  step_fos = k_fos(iOb)
+end subroutine hd_step_f
+! ------------------------------------------------------------------------------
+subroutine hd_step_a(step_alphas,uo,g_alphas,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__,&
+  nparabo,OBJ,k_alphas_,k_alphas__)
+  integer, intent(in) :: nt, nb, nh, nt_, nt__, nparabo, OBJ
+  double precision, intent(in) :: uo(nt), t(nt), g_alphas(nb*nh)
+  double precision, intent(in) :: alphas(nb*nh), betas(nb*nh), fos(nb), h(nh)
+  double precision, intent(in) :: k_alphas_,k_alphas__
+  double precision, intent(in out) :: step_alphas
+
+  double precision :: Ob_(nparabo), k_alphas(nparabo), alphas_(nb*nh)
+  double precision :: uh_(nt), error_(nt)
+  integer :: iparabo, ib, iOb, iOb_(nparabo)
+  ! ----------------------------------------------------------------------------
+  ! --- build perturbations
+  k_alphas = logspace(dlog10(k_alphas_),dlog10(k_alphas__),nparabo)
+  ! compute many objective function values
+  do iparabo=1,nparabo
+    ! perturb
+    ! α_ = α ⊙ exp(-k·g_α ⊙ α)
+    do ib=1,nb*nh
+      alphas_(ib) = alphas(ib)*exp(- k_alphas(iparabo)*g_alphas(ib)*alphas(ib))
+    enddo
+    ! fwd
+    call hd_fwd(uh_,t,alphas_,betas,fos,h,nt,nb,nh,nt_,nt__)
+    ! obj
+    call hd_obj(Ob, error_, uh_, uo, OBJ, nt)
+    Ob_(iparabo) = Ob
+  enddo
+  ! -- brute line-search
+  do iOb=1,nparabo
+    iOb_(iOb) = iOb
+  enddo
+  call quicksort(Ob_,iOb_,nparabo)
+  iOb = iOb_(1) ! min index
+  step_alphas = k_alphas(iOb)
+end subroutine hd_step_a
+! ------------------------------------------------------------------------------
+subroutine hd_step_b(step_betas,uo,g_betas,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__,&
+  nparabo,OBJ,k_betas_,k_betas__)
+  integer, intent(in) :: nt, nb, nh, nt_, nt__, nparabo, OBJ
+  double precision, intent(in) :: uo(nt), t(nt), g_betas(nb*nh)
+  double precision, intent(in) :: alphas(nb*nh), betas(nb*nh), fos(nb), h(nh)
+  double precision, intent(in) :: k_betas_,k_betas__
+  double precision, intent(in out) :: step_betas
+
+  double precision :: Ob_(nparabo), k_betas(nparabo), betas_(nb*nh)
+  double precision :: uh_(nt), error_(nt)
+  integer :: iparabo, ib, iOb, iOb_(nparabo)
+  ! ----------------------------------------------------------------------------
+  ! --- build perturbations
+  k_betas = logspace(dlog10(k_betas_),dlog10(k_betas__),nparabo)
+  ! compute many objective function values
+  do iparabo=1,nparabo
+    ! perturb
+    ! β_ = β ⊙ exp(-k·g_β ⊙ β)
+    do ib=1,nb*nh
+      betas_(ib) = betas(ib)*exp(- k_betas(iparabo)*g_betas(ib)*betas(ib))
+    enddo
+    ! fwd
+    call hd_fwd(uh_,t,alphas,betas_,fos,h,nt,nb,nh,nt_,nt__)
+    ! obj
+    call hd_obj(Ob, error_, uh_, uo, OBJ, nt)
+    Ob_(iparabo) = Ob
+  enddo
+  ! -- brute line-search
+  do iOb=1,nparabo
+    iOb_(iOb) = iOb
+  enddo
+  call quicksort(Ob_,iOb_,nparabo)
+  iOb = iOb_(1) ! min index
+  step_betas = k_betas(iOb)
+end subroutine hd_step_b
 ! ------------------------------------------------------------------------------
 end module harmodenoiser
