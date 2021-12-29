@@ -20,20 +20,32 @@ uh(t) = Σj Σi αi⋅cos(2*π*t * fo*hj) + Σj Σi βi⋅sin(2*π*t * fo*hj)
 
 which is linear on α and β, so we write it like so:
 
-uh = cos_blocs * α + sin_blocs * β.
+ uh = cos_blocs · α + sin_blocs · β
 
-the cos_blocs matrix (nt x nb*nh) looks a little like this:
+ the cos_blocs matrix (nt × nb·nh) looks like this:
 
-            nh
-            |
-         _____________________________
-        |        |                    |
-nt_ ->  |    *   |_________     0     |
-        |________| <-nt__  |          |
-        |        |    *    |          | * α
-        |        |_________|          |
-        |   0                  etc    |
-        |_____________________________|
+                       nh
+                       ↓
+                    _____________________________
+        |          |        |                    |
+        |  nt_ →   |    *   |_________     0     |
+        |          |________| ← nt__  |          |
+ nt →   |          |        |    *    |          | · α
+        |          |        |_________|          |
+        |          |   0                  etc    |
+        |          |_____________________________|
+
+                                  ↑
+                                nb·nh
+
+and one cos_bloc looks like:
+
+               nh
+               ↓
+            ________
+           |        |
+   nt_ →   |    *   | = cos( 2*pi*fo*t*h )
+           |________|
 
 
 each block is of size nt_ x nh.
@@ -71,4 +83,3 @@ Again, we do not store large matrices. Rather, we only compute the entries of �
 ## Example 🎨
 
 [![](../pics/harmodenoi-synt.png)](./)
-

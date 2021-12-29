@@ -17,6 +17,7 @@ for ib=1:nb
   % harmonic interval
   indexes_h = (1 + (ib-1)*nh):(nh + (ib-1)*nh);
 
+  % this is actually a matrix of size nt_ x nh
   argu_ = 2*pi* (fos(ib)*t(indexes_t)) * h;
 
   cos_bloc = cos( argu_ );

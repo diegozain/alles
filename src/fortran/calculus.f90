@@ -353,4 +353,81 @@ subroutine quicksort(array,iarray,narray)
   enddo
 end subroutine quicksort
 ! ------------------------------------------------------------------------------
+subroutine mean(x_,x,nx)
+  integer, intent(in) :: nx
+  double precision, intent(in) :: x(nx)
+  double precision, intent(in out) :: x_
+
+  integer :: ix
+  ! ----------------------------------------------------------------------------
+  x_=0
+  do ix=1,nx
+    x_ = x_ + x(ix)
+  enddo
+  x_ = x_ / nx
+end subroutine mean
+! ------------------------------------------------------------------------------
+subroutine std(x_,x,nx)
+  integer, intent(in) :: nx
+  double precision, intent(in) :: x(nx)
+  double precision, intent(in out) :: x_
+
+  double precision :: x__
+  integer :: ix
+  ! ----------------------------------------------------------------------------
+  call mean(x__,x,nx)
+  x_ = 0
+  do ix=1,nx
+    x_ = x_ + (x(ix)-x__)**2
+  enddo
+  x_ = dsqrt(x_ / dble(nx))
+end subroutine std
+! ------------------------------------------------------------------------------
+subroutine window_mean(v,u,nt,nw)
+  integer, intent(in) :: nt, nw
+  double precision, intent(in) :: u(nt)
+  double precision, intent(in out) :: v(nt)
+
+  integer :: nb_, nb__, it, it_
+  double precision :: v_
+  ! ----------------------------------------------------------------------------
+  if (mod(nw,2)==0) then
+    nb_ = nw/2
+    ! last block starts at (-1)
+    nb__ = nt - nb_
+  else
+    nb_ = ceiling(dble(nw/2))
+    ! last block starts at (-1)
+    nb__ = nt - nb_ + 1
+  endif
+  ! ----------------------------------------------------------------------------
+  ! starting block
+  do it=1,(nb_-1)
+    ! v(it) = (ones(1,it+nb_-1)/(it+nb_-1)) * u(1:(it+nb_-1));
+    v_ = 0
+    do it_=1,it+nb_-1
+      v_ = v_ + u(it_)
+    enddo
+    v(it) = v_ / dble(it+nb_-1)
+  enddo
+  ! middle block
+  do it=nb_,nb__
+    ! v(it) = (ones(1,nw)/nw) * u((it-nb_+1):(it-nb_+nw));
+    v_ = 0
+    do it_=(it-nb_+1),(it-nb_+nw)
+      v_ = v_ + u(it_)
+    enddo
+    v(it) = v_ / dble(nw)
+  enddo
+  ! ending block
+  do it=(nb__+1),nt
+    ! v(it) = (ones(1,(nt-it+nb_))/(nt-it+nb_)) * u((it-nb_+1):nt);
+    v_ = 0
+    do it_=(it-nb_+1),nt
+      v_ = v_ + u(it_)
+    enddo
+    v(it) = v_ / dble(nt-it+nb_)
+  enddo
+end subroutine window_mean
+! ------------------------------------------------------------------------------
 end module calculus
