@@ -1,6 +1,12 @@
 module harmodenoiser
 ! ------------------------------------------------------------------------------
+! diego domenzain
 !
+! 🔥 super 🍧 cool 🎵 harmonic denoising.
+!
+! based on my own matlab code,
+! which is in turn based on a seismic processing paper from Geophysics.
+! -- put name of that paper here --
 ! ------------------------------------------------------------------------------
 use calculus
 contains
@@ -164,8 +170,8 @@ subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
   double precision, intent(in) :: alphas(nb*nh), betas(nb*nh), fos(nb), h(nh)
   double precision, intent(in out) :: uh(nt)
 
-  integer :: ib, it_, ih, indexes_h(nh), indexes_t(nt_)
-  double precision :: argu, cos_bloc(nt_,nh), sin_bloc(nt_,nh), uh_(nt)
+  integer :: ib, it_, ih, index_h, index_t
+  double precision :: argu, dotter, uh_(nt)
   double precision, parameter :: pi=3.14159265358979
   ! ----------------------------------------------------------------------------
   do ib=1,nb
@@ -177,33 +183,18 @@ subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
     do it_=1,nt
       uh_(it_) = 0
     enddo
-    ! time-interval times
-    ! indexes_t = (1 + (ib-1)*(nt_-nt__)):(nt_+ (ib-1)*(nt_-nt__));
-    do it_=1,nt_
-      indexes_t(it_) = it_ + (ib-1)*(nt_-nt__)
-    enddo
-    ! harmonic interval
-    ! indexes_h = (1 + (ib-1)*nh):(nh + (ib-1)*nh);
-    do ih=1,nh
-      indexes_h(ih) = ih + (ib-1)*nh
-    enddo
 
     ! each bloc is a matrix of size nt_ × nh
     do it_=1,nt_
+      dotter = 0
+      index_t = it_ + (ib-1)*(nt_-nt__)
       do ih=1,nh
-        argu = 2*pi*fos(ib)*t(indexes_t(it_)) * h(ih)
-        cos_bloc(it_,ih) = dcos(argu)
-        sin_bloc(it_,ih) = dsin(argu)
+        index_h = ih + (ib-1)*nh
+        argu   = 2*pi*fos(ib)*t(index_t) * h(ih)
+        ! uh_ = cos_bloc·α + sin_bloc·β
+        dotter = dotter + dcos(argu)*alphas(index_h) + dsin(argu)*betas(index_h)
       enddo
-    enddo
-
-    ! uh_(indexes_t) = cos_bloc * alphas(indexes_h) + sin_bloc * betas(indexes_h);
-    do it_=1,nt_
-      argu = 0
-      do ih=1,nh
-        argu = argu + cos_bloc(it_,ih) * alphas(indexes_h(ih)) + sin_bloc(it_,ih) * betas(indexes_h(ih))
-      enddo
-      uh_(indexes_t(it_)) = argu
+      uh_(index_t) = dotter
     enddo
 
     ! record the harmonic signal WITH overlapping blocks
@@ -220,52 +211,32 @@ subroutine hd_grad_f(g_fos,error_,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
   double precision, intent(in) :: alphas(nb*nh), betas(nb*nh), fos(nb), h(nh)
   double precision, intent(in out) :: g_fos(nb)
 
-  integer :: ib, it_, ih, indexes_h(nh), indexes_t(nt_)
-  double precision :: argu, argu_, cos_bloc_(nt_,nh), sin_bloc_(nt_,nh)
-  double precision :: cos_bloc__(nt_), sin_bloc__(nt_)
+  integer :: ib, it_, ih, index_h, index_t
+  double precision :: argu, argu_, dotter, del_fo(nt_)
   double precision, parameter :: pi=3.14159265358979
   ! ----------------------------------------------------------------------------
   do ib=1,nb
-    ! time-interval times
-    ! indexes_t = (1 + (ib-1)*(nt_-nt__)):(nt_+ (ib-1)*(nt_-nt__));
-    do it_=1,nt_
-      indexes_t(it_) = it_ + (ib-1)*(nt_-nt__)
-    enddo
-    ! harmonic interval
-    ! indexes_h = (1 + (ib-1)*nh):(nh + (ib-1)*nh);
-    do ih=1,nh
-      indexes_h(ih) = ih + (ib-1)*nh
-    enddo
-
     ! each bloc is a matrix of size nt_ × nh
     do it_=1,nt_
+      dotter = 0
+      index_t = it_ + (ib-1)*(nt_-nt__)
       do ih=1,nh
-        argu =  2*pi*fos(ib)*t(indexes_t(it_)) * h(ih)
-        argu_= -2*pi*t(indexes_t(it_)) * h(ih)
-        cos_bloc_(it_,ih) =  argu_*dsin(argu)
-        sin_bloc_(it_,ih) = -argu_*dcos(argu)
+        index_h = ih + (ib-1)*nh
+        argu =  2*pi*fos(ib)*t(index_t) * h(ih)
+        argu_= -2*pi*t(index_t) * h(ih)
+        dotter = dotter + argu_*dsin(argu)*alphas(index_h) - argu_*dcos(argu)*betas(index_h)
       enddo
-    enddo
-    ! multiply by vec of size nh,
-    ! result is a vec of size nt_
-    do it_=1,nt_
-      argu = 0
-      argu_= 0
-      do ih=1,nh
-        argu = argu + cos_bloc_(it_,nh) * alphas(indexes_h(ih))
-        argu_= argu_+ sin_bloc_(it_,nh) * betas(indexes_h(ih))
-      enddo
-      cos_bloc__(it_) = argu
-      sin_bloc__(it_) = argu_
+      del_fo(it_) = dotter
     enddo
 
     ! dot product
     ! g_fos(ib) = error_(indexes_t) * (cos_bloc__ + sin_bloc__);
-    argu = 0
+    dotter = 0
     do it_=1,nt_
-      argu = argu + error_(indexes_t(it_)) * (cos_bloc__(it_) + sin_bloc__(it_))
+      index_t= it_ + (ib-1)*(nt_-nt__)
+      dotter = dotter + error_(index_t) * del_fo(it_)
     enddo
-    g_fos(ib) = argu
+    g_fos(ib) = dotter
   enddo
 end subroutine hd_grad_f
 ! ------------------------------------------------------------------------------
@@ -430,13 +401,13 @@ subroutine hd_step_a(step_alphas,uo,g_alphas,t,alphas,betas,fos,h,nt,nb,nh,nt_,n
   integer :: iparabo, ib, iOb, iOb_(nparabo)
   ! ----------------------------------------------------------------------------
   ! --- build perturbations
-  k_alphas = logspace(dlog10(k_alphas_),dlog10(k_alphas__),nparabo)
+  k_alphas = linspace(k_alphas_,k_alphas__,nparabo)
   ! compute many objective function values
   do iparabo=1,nparabo
     ! perturb
-    ! α_ = α ⊙ exp(-k·g_α ⊙ α)
+    ! α_ = α - k·g_α
     do ib=1,nb*nh
-      alphas_(ib) = alphas(ib)*exp(- k_alphas(iparabo)*g_alphas(ib)*alphas(ib))
+      alphas_(ib) = alphas(ib) - k_alphas(iparabo)*g_alphas(ib)
     enddo
     ! fwd
     call hd_fwd(uh_,t,alphas_,betas,fos,h,nt,nb,nh,nt_,nt__)
@@ -466,13 +437,13 @@ subroutine hd_step_b(step_betas,uo,g_betas,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt_
   integer :: iparabo, ib, iOb, iOb_(nparabo)
   ! ----------------------------------------------------------------------------
   ! --- build perturbations
-  k_betas = logspace(dlog10(k_betas_),dlog10(k_betas__),nparabo)
+  k_betas = linspace(k_betas_,k_betas__,nparabo)
   ! compute many objective function values
   do iparabo=1,nparabo
     ! perturb
-    ! β_ = β ⊙ exp(-k·g_β ⊙ β)
+    ! β_ = β - k·g_β
     do ib=1,nb*nh
-      betas_(ib) = betas(ib)*exp(- k_betas(iparabo)*g_betas(ib)*betas(ib))
+      betas_(ib) = betas(ib) - k_betas(iparabo)*g_betas(ib)
     enddo
     ! fwd
     call hd_fwd(uh_,t,alphas,betas_,fos,h,nt,nb,nh,nt_,nt__)
@@ -488,5 +459,157 @@ subroutine hd_step_b(step_betas,uo,g_betas,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt_
   iOb = iOb_(1) ! min index
   step_betas = k_betas(iOb)
 end subroutine hd_step_b
+! ------------------------------------------------------------------------------
+subroutine hd_hyperparam(k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__,&
+  nparabo_fos,nparabo_a,nparabo_b,niter_fos,niter_ab,hyperparam,nhyper)
+  integer, intent(in) :: nhyper
+  double precision, intent(in) :: hyperparam(nhyper)
+  integer, intent(in out) :: nparabo_fos,nparabo_a,nparabo_b,niter_fos,niter_ab
+  double precision, intent(in out) :: k_fos_,k_fos__
+  double precision, intent(in out) :: k_alphas_,k_alphas__,k_betas_,k_betas__
+  ! ----------------------------------------------------------------------------
+  k_fos_     = hyperparam(1)
+  k_fos__    = hyperparam(2)
+  k_alphas_  = hyperparam(3)
+  k_alphas__ = hyperparam(4)
+  k_betas_   = hyperparam(5)
+  k_betas__  = hyperparam(6)
+  nparabo_fos= int(hyperparam(7))
+  nparabo_a  = int(hyperparam(8))
+  nparabo_b  = int(hyperparam(9))
+  niter_fos  = int(hyperparam(10))
+  niter_ab   = int(hyperparam(11))
+end subroutine hd_hyperparam
+! ------------------------------------------------------------------------------
+subroutine harmodenoi_(uo,dt,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
+  integer, intent(in) :: nt, nb, nh, nhyper
+  double precision, intent(in) :: dt, fo, h(nh), hyperparam(nhyper)
+  double precision, intent(in out) :: uo(nt),alphas(nh*nb),betas(nh*nb),fos(nb)
+
+  integer :: nt_, nt__, ibh, ib, iter
+  double precision :: x_, objfnc_, error_(nt)
+
+  double precision :: k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__
+  integer :: nparabo_fos,nparabo_a,nparabo_b,niter_fos,niter_ab
+
+  double precision, allocatable :: fos_niter(:,:), a_niter(:,:), b_niter(:,:)
+  double precision, allocatable :: ob_fos(:), ob_ab(:)
+  integer, allocatable :: iob_fos(:), iob_ab(:)
+  ! ----------------------------------------------------------------------------
+  call hd_nbnt_(nb,nt_,nt__,nt,fo,dt)
+  ! ----------------------------------------------------------------------------
+  !                    💠 initial guess for α & β & fos 💠
+  ! ----------------------------------------------------------------------------
+  ! the idea for this one is that:
+  ! • α & β are the ones contributing most of the noise in the signal (std)
+  ! • α & β for small frequencies are usually larger when dealing with EM data (/ibh)
+  call std(x_,uo,nt)
+  do ibh=1,nb*nh
+    alphas(ibh)= x_ / ibh
+    betas(ibh) = x_ / ibh
+  enddo
+  ! the idea for this one is that fo varies very little between blocks.
+  ! in fact, with EM data i am yet to see a case where nb > 1 is gives better
+  ! results than nb=1.
+  do ib=1,nb
+    fos(ib) = fo
+  enddo
+  ! ----------------------------------------------------------------------------
+  !                            📟 hyperparam 📟
+  ! ----------------------------------------------------------------------------
+  call hd_hyperparam(k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__,&
+    nparabo_fos,nparabo_a,nparabo_b,niter_fos,niter_ab,hyperparam,nhyper)
+  ! ok now lets allocate some fail-safe stuff
+  allocate(fos_niter(nb,niter_fos))
+  allocate(a_niter(nb*nh,niter_ab))
+  allocate(b_niter(nb*nh,niter_ab))
+  allocate(ob_fos(niter_fos))
+  allocate(ob_ab(niter_ab))
+  allocate(iob_fos(niter_fos))
+  allocate(iob_ab(niter_ab))
+  ! ----------------------------------------------------------------------------
+  !
+  !                      💃🎸 lets rock and roll 🎸💃
+  !
+  ! ----------------------------------------------------------------------------
+  !                                🎹 fo 🎹
+  ! ----------------------------------------------------------------------------
+  do iter=1,niter_fos
+    ! fwd & obj
+    call hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
+    call hd_obj(objfnc_,error_,uh, uo, 1, nt)
+    ! fail-safe
+    ob_fos(iter) = objfnc_
+    do ib=1,nb
+      fos_niter(ib,iter) = fos(ib)
+    enddo
+    ! gradient
+    call hd_grad_f(g_fos,error_,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
+    ! step-size
+    call hd_step_f(step_fos,uo,g_fos,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__,&
+      nparabo_fos,1,k_fos_,k_fos__)
+    ! update (always positive)
+    do ib=1,nb
+      fos(ib) = fos(ib) * exp(-step_fos*g_fos(ib)*fos(ib))
+    enddo
+  enddo
+  ! init this guy 👲
+  do ib=1,nb
+    iob_fos(ib) = ib
+  enddo
+  call quicksort(ob_fos,iob_fos,niter_fos)
+  iter = iob_fos(1) ! min index
+  do ib=1,nb
+    fos(ib) = fos_niter(ib,iter)
+  enddo
+  ! ----------------------------------------------------------------------------
+  !                                 α & β
+  ! ----------------------------------------------------------------------------
+  do iter=1,niter_ab
+    ! fwd & obj
+    call hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
+    call hd_obj(objfnc_,error_,uh, uo, 0, nt)
+    ! fail-safe
+    ob_ab(iter) = objfnc_
+    do ibh=1,nb*nh
+      a_niter(ibh,iter) = alphas(ibh)
+      b_niter(ibh,iter) = betas(ibh)
+    enddo
+    ! α gradient
+    call hd_grad_a(g_alphas,error_,t,fos,h,nt,nb,nh,nt_,nt__)
+    ! α step-size
+    call hd_step_a(step_alphas,uo,g_alphas,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__,&
+      nparabo_a,0,k_alphas_,k_alphas__)
+    ! β gradient
+    call hd_grad_b(g_betas,error_,t,fos,h,nt,nb,nh,nt_,nt__)
+    ! β step-size
+    call hd_step_b(step_betas,uo,g_betas,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__,&
+      nparabo_b,0,k_betas_,k_betas__)
+    ! update
+    do ibh=1,nb*nh
+      alphas(ibh)= alphas(ibh)- step_alphas*g_alphas
+      betas(ibh) = betas(ibh) - step_betas*g_betas
+    enddo
+  enddo
+  ! init this guy 👲
+  do ibh=1,nb*nh
+    iob_ab(ibh) = ibh
+  enddo
+  call quicksort(ob_ab,iob_ab,niter_ab)
+  iter = iob_ab(1) ! min index
+  do ibh=1,nb*nh
+    alphas(ibh)= a_niter(ibh,iter)
+    betas(ibh) = b_niter(ibh,iter)
+  enddo
+  ! ----------------------------------------------------------------------------
+  !                          👉 last pass 👉
+  ! ----------------------------------------------------------------------------
+  call hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
+  do it=1,nt
+    uo(it) = uo(it) - uh(it)
+  enddo
+  nw = ceiling((1/(fo*h(1)))/dt)
+  call window_mean(uo,nt,nw)
+end subroutine harmodenoi_
 ! ------------------------------------------------------------------------------
 end module harmodenoiser

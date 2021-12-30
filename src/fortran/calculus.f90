@@ -383,13 +383,12 @@ subroutine std(x_,x,nx)
   x_ = dsqrt(x_ / dble(nx))
 end subroutine std
 ! ------------------------------------------------------------------------------
-subroutine window_mean(v,u,nt,nw)
+subroutine window_mean(u,nt,nw)
   integer, intent(in) :: nt, nw
-  double precision, intent(in) :: u(nt)
-  double precision, intent(in out) :: v(nt)
+  double precision, intent(in out) :: u(nt)
 
   integer :: nb_, nb__, it, it_
-  double precision :: v_
+  double precision :: v_, v(nt)
   ! ----------------------------------------------------------------------------
   if (mod(nw,2)==0) then
     nb_ = nw/2
@@ -427,6 +426,10 @@ subroutine window_mean(v,u,nt,nw)
       v_ = v_ + u(it_)
     enddo
     v(it) = v_ / dble(nt-it+nb_)
+  enddo
+  ! overwrite
+  do it=1,nt
+    u(it)=v(it)
   enddo
 end subroutine window_mean
 ! ------------------------------------------------------------------------------
