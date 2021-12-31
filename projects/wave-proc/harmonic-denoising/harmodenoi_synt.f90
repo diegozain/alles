@@ -19,7 +19,7 @@ program harmodenoi_synt
  double precision, allocatable :: us(:)
 
  ! 📟
- integer :: it, ib, ibh, nhyper
+ integer :: it, ib, ih, ibh, nhyper
  double precision, allocatable :: hyperparam(:)
 
  ! 💾
@@ -35,7 +35,7 @@ program harmodenoi_synt
  nt = 8000   ! # of samples
 
  nh = 4
- nb = 1
+ nb = 2
  ! -----------------------------------------------------------------------------
  ! input  :: target nb, fo, & dt
  ! output :: new nb, nt_, & nt__
@@ -144,26 +144,30 @@ program harmodenoi_synt
  print*,''
  print*,'--> recovered alphas per block:'
  print*,''
- do ibh=1,nb*nh
-   if (mod(ibh,nb) == 0) then
-     print*,''
-   endif
-   print*,alphas(ibh),'(alpha)'
+ ibh=1
+ do ib=1,nb
+   do ih=1,nh
+     print*,alphas(ibh),'(alpha)'
+     ibh = ibh+1
+   enddo
+   print*,''
  enddo
 
  print*,''
  print*,'--> recovered betas per block:'
  print*,''
- do ibh=1,nb*nh
-   if (mod(ibh,nb) == 0) then
-     print*,''
-   endif
-   print*,betas(ibh),'(beta)'
+ ibh=1
+ do ib=1,nb
+   do ih=1,nh
+     print*,betas(ibh),'(beta)'
+     ibh = ibh+1
+   enddo
+   print*,''
  enddo
  print*,''
  ! -----------------------------------------------------------------------------
  ! 💾 uo & t
- name_ = trim(path_save) // 'uo_reco.bin'
+ name_ = trim(path_save) // 'uo_rec.bin'
  call save_vec_dbl(uo,nt,name_)
  name_ = trim(path_save) // 't.bin'
  call save_vec_dbl(t,nt,name_)

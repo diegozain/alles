@@ -10,7 +10,7 @@ import numpy as np
 # ------------------------------------------------------------------------------
 # load when saved as binary
 uo_obs = np.fromfile('../bin/uo_obs.bin',dtype=float)
-uo_reco= np.fromfile('../bin/uo_reco.bin',dtype=float)
+uo_rec= np.fromfile('../bin/uo_rec.bin',dtype=float)
 uo_sig= np.fromfile('../bin/uo_sig.bin',dtype=float)
 t = np.fromfile('../bin/t.bin',dtype=float)
 # ------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ holdon = 'on'
 
 fancy_figure(
 figsize=size,
-curve=uo_reco,
+curve=uo_rec,
 x=t,
 title='Harmonic denoising',
 xlabel='Time (s)',

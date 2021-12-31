@@ -100,7 +100,8 @@ nt_ →  |    *   | · α    ⟶    |-2·pi·t·h| ⊙ |sin(2·pi·fo·t·h)| ·
 
 ### Observations 🌜🌛
 
-  * In the case where there is only one block, this approach is still feasible because there is no explicit storage (and inversion) of large matrices.
+  * In the case where there is only one block, this approach is still feasible because,
+    * there is no explicit storage (and inversion) of large matrices.
 
   * Getting a very good solution for *fo* first is essential:
     * recovering α & β wont work if *fo* is not found first,
