@@ -496,13 +496,13 @@ subroutine hd_hyperparam(k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__,
   niter_ab   = int(hyperparam(11))
 end subroutine hd_hyperparam
 ! ------------------------------------------------------------------------------
-subroutine harmodenoi_(uo,t,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
-  integer, intent(in) :: nt, nh, nhyper
-  double precision, intent(in) :: t(nt), fo, h(nh), hyperparam(nhyper)
+subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
+  hyperparam, nhyper)
+  integer, intent(in) :: nt, nb, nh, nt_, nt__, nw
+  double precision, intent(in) :: t(nt), h(nh), hyperparam(nhyper)
   double precision, intent(in out) :: uo(nt),alphas(nh*nb),betas(nh*nb),fos(nb)
-  integer, intent(in out) :: nb
 
-  integer :: nt_, nt__, ibh, ib, iter
+  integer :: ibh, ib, iter
   double precision :: dt, x_, objfnc_, error_(nt)
 
   double precision :: k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__
@@ -515,9 +515,6 @@ subroutine harmodenoi_(uo,t,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
   double precision :: uh(nt), g_alphas(nh*nb), g_betas(nh*nb), g_fos(nb)
   double precision :: step_alphas, step_betas, step_fos
   ! ----------------------------------------------------------------------------
-  dt = t(2) - t(1)
-  call hd_nbnt_(nb,nt_,nt__,nt,fo,dt)
-  ! ----------------------------------------------------------------------------
   !                    💠 initial guess for α & β & fos 💠
   ! ----------------------------------------------------------------------------
   ! the idea for this one is that:
@@ -527,12 +524,6 @@ subroutine harmodenoi_(uo,t,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
   do ibh=1,nb*nh
     alphas(ibh)= x_ / ibh
     betas(ibh) = x_ / ibh
-  enddo
-  ! the idea for this one is that fo varies very little between blocks.
-  ! in fact, with EM data i am yet to see a case where nb > 1 gives better
-  ! results than nb=1.
-  do ib=1,nb
-    fos(ib) = fo
   enddo
   ! ----------------------------------------------------------------------------
   !                            📟 hyperparam 📟
@@ -629,7 +620,6 @@ subroutine harmodenoi_(uo,t,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
   do it=1,nt
     uo(it) = uo(it) - uh(it)
   enddo
-  nw = ceiling((1/(fo*h(1)))/dt)
   call window_mean(uo,nt,nw)
 end subroutine harmodenoi_
 ! ------------------------------------------------------------------------------

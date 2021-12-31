@@ -7,7 +7,7 @@ function [v,C] = window_mean_(u,nw)
 % it takes into account averages at early and late times.
 % ------------------------------------------------------------------------------
 nt= numel(u);
-C = zeros(nt,nt);
+C = 0;
 
 if mod(nw,2)==0;
   nb_ = nw/2;
@@ -44,6 +44,7 @@ end
 %    v = C*u
 % ------------------------------------------------------------------------------
 if nargout > 1
+  C = zeros(nt,nt);
   % starting block
   for it=1:(nb_-1)
     C(it,1:(it+nb_-1)) = ones(1,it+nb_-1)/(it+nb_-1);

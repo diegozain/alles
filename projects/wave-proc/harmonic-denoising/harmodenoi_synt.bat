@@ -13,7 +13,7 @@ del *.mod *.obj
 
 REM /traceback /check:bounds
 
-ifort /Qmkl /Qopenmp /c /traceback ..\..\..\src\fortran\calculus.f90 ..\..\..\src\fortran\readfiles.f90 ..\..\..\src\fortran\harmodenoiser.f90 harmodenoi_synt.f90
+ifort /Qmkl /Qopenmp /c /traceback /heap-arrays ..\..\..\src\fortran\calculus.f90 ..\..\..\src\fortran\readfiles.f90 ..\..\..\src\fortran\harmodenoiser.f90 harmodenoi_synt.f90
 
 ifort harmodenoi_synt.obj calculus.obj readfiles.obj harmodenoiser.obj
 

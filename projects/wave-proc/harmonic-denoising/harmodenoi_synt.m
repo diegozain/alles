@@ -26,6 +26,7 @@ uo_h = 2*cos(2*pi*fo*t) + cos(2*pi*fo*3*t) + cos(2*pi*fo*5*t) + cos(2*pi*fo*11*t
 % uo_s = zeros(nt,1);
 % uo_s = t.^2;
 uo_s = exp(-t.^2);
+% uo_s = cos(2*pi*fo*3.5*t);
 % ------------------------------------------------------------------------------
 % observed signal
 uo   = uo_h + uo_s;
@@ -106,17 +107,26 @@ nb = (nt-nt__)/(nt_-nt__);
 % end
 % %{
 % ------------------------------------------------------------------------------
-% initial guess for α, β, and fo
-alpha_ = 4;
-beta_  = 4;
-fo     = 5.5; % Hz
-% ------------------------------------------------------------------------------
 % multiples h*fo that make up the harmonics
 h = [1, 3, 5, 11];
 nh= numel(h);
 % ------------------------------------------------------------------------------
-alphas = ones(nb*nh,1) * alpha_;
-betas  = ones(nb*nh,1) * beta_;
+%                      initial α, β, & fo
+% ------------------------------------------------------------------------------
+% alpha_ = 4;
+% beta_  = 4;
+% fo     = 5.5; % Hz
+%
+% alphas = ones(nb*nh,1) * alpha_;
+% betas  = ones(nb*nh,1) * beta_;
+% fos    = ones(nb,1) * fo;
+% ------------------------------------------------------------------------------
+% initial guess for α & β
+alpha_ = 1*std(uo);
+beta_  = 1*std(uo);
+% ----------------------------------------------------------------------------
+alphas = ones(nb*nh,1) * alpha_ ./ (1:nb*nh).';
+betas  = ones(nb*nh,1) * beta_  ./ (1:nb*nh).';
 fos    = ones(nb,1) * fo;
 % ------------------------------------------------------------------------------
 fprintf('\n total time    = %2.2f (s)',nt*dt)
@@ -175,7 +185,7 @@ ob_betas=zeros(niter,1);
 betas_niter=zeros(nb*nh,niter);
 % ------------------------------------------------------------------------------
 fprintf('\n\n     Ok Mr User. I will now begin the inversion,');
-fprintf('\n        it will go for %i iterations\n\n.', niter);
+fprintf('\n        it will go for %i iterations.\n\n', niter);
 % ------------------------------------------------------------------------------
 tic;
 [alphas,betas,fos] = hd_inversion(uo,niter,t,alphas,betas,fos,h,nt_,nt__);

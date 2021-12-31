@@ -13,7 +13,7 @@ program harmodenoi_synt
  implicit none
  ! -----------------------------------------------------------------------------
  ! 🎵
- integer :: nt,nb,nh,nt_,nt__
+ integer :: nt,nb,nh,nt_,nt__,nw
  double precision :: dt, fo
  double precision, allocatable :: uo(:), h(:), alphas(:), betas(:), fos(:), t(:)
  double precision, allocatable :: us(:)
@@ -109,12 +109,25 @@ program harmodenoi_synt
  hyperparam(10) = 5
  hyperparam(11) = 5
  ! -----------------------------------------------------------------------------
+ !                              fo stuff
+ ! -----------------------------------------------------------------------------
+ ! window to convolve with
+ nw = ceiling((1/(fo*h(1)))/dt)
+
+ ! fo varies very little between blocks.
+ ! in fact, with EM data i am yet to see a case where nb > 1 gives better
+ ! results than nb=1.
+ do ib=1,nb
+   fos(ib) = fo
+ enddo
+ ! -----------------------------------------------------------------------------
  !                                 🎵
  ! -----------------------------------------------------------------------------
  ! ⌚
  start_time = omp_get_wtime()
  ! -----------------------------------------------------------------------------
- call harmodenoi_(uo,t,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
+ call harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
+   hyperparam, nhyper)
  ! -----------------------------------------------------------------------------
  ! ⌚
  end_time = omp_get_wtime()
@@ -132,6 +145,9 @@ program harmodenoi_synt
  print*,'--> recovered alphas per block:'
  print*,''
  do ibh=1,nb*nh
+   if (mod(ibh,nb) == 0) then
+     print*,''
+   endif
    print*,alphas(ibh),'(alpha)'
  enddo
 
@@ -139,6 +155,9 @@ program harmodenoi_synt
  print*,'--> recovered betas per block:'
  print*,''
  do ibh=1,nb*nh
+   if (mod(ibh,nb) == 0) then
+     print*,''
+   endif
    print*,betas(ibh),'(beta)'
  enddo
  print*,''

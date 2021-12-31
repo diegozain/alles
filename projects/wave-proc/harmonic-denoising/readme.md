@@ -21,6 +21,9 @@ cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
 python3 .\vis\vis_sy.py
 cd ..
 ```
+The *Fortran* version is always about **twice or three times faster** than the *Matlab* version:
+
+* larger signal ⟶ *Fortran* is even faster.
 
 ## Forward model 🌞
 
@@ -97,13 +100,15 @@ nt_ →  |    *   | · α    ⟶    |-2·pi·t·h| ⊙ |sin(2·pi·fo·t·h)| ·
 
 ### Observations 🌜🌛
 
-Getting a very good solution for *fo* first is essential:
-* recovering α & β wont work if *fo* is not found first,
-  * finding *fo* with the wrong α & β is not so hard.
-* For these reasons, *fo* is found first and then α & β.
-  * The objective function for just *fo* is ln(sum( *e* ).^2).
-  * The objective function for α & β is sum( *e* ).^2.
-* The code can handle inverting several *fo* for several blocks in time, but the results are honestly not any better.
+  * In the case where there is only one block, this approach is still feasible because there is no explicit storage (and inversion) of large matrices.
+
+  * Getting a very good solution for *fo* first is essential:
+    * recovering α & β wont work if *fo* is not found first,
+      * finding *fo* with the wrong α & β is not so hard.
+    * For these reasons, *fo* is found first and then α & β.
+      * The objective function for just *fo* is ln(sum( *e* ).^2).
+      * The objective function for α & β is sum( *e* ).^2.
+    * The code can handle inverting several *fo* for several blocks in time, but the results are honestly not any better.
 
 ## Example 🎨
 
