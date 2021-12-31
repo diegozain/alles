@@ -19,6 +19,7 @@ subroutine hd_nbnt_(nb,nt_,nt__,nt,fo,dt)
   ! nb : desired # of time blocks
   !
   ! example for nt=4000, fo=50, dt=2.5e-4, nb=4
+  !        [nb,nt_,nt__] = hd_nbnt_(nt,fo,dt,nb)
   !        [nb,nt_,nt__] = hd_nbnt_(4000,50,2.5e-4,4)
   ! nb=4, nt_=180, nt__=80.
   ! ----------------------------------------------------------------------------
@@ -111,7 +112,11 @@ subroutine hd_nbnt_(nb,nt_,nt__,nt,fo,dt)
   double precision, allocatable :: err_(:)
   ! ----------------------------------------------------------------------------
   ! overlapping number of time samples
-  nt__ = ceiling(1/fo/dt)
+  if (nb==1) then
+    nt__ = 0
+  else
+    nt__ = ceiling(1/(fo*dt))
+  endif
   ! get number of factors of ntnt
   ntnt  = nt-nt__
   nfact = 0
@@ -174,6 +179,9 @@ subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
   double precision :: argu, dotter, uh_(nt)
   double precision, parameter :: pi=3.14159265358979
   ! ----------------------------------------------------------------------------
+  do it_=1,nt
+    uh(it_)=0
+  enddo
   do ib=1,nb
     ! --- one block ---
     ! each block is of size nt_ × nh
@@ -189,9 +197,9 @@ subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
       dotter = 0
       index_t = it_ + (ib-1)*(nt_-nt__)
       do ih=1,nh
-        index_h = ih + (ib-1)*nh
         argu   = 2*pi*fos(ib)*t(index_t) * h(ih)
         ! uh_ = cos_bloc·α + sin_bloc·β
+        index_h = ih + (ib-1)*nh
         dotter = dotter + dcos(argu)*alphas(index_h) + dsin(argu)*betas(index_h)
       enddo
       uh_(index_t) = dotter
@@ -221,10 +229,10 @@ subroutine hd_grad_f(g_fos,error_,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
       dotter = 0
       index_t = it_ + (ib-1)*(nt_-nt__)
       do ih=1,nh
-        index_h = ih + (ib-1)*nh
         argu =  2*pi*fos(ib)*t(index_t) * h(ih)
-        argu_= -2*pi*t(index_t) * h(ih)
-        dotter = dotter + argu_*dsin(argu)*alphas(index_h) - argu_*dcos(argu)*betas(index_h)
+        argu_=  2*pi*t(index_t) * h(ih)
+        index_h = ih + (ib-1)*nh
+        dotter = dotter - argu_*dsin(argu)*alphas(index_h) + argu_*dcos(argu)*betas(index_h)
       enddo
       del_fo(it_) = dotter
     enddo
@@ -330,24 +338,23 @@ subroutine hd_obj(objfnc_,error_,data_, datao_, OBJ, nd)
   !       2 : entropy                         Θ = - ∑ e^2 ⋅ log( e^2 )
   ! ----------------------------------------------------------------------------
   objfnc_ = 0
-
   do id_=1,nd
     error_(id_) = data_(id_) - datao_(id_)
     objfnc_ = objfnc_ + error_(id_)**2
   enddo
 
   if (OBJ == 1) then
-    objfnc_ = log(objfnc_)
+    objfnc_ = dlog(objfnc_)
     do id_=1,nd
-      error_(id_) = - (1/objfnc_) * error_(id_)
+      error_(id_) = (1/objfnc_) * error_(id_)
     enddo
   elseif (OBJ == 2) then
     objfnc_ = 0
     do id_=1,nd
-      objfnc_ = objfnc_ - (error_(id_)**2) * log(error_(id_)**2)
+      objfnc_ = objfnc_ - (error_(id_)**2) * dlog(error_(id_)**2)
     enddo
     do id_=1,nd
-      error_(id_) = - error_(id_) - error_(id_)*log(error_(id_)**2)
+      error_(id_) = - error_(id_) - error_(id_)*dlog(error_(id_)**2)
     enddo
   endif
 end subroutine hd_obj
@@ -360,7 +367,7 @@ subroutine hd_step_f(step_fos,uo,g_fos,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__,&
   double precision, intent(in) :: k_fos_,k_fos__
   double precision, intent(in out) :: step_fos
 
-  double precision :: Ob_(nparabo), k_fos(nparabo), fos_(nb)
+  double precision :: Ob_(nparabo), k_fos(nparabo), fos_(nb), Ob
   double precision :: uh_(nt), error_(nt)
   integer :: iparabo, ib, iOb, iOb_(nparabo)
   ! ----------------------------------------------------------------------------
@@ -371,7 +378,7 @@ subroutine hd_step_f(step_fos,uo,g_fos,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__,&
     ! perturb
     ! fo_ = fo ⊙ exp(-k·g_fo ⊙ fo)
     do ib=1,nb
-      fos_(ib) = fos(ib)*exp(- k_fos(iparabo)*g_fos(ib)*fos(ib))
+      fos_(ib) = fos(ib)*dexp(- k_fos(iparabo)*g_fos(ib)*fos(ib))
     enddo
     ! fwd
     call hd_fwd(uh_,t,alphas,betas,fos_,h,nt,nb,nh,nt_,nt__)
@@ -396,7 +403,7 @@ subroutine hd_step_a(step_alphas,uo,g_alphas,t,alphas,betas,fos,h,nt,nb,nh,nt_,n
   double precision, intent(in) :: k_alphas_,k_alphas__
   double precision, intent(in out) :: step_alphas
 
-  double precision :: Ob_(nparabo), k_alphas(nparabo), alphas_(nb*nh)
+  double precision :: Ob_(nparabo), k_alphas(nparabo), alphas_(nb*nh), Ob
   double precision :: uh_(nt), error_(nt)
   integer :: iparabo, ib, iOb, iOb_(nparabo)
   ! ----------------------------------------------------------------------------
@@ -419,8 +426,16 @@ subroutine hd_step_a(step_alphas,uo,g_alphas,t,alphas,betas,fos,h,nt,nb,nh,nt_,n
   do iOb=1,nparabo
     iOb_(iOb) = iOb
   enddo
+  ! !🐛
+  ! do ib=1,nparabo
+  !   print*,Ob_(ib),iOb_(ib),k_alphas(ib)
+  ! enddo
   call quicksort(Ob_,iOb_,nparabo)
-  iOb = iOb_(1) ! min index
+  iOb = iOb_(2) ! min index
+  ! !🐛
+  ! do ib=1,nparabo
+  !   print*,Ob_(ib),iOb_(ib)
+  ! enddo
   step_alphas = k_alphas(iOb)
 end subroutine hd_step_a
 ! ------------------------------------------------------------------------------
@@ -432,7 +447,7 @@ subroutine hd_step_b(step_betas,uo,g_betas,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt_
   double precision, intent(in) :: k_betas_,k_betas__
   double precision, intent(in out) :: step_betas
 
-  double precision :: Ob_(nparabo), k_betas(nparabo), betas_(nb*nh)
+  double precision :: Ob_(nparabo), k_betas(nparabo), betas_(nb*nh), Ob
   double precision :: uh_(nt), error_(nt)
   integer :: iparabo, ib, iOb, iOb_(nparabo)
   ! ----------------------------------------------------------------------------
@@ -481,13 +496,14 @@ subroutine hd_hyperparam(k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__,
   niter_ab   = int(hyperparam(11))
 end subroutine hd_hyperparam
 ! ------------------------------------------------------------------------------
-subroutine harmodenoi_(uo,dt,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
-  integer, intent(in) :: nt, nb, nh, nhyper
-  double precision, intent(in) :: dt, fo, h(nh), hyperparam(nhyper)
+subroutine harmodenoi_(uo,t,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
+  integer, intent(in) :: nt, nh, nhyper
+  double precision, intent(in) :: t(nt), fo, h(nh), hyperparam(nhyper)
   double precision, intent(in out) :: uo(nt),alphas(nh*nb),betas(nh*nb),fos(nb)
+  integer, intent(in out) :: nb
 
   integer :: nt_, nt__, ibh, ib, iter
-  double precision :: x_, objfnc_, error_(nt)
+  double precision :: dt, x_, objfnc_, error_(nt)
 
   double precision :: k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__
   integer :: nparabo_fos,nparabo_a,nparabo_b,niter_fos,niter_ab
@@ -495,7 +511,11 @@ subroutine harmodenoi_(uo,dt,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
   double precision, allocatable :: fos_niter(:,:), a_niter(:,:), b_niter(:,:)
   double precision, allocatable :: ob_fos(:), ob_ab(:)
   integer, allocatable :: iob_fos(:), iob_ab(:)
+
+  double precision :: uh(nt), g_alphas(nh*nb), g_betas(nh*nb), g_fos(nb)
+  double precision :: step_alphas, step_betas, step_fos
   ! ----------------------------------------------------------------------------
+  dt = t(2) - t(1)
   call hd_nbnt_(nb,nt_,nt__,nt,fo,dt)
   ! ----------------------------------------------------------------------------
   !                    💠 initial guess for α & β & fos 💠
@@ -509,7 +529,7 @@ subroutine harmodenoi_(uo,dt,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
     betas(ibh) = x_ / ibh
   enddo
   ! the idea for this one is that fo varies very little between blocks.
-  ! in fact, with EM data i am yet to see a case where nb > 1 is gives better
+  ! in fact, with EM data i am yet to see a case where nb > 1 gives better
   ! results than nb=1.
   do ib=1,nb
     fos(ib) = fo
@@ -550,11 +570,11 @@ subroutine harmodenoi_(uo,dt,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
       nparabo_fos,1,k_fos_,k_fos__)
     ! update (always positive)
     do ib=1,nb
-      fos(ib) = fos(ib) * exp(-step_fos*g_fos(ib)*fos(ib))
+      fos(ib) = fos(ib) * dexp(-step_fos*g_fos(ib)*fos(ib))
     enddo
   enddo
   ! init this guy 👲
-  do ib=1,nb
+  do ib=1,niter_fos
     iob_fos(ib) = ib
   enddo
   call quicksort(ob_fos,iob_fos,niter_fos)
@@ -587,12 +607,12 @@ subroutine harmodenoi_(uo,dt,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
       nparabo_b,0,k_betas_,k_betas__)
     ! update
     do ibh=1,nb*nh
-      alphas(ibh)= alphas(ibh)- step_alphas*g_alphas
-      betas(ibh) = betas(ibh) - step_betas*g_betas
+      alphas(ibh)= alphas(ibh)- step_alphas*g_alphas(ibh)
+      betas(ibh) = betas(ibh) - step_betas*g_betas(ibh)
     enddo
   enddo
   ! init this guy 👲
-  do ibh=1,nb*nh
+  do ibh=1,niter_ab
     iob_ab(ibh) = ibh
   enddo
   call quicksort(ob_ab,iob_ab,niter_ab)
@@ -605,6 +625,7 @@ subroutine harmodenoi_(uo,dt,fo,h,alphas,betas,fos,nt,nb,nh,hyperparam,nhyper)
   !                          👉 last pass 👉
   ! ----------------------------------------------------------------------------
   call hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
+  ! overwrite uo with solution
   do it=1,nt
     uo(it) = uo(it) - uh(it)
   enddo

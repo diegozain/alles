@@ -11,6 +11,17 @@ July 2021 @ Aarhus University
 
 The main inversion routine is in ```src/hd_inversion.m```
 
+## Fortran 💪
+
+In the terminal 💻,
+```
+cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
+.\harmodenoi_synt.bat
+.\harmodenoi_synt.exe
+python3 .\vis\vis_sy.py
+cd ..
+```
+
 ## Forward model 🌞
 
 ```
@@ -86,13 +97,13 @@ nt_ →  |    *   | · α    ⟶    |-2·pi·t·h| ⊙ |sin(2·pi·fo·t·h)| ·
 
 ### Observations 🌜🌛
 
-* Getting a very good solution for *fo* first is essential:
+Getting a very good solution for *fo* first is essential:
 * recovering α & β wont work if *fo* is not found first,
   * finding *fo* with the wrong α & β is not so hard.
 * For these reasons, *fo* is found first and then α & β.
   * The objective function for just *fo* is ln(sum( *e* ).^2).
   * The objective function for α & β is sum( *e* ).^2.
-* The code can handle inverting several *fo* for several chunks in time, but the results are honestly not any better.
+* The code can handle inverting several *fo* for several blocks in time, but the results are honestly not any better.
 
 ## Example 🎨
 

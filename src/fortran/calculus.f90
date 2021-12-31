@@ -404,7 +404,7 @@ subroutine window_mean(u,nt,nw)
   do it=1,(nb_-1)
     ! v(it) = (ones(1,it+nb_-1)/(it+nb_-1)) * u(1:(it+nb_-1));
     v_ = 0
-    do it_=1,it+nb_-1
+    do it_=1,(it+nb_-1)
       v_ = v_ + u(it_)
     enddo
     v(it) = v_ / dble(it+nb_-1)

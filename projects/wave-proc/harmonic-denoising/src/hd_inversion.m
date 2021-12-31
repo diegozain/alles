@@ -24,13 +24,13 @@ nh = numel(h);
 % fo
 k_fos_     =1e-8;
 k_fos__    =2e-5; % 1e-6
-nparabo_fos=1e2;
+nparabo_fos=100;
 % α & β
 k_alphas_ =1e-8;
 k_alphas__=1e-3;
 k_betas_  =1e-8;
 k_betas__ =5e-3;
-nparabo_ab=1e2;
+nparabo_ab=100;
 
 % % - field data
 % % fo

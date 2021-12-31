@@ -30,6 +30,7 @@ else
   [~,istep] = min(Ob_);
   step_fos = k_fos(istep);
 end
+
 % % -- for debugging
 % figure;
 % hold on;

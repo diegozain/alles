@@ -81,7 +81,11 @@ function [nb,nt_,nt__] = hd_nbnt_(nt,fo,dt,nb)
 %
 % ------------------------------------------------------------------------------
 % overlapping number of time samples
-nt__ = ceil(1/fo/dt);
+if (nb==1)
+  nt__ = 0;
+else
+  nt__ = ceil(1/fo/dt);
+end
 % get number of factors of ntnt
 ntnt= nt-nt__;
 nfact = 0;
