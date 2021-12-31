@@ -13,6 +13,10 @@ The main inversion routine is in ```src/hd_inversion.m```
 
 ## Fortran 💪
 
+The *Fortran* version is always about **twice or three times faster** than the *Matlab* version:
+
+* larger signal ⟶ *Fortran* is even faster.
+
 In the terminal 💻,
 ```
 cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
@@ -21,9 +25,22 @@ cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
 python3 .\vis\vis_sy.py
 cd ..
 ```
-The *Fortran* version is always about **twice or three times faster** than the *Matlab* version:
+or if you prefer to read and plot in *Matlab*,
 
-* larger signal ⟶ *Fortran* is even faster.
+```matlab
+uo_sig = read_bin('bin\uo_sig',nt,'double');
+uo_obs = read_bin('bin\uo_obs',nt,'double');
+uo_reco= read_bin('bin\uo_reco',nt,'double');
+figure;
+hold on;
+plot(t,uo_sig,'k')
+plot(t,uo_obs,'b')
+plot(t,uo_reco,'r--')
+hold off;
+legend({'Signal','Observed','Recovered'})
+xlabel('Time (s)')
+ylabel('Amplitude')
+```
 
 ## Forward model 🌞
 

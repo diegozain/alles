@@ -35,7 +35,7 @@ program harmodenoi_synt
  nt = 8000   ! # of samples
 
  nh = 4
- nb = 2
+ nb = 1
  ! -----------------------------------------------------------------------------
  ! input  :: target nb, fo, & dt
  ! output :: new nb, nt_, & nt__
