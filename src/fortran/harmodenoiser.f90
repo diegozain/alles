@@ -502,7 +502,7 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
   double precision, intent(in) :: t(nt), h(nh), hyperparam(nhyper)
   double precision, intent(in out) :: uo(nt),alphas(nh*nb),betas(nh*nb),fos(nb)
 
-  integer :: ibh, ib, iter
+  integer :: ibh, ib, ih, iter
   double precision :: dt, x_, objfnc_, error_(nt)
 
   double precision :: k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__
@@ -521,9 +521,13 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
   ! • α & β are the ones contributing most of the noise in the signal (std)
   ! • α & β for small frequencies are usually larger when dealing with EM data (/ibh)
   call std(x_,uo,nt)
-  do ibh=1,nb*nh
-    alphas(ibh)= x_ / ibh
-    betas(ibh) = x_ / ibh
+  ibh=1
+  do ib=1,nb
+    do ih=1,nh
+      alphas(ibh)= x_ / ih
+      betas(ibh) = x_ / ih
+      ibh = ibh+1
+    enddo
   enddo
   ! ----------------------------------------------------------------------------
   !                            📟 hyperparam 📟

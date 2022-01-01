@@ -35,7 +35,7 @@ program harmodenoi_synt
  nt = 8000   ! # of samples
 
  nh = 4
- nb = 1
+ nb = 2
  ! -----------------------------------------------------------------------------
  ! input  :: target nb, fo, & dt
  ! output :: new nb, nt_, & nt__
@@ -69,10 +69,12 @@ program harmodenoi_synt
  ! -----------------------------------------------------------------------------
  !                         👉 synthetic fwd 👉
  ! -----------------------------------------------------------------------------
- alphas= [2,1,1,1]
- betas = [2,1,1,1]
+ alphas= [2,1,1,1,2,1,1,1]
+ betas = [2,1,1,1,2,1,1,1]
  h     = [1,3,5,11]
- fos   = [fo]
+ do ib=1,nb
+   fos(ib) = fo
+ enddo
  ! do some harmonic
  call hd_fwd(uo,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
  ! put in some hidden signal
