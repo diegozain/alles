@@ -35,6 +35,7 @@ If running *Matlab* projects, please set paths first by running the script:
 
 	* [Self-organizing maps](projects/dim-redu/self-org/)
 	* t-SNE
+  * [Density kernel distribution](projects/dim-redu/kernel-density/)
 
 * Graph theory algorithms
 
