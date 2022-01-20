@@ -2,6 +2,8 @@ clear
 close all
 clc
 % ------------------------------------------------------------------------------
+addpath('src/')
+% ------------------------------------------------------------------------------
 % np        = # of points
 % max_neigh = maximum # of neighbors a node may have
 % neigh     = neighbor list of size (np × max_neigh) ℕ
@@ -40,7 +42,7 @@ neigh(18,1:3)= [12, 15, 17];
 % edges
 % %{
 % ------------------------------------------------------------------------------
-xy = zeros(np*2,1);
+xy = randn(np*2,1);
 xy = 2*[0; 6; 12; 3; 9; 15; 0; 6; 12; 3; 9; 15; 0; 6; 12; 3; 9; 15; 0; 0; 0; 2.5; 2.5; 2.5; 5; 5; 5; 7.5; 7.5; 7.5; 10; 10; 10; 12.5; 12.5; 12.5];
 % ------------------------------------------------------------------------------
 xy_init = xy;
@@ -66,16 +68,16 @@ tol_error = -11;%1e-5;
 % ------------------------------------------------------------------------------
 iter   = 1;
 while (objfnc_>tol_error & iter<=niter)
-  % % 🎨
-  % figure(1001);
-  % hold on;
-  % plot(xy(1:np),xy((np+1:2*np)),'.','markersize',20)
-  % hold off;
-  % axis image;
-  % axis ij;
-  % xlabel('Length (m)')
-  % ylabel('Width (m)')
-  % simple_figure()
+  % 🎨
+  figure(1001);
+  hold on;
+  plot(xy(1:np),xy((np+1:2*np)),'.','markersize',20)
+  hold off;
+  axis image;
+  axis ij;
+  xlabel('Length (m)')
+  ylabel('Width (m)')
+  simple_figure()
 
   % forward model 👉
   dista = fwd_dista_(np,nedges,xy,edges);
