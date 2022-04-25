@@ -1,7 +1,7 @@
 # 🎵 Harmonic denoising
 diego domenzain
 
-July 2021 @ Aarhus University
+July 2021
 
 ## Code 📝
 
