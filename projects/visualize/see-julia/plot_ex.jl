@@ -24,6 +24,7 @@ display(fig);
 # ------------------------------------------------------------------------------
 # import Pkg; Pkg.add("GLMakie")
 using GLMakie
+using ColorSchemes
 
 r = LinRange(-1, 1, 100);
 cube = [(x.^2 + y.^2 + z.^2) for x = r, y = r, z = r];
