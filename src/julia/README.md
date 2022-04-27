@@ -14,6 +14,7 @@ The next functions on the list are:
 
 ```julia
 pwd()
+readdir()
 cd("path/to/files/")
 
 using SparseArrays, LinearAlgebra, FFTW, MAT
@@ -80,7 +81,7 @@ v=rand(nz,nx,nt);
 # remove the tic toc functions in julia.
 t1=time_ns();
 
-# the exclamation point ! makes the function pass by reference, 
+# the exclamation point ! makes the function pass by reference,
 # so no extra memory is used.
 differentiate_cube!(v,dt);
 
