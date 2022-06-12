@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 # -----------------------
 # diego domenzain
-# Boise State University 
+# Boise State University
 # spring 2019
 # -----------------------
 class fancy_image():
@@ -88,7 +88,7 @@ class fancy_image():
         import numpy as np
         '''
         pad an image horizontally
-        
+
         '''
         # ......
         # open
@@ -178,12 +178,15 @@ class fancy_image():
         # ......
         # merge
         # ......
-        im = np.vstack( (np.asarray( i_ ) for i_ in im ) )
-        im = Image.fromarray( im )
+        # python decided to deprecate this ↓ 🙄
+        # im = np.vstack( (np.asarray( i_ ) for i_ in im ) )
+        for i_ in range(0,len(im)-1):
+            im_ = np.vstack( (np.asarray(im[i_]) , np.asarray(im[i_+1])) )
+        im_ = Image.fromarray( im_ )
         # ......
         # return
         # ......
-        return im
+        return im_
     def concat_h(self):
         import numpy as np
         '''
@@ -196,12 +199,15 @@ class fancy_image():
         # ......
         # merge
         # ......
-        im = np.hstack( (np.asarray( i_ ) for i_ in im ) )
-        im = Image.fromarray( im )
+        # python decided to deprecate this ↓ 🙄
+        # im = np.hstack( (np.asarray( i_ ) for i_ in im ) )
+        for i_ in range(0,len(im)-1):
+            im_ = np.hstack( (np.asarray(im[i_]) , np.asarray(im[i_+1])) )
+        im_ = Image.fromarray( im_ )
         # ......
         # return
         # ......
-        return im
+        return im_
     def transpa_bye(self):
         '''
         remove transparency of an image
@@ -222,4 +228,3 @@ class fancy_image():
         # return
         # ......
         return im_
-        

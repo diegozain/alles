@@ -54,6 +54,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Umfpack demo](projects/pdes/umfpack-demo/)
 	* [Pardiso demo](projects/pdes/pardiso-demo/)
 	* [Helmholtz-Hodge Decomposition](projects/pdes/hhd/)
+  * [DC pseudo locations](projects/pdes/dc-xbore-vis/)
 
 * Squeezing and expanding matrices
 
@@ -84,7 +85,7 @@ If running *Matlab* projects, please set paths first by running the script:
 
 	* Plot output from *C*
 	* [Plot output from *Fortran*](projects/visualize/see-fortran/)
-	* Plot output from *Julia*
+	* [Plot output from *Julia*](projects/visualize/see-julia/)
 	* [*Fortran* in *Matlab*](projects/visualize/finmatlab/)
   * [Matrix inception](projects/visualize/matrix-inception/)
 
