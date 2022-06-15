@@ -3,9 +3,9 @@ function step_ = stepemcali(obj,param,datao,grad_,s,kparam_,kparam__,nparabo)
 % jun 2022
 % ------------------------------------------------------------------------------
 % % --- pica. pica doesnt work for this inverse problem :(
-% param_ = param + kparam*grad_;
-% data_ = fwdemcali(param,s);
-% step_ = kparam * ((data_.' * resi) / (data_.' * data_));
+% param_ = param + 1e-1*grad_;
+% data_ = fwdemcali(param_,s);
+% step_ = 1e-1 * ((data_.' * resi) / (data_.' * data_));
 % ------------------------------------------------------------------------------
 % --- build perturbations
 kparam = linspace(kparam_,kparam__,nparabo).';
@@ -35,5 +35,4 @@ else
   [~,istep] = min(obj_);
   step_ = kparam(istep);
 end
-
 end

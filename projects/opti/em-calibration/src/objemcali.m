@@ -9,5 +9,4 @@ function [obj,resi] = objemcali(data,datao)
 resi= data-datao;
 obj = log(resi'*resi);
 resi= (1/obj) * resi;
-
 end
