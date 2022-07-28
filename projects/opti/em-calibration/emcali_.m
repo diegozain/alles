@@ -25,24 +25,29 @@ datao2 = D2.';
 clear R Rd1 Rd2 D1 D2
 % ------------------------------------------------------------------------------
 datao = datao2 ./ datao1;
+ns = numel(s);
 % ------------------------------------------------------------------------------
-% fprintf('\n\n   gonna put some noise 🎶\n')
-% rng(1);
-% noimagre = std(real(datao));
-% noimagim = std(imag(datao));
-% noimagre = 0.1*noimagre;
-% noimagim = 0.1*noimagim;
-% datao = datao + (noimagre*rand(numel(s),1) + noimagim*1i*rand(numel(s),1));
+fprintf('\n\n   gonna put some noise 🎶\n')
+rng(1);
+noimagre = std(real(datao));
+noimagim = std(imag(datao));
+noimagre = 0.1*noimagre;
+noimagim = 0.1*noimagim;
+datao = datao + (noimagre*rand(numel(s),1) + noimagim*1i*rand(numel(s),1));
+% ------------------------------------------------------------------------------
+% fprintf('\n\n   gonna halve the data 💕\n')
+% datao = datao(1:2:ns);
+% s = s(1:2:ns);
 % ------------------------------------------------------------------------------
 % 📟
-niter = 100; % 100;
+niter = 200; % 100;
 % 🚚 true values
 %          l = 1e-3;
 %          c = 1e-10;
 %  1e-6  < l < 1e-2
 %  1e-12 < c < 1e-9
 l= 1e-1; % 1e-2
-c= 1e-9; % 1e-9
+c= 1e-8; % 1e-9
 kparam_ = 1e-7;  % 1e-7;
 kparam__= 1e-1;  % 1e-1;
 nparabo = 3;     % 3
@@ -63,7 +68,7 @@ fprintf('\n\n             😎😎😎😎😎😎\n l = %2.2d\n c = %2.2d\n    
 data = fwdemcali(param,s);
 
 figure(1);
-subplot(1,3,1);
+subplot(1,2,1);
 semilogx(imag(s),real(data),'-','linewidth',3,'color',[0.9290 0.6940 0.1250]);
 axis tight;
 axis square;
@@ -71,7 +76,7 @@ xlabel('iω (rad)')
 ylabel('R data ( - )')
 simple_figure();
 
-subplot(1,3,2);
+subplot(1,2,2);
 semilogx(imag(s),imag(data),'-','linewidth',3,'color',[0.9290 0.6940 0.1250]);
 axis tight;
 axis square;
@@ -79,13 +84,13 @@ xlabel('iω (rad)')
 ylabel('iR data ( - )')
 simple_figure();
 
-subplot(1,3,3)
-hold on;
-plot(real(data),imag(data),'-','linewidth',3,'color',[0.9290 0.6940 0.1250]);
-hold off;
-axis tight;
-% axis square;
-simple_figure();
+% subplot(1,3,3)
+% hold on;
+% plot(real(data),imag(data),'-','linewidth',3,'color',[0.9290 0.6940 0.1250]);
+% hold off;
+% axis tight;
+% % axis square;
+% simple_figure();
 % ------------------------------------------------------------------------------
 obj_ = zeros(niter,1);
 steps_ = zeros(niter,1);
@@ -117,7 +122,7 @@ fprintf('\n\n             😎😎😎😎😎😎\n l = %2.2d\n c = %2.2d\n    
 data = fwdemcali(param,s);
 
 figure(1);
-subplot(1,3,1);
+subplot(1,2,1);
 hold on;
 semilogx(imag(s),real(data),'-','linewidth',3,'color',[0.4660 0.6740 0.1880]);
 semilogx(imag(s),real(datao),'-','linewidth',3,'color',[0.4940 0.1840 0.5560]);
@@ -129,7 +134,7 @@ xlabel('iω (rad)')
 ylabel('R data ( - )')
 simple_figure();
 
-subplot(1,3,2);
+subplot(1,2,2);
 hold on;
 semilogx(imag(s),imag(data),'-','linewidth',3,'color',[0.4660 0.6740 0.1880]);
 semilogx(imag(s),imag(datao),'-','linewidth',3,'color',[0.4940 0.1840 0.5560]);
@@ -137,21 +142,22 @@ hold off;
 axis tight;
 axis square;
 grid on;
+legend({'initial','recovered','observed'})
 xlabel('iω (rad)')
 ylabel('iR data ( - )')
 simple_figure();
 
-subplot(1,3,3)
-hold on;
-plot(real(data),imag(data),'-','linewidth',3,'color',[0.4660 0.6740 0.1880]);
-plot(real(datao),imag(datao),'--','linewidth',3,'color',[0.4940 0.1840 0.5560]);
-hold off;
-axis tight;
-axis square;
-legend({'initial','recovered','observed'})
-xlabel('R data ( - )')
-ylabel('iR data ( - )')
-simple_figure();
+% subplot(1,3,3)
+% hold on;
+% plot(real(data),imag(data),'-','linewidth',3,'color',[0.4660 0.6740 0.1880]);
+% plot(real(datao),imag(datao),'--','linewidth',3,'color',[0.4940 0.1840 0.5560]);
+% hold off;
+% axis tight;
+% axis square;
+% legend({'initial','recovered','observed'})
+% xlabel('R data ( - )')
+% ylabel('iR data ( - )')
+% simple_figure();
 % ------------------------------------------------------------------------------
 figure;
 semilogy(obj_,'k.-','markersize',20);
