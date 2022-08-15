@@ -47,6 +47,8 @@ param(2) = c;
 param(3) = r;
 param(4) = a;
 param(5) = b;
+
+paramm=param;
 % ------------------------------------------------------------------------------
 fprintf('\n\n             😎😎😎😎😎😎\n l = %2.2d\n c = %2.2d\n             😎😎😎😎😎😎\n\n',param(1),param(2));
 % ------------------------------------------------------------------------------
@@ -130,5 +132,41 @@ axis tight;
 axis square;
 xlabel('Iteration #')
 ylabel('Objective function')
+simple_figure()
+% ------------------------------------------------------------------------------
+% l= 1e-3;
+% c= 1e-10;
+%  1e-6  < l < 1e-2
+%  1e-12 < c < 1e-9
+nll=1e2;
+ncc=1e2;
+% ll = logspace(-4,-2,nll);
+% cc = logspace(-11,-9,ncc);
+ll = logspace(-6,3,nll);
+cc = logspace(-12,-8,ncc);
+obje = zeros(nll,ncc);
+param_=param;
+for ill=1:nll
+  param_(1) = ll(ill);
+  for icc=1:ncc
+    param_(2) = cc(icc);
+    % 👉
+    data = fwdemcali(param_,s);
+    % Θ & residual
+    [obj,resi] = objemcali(data,datao);
+    % ⬛
+    obje(ill,icc) = obj;
+  end
+end
+figure;
+hold on;
+fancy_imagesc(obje,log10(cc),log10(ll));
+plot(log10(param(2)),log10(param(1)),'w.','markersize',40)
+plot(log10(paramm(2)),log10(paramm(1)),'c.','markersize',40)
+hold off;
+axis normal;
+colormap(rainbow2_cb(1))
+xlabel('lg C')
+ylabel('lg L')
 simple_figure()
 % ------------------------------------------------------------------------------

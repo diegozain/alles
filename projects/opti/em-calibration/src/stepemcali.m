@@ -8,7 +8,8 @@ function step_ = stepemcali(obj,param,datao,grad_,s,kparam_,kparam__,nparabo)
 % step_ = 1e-1 * ((data_.' * resi) / (data_.' * data_));
 % ------------------------------------------------------------------------------
 % --- build perturbations
-kparam = linspace(kparam_,kparam__,nparabo).';
+% kparam = linspace(kparam_,kparam__,nparabo).';
+kparam = logspace(log10(kparam_),log10(kparam__),nparabo).';
 obj_ = zeros(nparabo+1,1);
 obj_(1) = obj;
 % compute many objective function values

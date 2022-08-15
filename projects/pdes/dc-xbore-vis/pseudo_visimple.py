@@ -85,7 +85,7 @@ ax_=ax0,
 x=x,
 y=z,
 extent=extents_xz,
-data=psi1_,
+data=0*psi1_,
 midi=midi,
 vmin=mini,
 vmax=maxi,
@@ -193,5 +193,5 @@ nh,_=im.size
 im_ = fancy_image(im=im_,nh=nh,nh_r=int(1.5*dpi)).padder_h()
 im  = fancy_image(im=im,im_=im_).concat_v()
 # im.show()
-im.save(guarda_path+"sensis-paper.png","PNG", dpi=dpii)
+im.save(guarda_path+"sensis-paper-.png","PNG", dpi=dpii)
 # ------------------------------------------------------------------------------
