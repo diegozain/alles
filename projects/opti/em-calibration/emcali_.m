@@ -13,9 +13,9 @@ addpath('src/')
 % ∂c(d) = (b*s*(a - b).*(l*s + r)^2) ./ (a*(b*c*s.*(l*s + r) + b + l*s + r)^2)
 % ------------------------------------------------------------------------------
 % 📩
-% load('C:\Users\au699065\OneDrive - Aarhus Universitet\Documents\diego\code\tmp\TEM_coil_cal.mat');
-load('C:\Users\au699065\OneDrive - Aarhus Universitet\Documents\diego\code\tmp\TEM_coil_cal_NG1.mat');
-% load('C:\Users\au699065\OneDrive - Aarhus Universitet\Documents\diego\code\tmp\TEM_coil_cal_NG2.mat');
+% load('..\..\..\..\tmp\TEM_coil_cal.mat');
+% load('..\..\..\..\tmp\TEM_coil_cal_NG1.mat');
+load('..\..\..\..\tmp\TEM_coil_cal_NG2.mat');
 % ------------------------------------------------------------------------------
 r= complex(double(R),0);
 a= complex(double(Rd1),0);
@@ -29,30 +29,42 @@ clear R Rd1 Rd2 D1 D2
 datao = datao2 ./ datao1;
 ns = numel(s);
 % ------------------------------------------------------------------------------
-% fprintf('\n\n   gonna put some noise 🎶\n')
-% rng(1);
-% noimagre = std(real(datao));
-% noimagim = std(imag(datao));
-% noimagre = 0.1*noimagre;
-% noimagim = 0.1*noimagim;
-% datao = datao + (noimagre*rand(numel(s),1) + noimagim*1i*rand(numel(s),1));
+fprintf('\n\n   gonna put some noise 🎶\n')
+rng(1);
+noimagre = std(real(datao));
+noimagim = std(imag(datao));
+noimagre = 0.1*noimagre;
+noimagim = 0.1*noimagim;
+datao = datao + (noimagre*rand(numel(s),1) + noimagim*1i*rand(numel(s),1));
 % ------------------------------------------------------------------------------
 % fprintf('\n\n   gonna halve the data 💕\n')
 % datao = datao(1:2:ns);
 % s = s(1:2:ns);
 % ------------------------------------------------------------------------------
 % 📟
-niter = 200; % 100;
+niter = 500; % 100;
 % 🚚 true values
 %          l = 1e-3;
 %          c = 1e-10;
 %  1e-6  < l < 1e-2
 %  1e-12 < c < 1e-9
-l= 1e-1; % 1e-1; % 1e-2
-c= 1e-8; % 1e-8; % 1e-9
+l= 10^(-4.4); % 1e-5; % 8e-5; % 1e-1; % 1e-2
+c= 10^(-8.6); % 1e-7; % 1.6e-9; % 1e-8; % 1e-9
 kparam_ = 1/(ns*1e4); % 1e-9;  % 1e-7;
 kparam__= 1e2/ns; % 1e-3;  % 1e-1;
 nparabo = 3;     % 3
+% ------------------------------------------------------------------------------
+% % the idea here is that given a value for 'l',
+% % then 'c' has to be a certain way,
+% % so maybe doing what is beneath makes the initial guess better.
+% % not really though 😞
+% ------------------------------------------------------------------------------
+% for ii=1:10
+%   c = (r/a - 1 + l*s.*(1/a - datao/b)) ./ ((datao-1)*l.*s.^2 + r*s.*(datao - 1));
+%   c = abs(real(c(ns)));
+%   l = (r/a - 1 + r*c*s.*(1 - datao)) ./ ((datao-1)*c.*s.^2 + s.*(datao/b - 1/a));
+%   l = abs(real(l(ns)));
+% end
 % ------------------------------------------------------------------------------
 % 📦
 param = zeros(5,1);
@@ -96,6 +108,8 @@ simple_figure();
 % ylabel('iR data ( - )')
 % simple_figure();
 % ------------------------------------------------------------------------------
+tolerr = 1e-5;
+obj = tolerr + 1;
 obj_ = zeros(niter,1);
 steps_ = zeros(niter,1);
 
@@ -103,7 +117,7 @@ parammm=zeros(2,niter);
 % ------------------------------------------------------------------------------
 iter_=1;
 tic;
-while (iter_ < niter+1)
+while (obj>tolerr & iter_ < niter+1)
   % 👉
   data = fwdemcali(param,s);
   % Θ & residual
@@ -116,6 +130,7 @@ while (iter_ < niter+1)
   dparam = -step_*grad_;
   % ☝️📅
   param = param.*exp(param.*dparam);
+
   % 🚶🚶
   obj_(iter_) = obj;
   steps_(iter_) = step_;
@@ -183,8 +198,8 @@ nll=1e2;
 ncc=1e2;
 % ll = logspace(-4,-2,nll);
 % cc = logspace(-11,-9,ncc);
-ll = logspace(-6,3,nll);
-cc = logspace(-12,-7,ncc);
+ll = logspace(-6,1,nll);
+cc = logspace(-12,-6,ncc);
 obje = zeros(nll,ncc);
 param_=param;
 for ill=1:nll
@@ -214,6 +229,9 @@ ylabel('lg L')
 simple_figure()
 % ------------------------------------------------------------------------------
 % 🐛
+% lichao gave me 3 examples with the same 'l' & 'c',
+% but different 'a' & 'b' and he didn't give me a heads up. fucker.
+% so this plot was made to figure that out.
 figure(4);
 subplot(1,2,1);
 hold on;
