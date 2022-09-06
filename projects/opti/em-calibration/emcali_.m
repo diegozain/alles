@@ -194,8 +194,8 @@ simple_figure()
 % c= 1e-10;
 %  1e-6  < l < 1e-2
 %  1e-12 < c < 1e-9
-nll=1e2;
-ncc=1e2;
+nll=1e1;
+ncc=1e1;
 % ll = logspace(-4,-2,nll);
 % cc = logspace(-11,-9,ncc);
 ll = logspace(-6,1,nll);
