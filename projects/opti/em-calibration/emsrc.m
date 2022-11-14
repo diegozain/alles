@@ -26,14 +26,14 @@ ttot = 1e-3; % s
 dt = 1e-9*4.2; % 1e-6*10; % s
 nt = fix(ttot / dt);
 t = ((0:(nt-1))*dt).';
-% center time
-tce = 325;
-% μs ⟶ s
-tce = tce*1e-6; % s
 % time width
 twd = 450;
 % μs ⟶ s
 twd = twd*1e-6; % s
+% center time
+tce = 325;
+% μs ⟶ s
+tce = tce*1e-6; % s
 
 ampli = 1;
 % ------------------------------------------------------------------------------
