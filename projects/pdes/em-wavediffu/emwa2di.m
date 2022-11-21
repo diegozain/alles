@@ -75,6 +75,7 @@ omegs = 2*pi*freqs;
 % if epsis is large, then the media is a good conductor
 epsis = sig_ ./ omegs_;
 epsis = epsis / epso;
+epsis(find(epsis(:)<1)) = NaN;
 % ------------------------------------------------------------------------------
 %                                  🎨🎨🎨🎨
 % ------------------------------------------------------------------------------
@@ -86,6 +87,6 @@ colormap(rainbow2_cb(1));
 colorbar;
 ylabel('Frequency (lg rad)')
 xlabel('Conductivity (lg S/m)')
-title('σ/ω (lg F/m)')
+title('σ/ω (lg - )')
 simple_figure()
 % ------------------------------------------------------------------------------
