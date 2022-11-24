@@ -2,7 +2,7 @@ close all
 clear
 clc
 % ------------------------------------------------------------------------------
-fprintf('\n\n\n                                   🤔🤔🤔 \n            is the propagation diffusive 🌼 and the media conductive ⚡? \n                                   🤔🤔🤔 \n\n\n\n')
+fprintf('\n\n\n                                   🤔🤔🤔 \n\n            is the propagation diffusive 🌼 and the media conductive ⚡? \n                                   🤔🤔🤔 \n\n\n\n')
 % ------------------------------------------------------------------------------
 % is EM wave propagation asymptotically equal to diffusion?
 % if this happens then yes,
@@ -25,8 +25,8 @@ v = c/sqrt(epso);
 % ------------------------------------------------------------------------------
 % t = logspace(-11,-9,1e3); % s
 % t = logspace(-11,-8,1e3); % s
-t = logspace(-9,-3,1e3); % s
-sig = logspace(-3,0,1e3); % S/m
+t = logspace(-9,0,1e3); % s
+sig = logspace(-3,2,1e3); % S/m
 
 [sig_,t_] = meshgrid(sig,t);
 % ------------------------------------------------------------------------------
@@ -34,14 +34,27 @@ sig = logspace(-3,0,1e3); % S/m
 %
 %                         let R_ = √(v² ⋅ (t² - 4ε²/σ²))
 % ------------------------------------------------------------------------------
-% if R_ is large and positive, then it is diffusion
-% if R_ is small and positive, then it is on the edge of being a wave
-% if R_ is negative, then it is a wave 💯
+% if R_  is large and positive, then it is diffusion
+% if R_  is small and positive, then it is on the edge of being a wave
+% if R_² is negative, then it is a wave 💯
 % 🚨🚨 large & small compared to closest offset rx.
+% ------------------------------------------------------------------------------
+% another easier way to see it 👌
+% 
+%                     ρ = v² ⋅ (t² - 4ε²/σ²)
+% 
+% ρ is either large, small, or negative.
+% since 2ɛ is about 10⁻¹¹,
+%                          tσ - 10⁻¹¹ >> 0  ⥰ diffusion
+%                          tσ - 10⁻¹¹  > 0  ⥰ wavey diffusion
+%                          tσ - 10⁻¹¹  < 0  ⥰ wave
 % ------------------------------------------------------------------------------
 R_ = v^2 * (t_.^2 - (4*eps^2)./(sig_.^2));
 R_(find(R_(:)<0)) = NaN;
 R_ = sqrt(R_);
+
+rho = t_.*sig_ - 2*eps;
+rho(find(rho(:)<0)) = NaN;
 % ------------------------------------------------------------------------------
 %                                  🎨🎨🎨🎨
 % ------------------------------------------------------------------------------
@@ -49,11 +62,22 @@ figure;
 contour(log10(sig),log10(t),log10(R_),50,'linewidth',10);
 axis square;
 axis ij;
-colormap(rainbow2_cb(1));
+% colormap(rainbow2_cb(1));
 colorbar;
 ylabel('Time (lg s)')
 xlabel('Conductivity (lg S/m)')
-title('√(v²t² - 4v²ε²/σ²) (lg m)')
+title('r^* (lg m)')
+simple_figure()
+
+figure;
+contour(log10(sig),log10(t),log10(rho),50,'linewidth',8);
+axis square;
+axis ij;
+% colormap(rainbow2_cb(1));
+colorbar;
+ylabel('Time (lg s)')
+xlabel('Conductivity (lg S/m)')
+title('ρ-2ɛ (lg - )')
 simple_figure()
 % ------------------------------------------------------------------------------
 % is the media a poor conductor or a good conductor?
@@ -80,13 +104,13 @@ epsis(find(epsis(:)<1)) = NaN;
 %                                  🎨🎨🎨🎨
 % ------------------------------------------------------------------------------
 figure;
-contour(log10(sig),log10(omegs),log10(epsis),50,'linewidth',10);
+contour(log10(sig),log10(freqs),log10(epsis),50,'linewidth',10);
 axis square;
 axis ij;
-colormap(rainbow2_cb(1));
+% colormap(rainbow2_cb(1));
 colorbar;
-ylabel('Frequency (lg rad)')
+ylabel('Frequency (lg Hz)')
 xlabel('Conductivity (lg S/m)')
-title('σ/ω (lg - )')
+title('ɛ^* (lg - )')
 simple_figure()
 % ------------------------------------------------------------------------------
