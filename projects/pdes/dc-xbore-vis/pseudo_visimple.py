@@ -46,8 +46,20 @@ pseud = pseud.T
 
 niabmn = np.fromfile(path_read+'iabmn_size.bin',dtype=int)
 niabmn = niabmn[0]
-iabmn = np.fromfile(path_read+'iabmn.bin',dtype=int)
+iabmn  = np.fromfile(path_read+'iabmn.bin',dtype=int)
 iabmn1 = np.fromfile(path_read+'iabmn1.bin',dtype=int)
+
+nsrc = np.fromfile(path_read+'src_size.bin',dtype=int)
+nsrc = nsrc[0]
+src  = np.fromfile(path_read+'src.bin',dtype=int)
+nrecs= np.fromfile(path_read+'recs_size.bin',dtype=int)
+nrecs= nrecs[0]
+recs = np.fromfile(path_read+'recs.bin',dtype=int)
+recs = np.reshape(recs,(2,nrecs))
+nelectrxyz = np.fromfile(path_read+'electrxyz_size.bin',dtype=int)
+nelectrxyz= nelectrxyz[0]
+electrxyz = np.fromfile(path_read+'electrxyz.bin',dtype=float)
+electrxyz = np.reshape(electrxyz,(2,nelectrxyz))
 # ------------------------------------------------------------------------------
 #                                 🚧🎨
 # ------------------------------------------------------------------------------
@@ -68,7 +80,9 @@ height_max= z[nz-1]
 
 wi,he = figaspect(nrows*width_max/(ncols*height_max))
 # ------------------------------------------------------------------------------
-#                                 🎨🎨
+#                                   🎨🎨
+#                                   🎨🎨
+#                                   🎨🎨
 # ------------------------------------------------------------------------------
 plt_=fancy_figure(data=np.zeros((2,2)),holdon='close',colorbaron='off').matrix()
 
@@ -85,7 +99,7 @@ ax_=ax0,
 x=x,
 y=z,
 extent=extents_xz,
-data=0*psi1_,
+data=psi1_,
 midi=midi,
 vmin=mini,
 vmax=maxi,
@@ -104,8 +118,8 @@ curve=pseud[iabmn1-1,1],
 x=pseud[iabmn1-1,0],
 ax_accu="%.0f",
 symbol='.',
-markersize=20,
-colop=((0.4940,0.1840,0.5560)),
+markersize=15,
+colop=((0,0,0)),
 holdon='on'
 ).plotter()
 #
@@ -115,8 +129,95 @@ curve=pseud[iabmn1-1,1],
 x=pseud[iabmn1-1,0],
 ax_accu="%.0f",
 symbol='.',
-markersize=10,
+markersize=9,
 colop=((0.9290,0.6940,0.1250)),
+holdon='on'
+).plotter()
+# ------------------------------------------------------------------------------
+#                                   🐘 electrxyz 🐘
+# ------------------------------------------------------------------------------
+# 𝐚
+fancy_figure(
+ax_=ax0,
+curve=electrxyz[1,src[0]-1],
+x=electrxyz[0,src[0]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=7,
+colop=((0,0,0)),
+holdon='on'
+).plotter()
+fancy_figure(
+ax_=ax0,
+curve=electrxyz[1,src[0]-1],
+x=electrxyz[0,src[0]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=5,
+colop=((1,1,1)),
+holdon='on'
+).plotter()
+# 𝐛
+fancy_figure(
+ax_=ax0,
+curve=electrxyz[1,src[1]-1],
+x=electrxyz[0,src[1]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=7,
+colop=((0,0,0)),
+holdon='on'
+).plotter()
+fancy_figure(
+ax_=ax0,
+curve=electrxyz[1,src[1]-1],
+x=electrxyz[0,src[1]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=5,
+colop=((1,1,1)),
+holdon='on'
+).plotter()
+# 𝐦
+fancy_figure(
+ax_=ax0,
+curve=electrxyz[1,recs[0,0]-1],
+x=electrxyz[0,recs[0,0]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=7,
+colop=((0,0,0)),
+holdon='on'
+).plotter()
+fancy_figure(
+ax_=ax0,
+curve=electrxyz[1,recs[0,0]-1],
+x=electrxyz[0,recs[0,0]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=5,
+colop=((0.84,0.05,0.26)),
+holdon='on'
+).plotter()
+# 𝐧
+fancy_figure(
+ax_=ax0,
+curve=electrxyz[1,recs[1,0]-1],
+x=electrxyz[0,recs[1,0]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=7,
+colop=((0,0,0)),
+holdon='on'
+).plotter()
+fancy_figure(
+ax_=ax0,
+curve=electrxyz[1,recs[1,0]-1],
+x=electrxyz[0,recs[1,0]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=5,
+colop=((0.84,0.05,0.26)),
 xlabel='Length',
 ylabel='Depth',
 holdon='on'
@@ -141,6 +242,116 @@ holdon='on'
 # ------------------------------------------------------------------------------
 ax1.annotate("slice in width",xy=(3.2,5.9),fontsize=fontsize_,color=colo_txt,ha='left')
 # ------------------------------------------------------------------------------
+#                                   🐘 electrxyz 🐘
+# ------------------------------------------------------------------------------
+# 𝐚
+fancy_figure(
+ax_=ax1,
+curve=electrxyz[1,src[0]-1],
+x=electrxyz[0,src[0]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=7,
+colop=((0,0,0)),
+holdon='on'
+).plotter()
+fancy_figure(
+ax_=ax1,
+curve=electrxyz[1,src[0]-1],
+x=electrxyz[0,src[0]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=5,
+colop=((1,1,1)),
+holdon='on'
+).plotter()
+# 𝐛
+fancy_figure(
+ax_=ax1,
+curve=electrxyz[1,src[1]-1],
+x=electrxyz[0,src[1]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=7,
+colop=((0,0,0)),
+holdon='on'
+).plotter()
+fancy_figure(
+ax_=ax1,
+curve=electrxyz[1,src[1]-1],
+x=electrxyz[0,src[1]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=5,
+colop=((1,1,1)),
+holdon='on'
+).plotter()
+for irec in range(0,nrecs):
+    # 𝐦
+    fancy_figure(
+    ax_=ax1,
+    curve=electrxyz[1,recs[0,irec]-1],
+    x=electrxyz[0,recs[0,irec]-1],
+    ax_accu="%.0f",
+    symbol='s',
+    markersize=7,
+    colop=((0,0,0)),
+    holdon='on'
+    ).plotter()
+    fancy_figure(
+    ax_=ax1,
+    curve=electrxyz[1,recs[0,irec]-1],
+    x=electrxyz[0,recs[0,irec]-1],
+    ax_accu="%.0f",
+    symbol='s',
+    markersize=5,
+    colop=((0.84,0.05,0.26)),
+    holdon='on'
+    ).plotter()
+    # 𝐧
+    fancy_figure(
+    ax_=ax1,
+    curve=electrxyz[1,recs[1,irec]-1],
+    x=electrxyz[0,recs[1,irec]-1],
+    ax_accu="%.0f",
+    symbol='s',
+    markersize=7,
+    colop=((0,0,0)),
+    holdon='on'
+    ).plotter()
+    fancy_figure(
+    ax_=ax1,
+    curve=electrxyz[1,recs[1,irec]-1],
+    x=electrxyz[0,recs[1,irec]-1],
+    ax_accu="%.0f",
+    symbol='s',
+    markersize=5,
+    colop=((0.84,0.05,0.26)),
+    holdon='on'
+    ).plotter()
+# 𝐦
+fancy_figure(
+ax_=ax1,
+curve=electrxyz[1,recs[0,1]-1],
+x=electrxyz[0,recs[0,1]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=7,
+colop=((0,0,0)),
+holdon='on'
+).plotter()
+fancy_figure(
+ax_=ax1,
+curve=electrxyz[1,recs[0,1]-1],
+x=electrxyz[0,recs[0,1]-1],
+ax_accu="%.0f",
+symbol='s',
+markersize=5,
+# colop=((0.4940,0.1840,0.5560)),
+colop=((0.8745,0.2745,0.9176)),
+holdon='on'
+).plotter()
+# ------------------------------------------------------------------------------
 #  pseudolocs
 fancy_figure(
 ax_=ax1,
@@ -148,10 +359,22 @@ curve=pseud[iabmn-1,1],
 x=pseud[iabmn-1,0],
 ax_accu="%.0f",
 symbol='.',
-markersize=20,
-colop=((0.4940,0.1840,0.5560)),
+markersize=15,
+colop=((0,0,0)),
 holdon='on'
 ).plotter()
+#
+for iabmn_ in range(0,4):
+    fancy_figure(
+    ax_=ax1,
+    curve=pseud[iabmn[iabmn_]-1,1],
+    x=pseud[iabmn[iabmn_]-1,0],
+    ax_accu="%.0f",
+    symbol='.',
+    markersize=17,
+    colop=((0.4940,0.1840,0.5560)),
+    holdon='on'
+    ).plotter()
 #
 fancy_figure(
 ax_=ax1,
@@ -159,10 +382,9 @@ curve=pseud[iabmn-1,1],
 x=pseud[iabmn-1,0],
 ax_accu="%.0f",
 symbol='.',
-markersize=10,
+markersize=9,
 colop=((0.9290,0.6940,0.1250)),
 xlabel='Length',
-# ylabel='Depth',
 guarda_path=guarda_path,
 guarda=dpi,
 fig_name='figo'
@@ -193,5 +415,11 @@ nh,_=im.size
 im_ = fancy_image(im=im_,nh=nh,nh_r=int(1.5*dpi)).padder_h()
 im  = fancy_image(im=im,im_=im_).concat_v()
 # im.show()
-im.save(guarda_path+"sensis-paper-.png","PNG", dpi=dpii)
+im.save(guarda_path+"sensis-paper.png","PNG", dpi=dpii)
+# ------------------------------------------------------------------------------
+print('')
+print('')
+print('     just finished the 🎨👨🏻‍🎨')
+print('')
+print('')
 # ------------------------------------------------------------------------------
