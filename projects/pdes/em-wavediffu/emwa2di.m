@@ -43,7 +43,7 @@ sig = logspace(-3,2,1e3); % S/m
 % 
 %                     ρ = v² ⋅ (t² - 4ε²/σ²)
 % 
-% ρ is either large, small, or negative.
+% ρ can be large, small, or negative.
 % since 2ɛ is about 10⁻¹¹,
 %                          tσ - 10⁻¹¹ >> 0  ⥰ diffusion
 %                          tσ - 10⁻¹¹  > 0  ⥰ wavey diffusion
@@ -64,9 +64,9 @@ axis square;
 axis ij;
 % colormap(rainbow2_cb(1));
 colorbar;
-ylabel('Time (lg s)')
-xlabel('Conductivity (lg S/m)')
-title('r^* (lg m)')
+ylabel('Time (log₁₀ s)')
+xlabel('Conductivity (log₁₀ S/m)')
+title('r^* (log₁₀ m)')
 simple_figure()
 
 figure;
@@ -75,9 +75,9 @@ axis square;
 axis ij;
 % colormap(rainbow2_cb(1));
 colorbar;
-ylabel('Time (lg s)')
-xlabel('Conductivity (lg S/m)')
-title('ρ-2ɛ (lg - )')
+ylabel('Time (log₁₀ s)')
+xlabel('Conductivity (log₁₀ S/m)')
+title('tσ-2ɛₒ (log₁₀ F/m )')
 simple_figure()
 % ------------------------------------------------------------------------------
 % is the media a poor conductor or a good conductor?
@@ -109,8 +109,8 @@ axis square;
 axis ij;
 % colormap(rainbow2_cb(1));
 colorbar;
-ylabel('Frequency (lg Hz)')
-xlabel('Conductivity (lg S/m)')
-title('ɛ^* (lg - )')
+ylabel('Frequency (log₁₀ Hz)')
+xlabel('Conductivity (log₁₀ S/m)')
+title('ɛ^* (log₁₀ - )')
 simple_figure()
 % ------------------------------------------------------------------------------

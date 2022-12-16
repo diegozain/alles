@@ -92,17 +92,17 @@ azul    = [0.3010 0.7450 0.9330];
 purpura = [0.4940 0.1840 0.5560];
 naranja = [0.8500 0.3250 0.0980];
 % ------------------------------------------------------------------------------
-figure;
+figure('units','normalized','outerposition',[0 0 0.5 0.5]);
 subplot(1,2,1);
 hold on;
 plot(t*1e6,src,'linewidth',5,'color',verde);
-plot(t*1e6,src,'.','markersize',5,'color',azul);
+% plot(t*1e6,src,'.','markersize',5,'color',azul);
 
 plot(t*1e6,srcd,'linewidth',5,'color',azul);
-plot(t*1e6,srcd,'.','markersize',5,'color',purpura);
+% plot(t*1e6,srcd,'.','markersize',5,'color',purpura);
 
 plot(t*1e6,srci,'linewidth',5,'color',purpura);
-plot(t*1e6,srci,'.','markersize',5,'color',naranja);
+% plot(t*1e6,srci,'.','markersize',5,'color',naranja);
 hold off;
 axis tight;
 axis square;
