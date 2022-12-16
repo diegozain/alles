@@ -1,4 +1,4 @@
-🔥🌊 
+# 🔥🌊 
 
 ## is EM wave propagation asymptotically equal to diffusion?
 
