@@ -9,20 +9,20 @@ if this happens then yes,
 
 t is time that has passed and, R is distance from source to receiver.
 
-"Diffusion of electromagnetic fields into a two-dimensional earth: a finite difference approach" Oristaglio and Hohmann, 1984.
+📖 "Diffusion of electromagnetic fields into a two-dimensional earth: a finite difference approach" Oristaglio and Hohmann, 1984.
 
 💡🟢 this 👇 approach is easier to check as criteria,
 
                             R² << v² ⋅ (t² - 4ε²/σ²)
                         let r* = √(v² ⋅ (t² - 4ε²/σ²))
 
-* if r*  >> 0  ⥰ diffusion
-* if r*   > 0  ⥰ wavey diffusion
-* if r*²  < 0  ⥰ wave 💯
-
-[![](../pics/wavevsmedia-rst.png)](./)
+* if r*  >> 0  ⟹ diffusion
+* if r*   > 0  ⟹ wavey diffusion
+* if r*²  < 0  ⟹ wave 💯
 
 🚨🚨 large & small compared to closest offset rx.
+
+[![](../pics/wavevsmedia-rst.png)](./)
 
 💡🟢 another 👇 easier way to see it 👌 (valid in free-space),
 
@@ -30,25 +30,28 @@ t is time that has passed and, R is distance from source to receiver.
 
 ρ can be large, small, or negative. Since 2ɛₒ is about 10⁻¹¹,
 
-* tσ - 10⁻¹¹ >> 0  ⥰ diffusion
-* tσ - 10⁻¹¹  > 0  ⥰ wavey diffusion
-* tσ - 10⁻¹¹  < 0  ⥰ wave 💯
+* tσ - 10⁻¹¹ >> 0  ⟹ diffusion
+* tσ - 10⁻¹¹  > 0  ⟹ wavey diffusion
+* tσ - 10⁻¹¹  < 0  ⟹ wave 💯
 
 [![](../pics/wavevsmedia-rho.png)](./)
 
 ## is the media a poor conductor or a good conductor?
 
+```
 σ << ωε poor conductor
 σ >> ωε good conductor
+```
+or,
 
-    or,
-
+```
 ε >> σ/ω poor conductor
 ε << σ/ω good conductor
+```
 
 💡🟢 let ε* = σ/ω/ɛₒ.
 
-* if ɛᵣ >> ε* ⥰ poor conducctor
-* if ɛᵣ << ε* ⥰ good conducctor
+* if ɛᵣ >> ε* ⟹ poor conducctor
+* if ɛᵣ << ε* ⟹ good conducctor
 
 [![](../pics/conductmedia.png)](./)
