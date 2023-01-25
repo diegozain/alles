@@ -128,6 +128,7 @@ figure;
 loglog(objfnc,'r.-','markersize',20)
 % plot(objfnc,'r.-','markersize',20)
 axis tight;
+axis square;
 grid on;
 xlabel('Iteration #')
 ylabel('Objective function')
