@@ -34,7 +34,7 @@ neigh(7,1:4) = [3, 4, 5, 6];
 xy = zeros(np*2,1);
 xy = [0; 0; 0; 15; 12.7; 18.5; 12.7; 0; 0; 0; 0; -2.7; -1.2; -4];
 % ------------------------------------------------------------------------------
-load('..\..\..\..\dcip\field\protocols\data\geome\borexyextend.mat');
+load('../../../../dcip/field/protocols/data/geome/borexyextend.mat');
 xy(1) = borexyextend(15,1);
 xy(2) = borexyextend(17,1);
 xy(3) = borexyextend(18,1);
