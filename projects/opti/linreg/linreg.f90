@@ -8,19 +8,21 @@ program linreg
  ! Ax = b
  ! AP = QR
  ! -----------------------------------------------------------------------
- ! compiling in 💩
  !
- ! $> cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
+ ! ••• compiling in 💩
+ !
+ ! cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
  ! ifort /Qmkl /c "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\include\lapack.f90" linreg.f90
  ! ifort /Qmkl linreg.obj lapack.obj
  ! .\linreg.exe
- ! -----------------------------------------------------------------------
- ! compiling in 🚀
+ ! 
+ !
+ ! ••• compiling in 🚀
  !
  ! source /opt/intel/oneapi/setvars.sh intel64
  ! rm -f *.o *.mod
  ! ifort -qmkl -c /opt/intel/oneapi/mkl/2023.0.0/include/lapack.f90 linreg.f90
- ! ifort -qmkl lapack.o linreg.o
+ ! ifort -qmkl linreg.o lapack.o
  ! rm -f *.o *.mod
  ! mv a.out linreg.out
  ! ./linreg.out
@@ -28,11 +30,11 @@ program linreg
  ! AX = B
  !
  ! ?geqp3 ⟶ AP = QR
- ! ormqr  ⟶ C  = Q.'B (for ℝ)
+ ! ?ormqr ⟶ C  = Q.'B (for ℝ)
  ! unmqr  ⟶ C  = Q'B  (for ℂ)
  ! trsm   ⟶ X  = R\C
  !
- ! page 922 of oneapi-mkl.pdf
+ ! page 922, 927, 140 of oneapi-mkl.pdf
  ! -----------------------------------------------------------------------
  !
  !     _________     _____________     _____________
@@ -47,6 +49,7 @@ program linreg
  ! ⟶ call dgeqp3(m, n, A, lda, jpvt, tau, work, lwork, info)
  !
  ! 📥
+ ! A is of size m by n
  ! lda is a ℕ the leading dimension of A. at least max(1, m)
  ! jpvt is an array (integer) size at least max(1, n)
  ! work is an array (real, double, or cmplx) of size max(1, lwork)
@@ -68,13 +71,13 @@ program linreg
  !
  ! A = magic(3);
  ! [Q,R,P] = qr(A);
- ! b = [1 ; 2 ; 3];
+ ! b = [28 ; 34 ; 28];
  ! x = A\b;
  !
  ! x =
- ! 0.05
- ! 0.3
- ! 0.05
+ ! 1
+ ! 2
+ ! 3
  !
  ! A =
  !     8     1     6
