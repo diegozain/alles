@@ -11,8 +11,9 @@ program linreg
  ! compiling in 💩
  !
  ! $> cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
- ! $> ifort /Qmkl [name of file].f
- ! $> .\[name of file].exe
+ ! ifort /Qmkl /c "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\include\lapack.f90" linreg.f90
+ ! ifort /Qmkl linreg.obj lapack.obj
+ ! .\linreg.exe
  ! -----------------------------------------------------------------------
  ! compiling in 🚀
  !
@@ -24,7 +25,7 @@ program linreg
  ! mv a.out linreg.out
  ! ./linreg.out
  ! -----------------------------------------------------------------------
- ! AX = B 
+ ! AX = B
  !
  ! ?geqp3 ⟶ AP = QR
  ! ormqr  ⟶ C  = Q.'B (for ℝ)
@@ -36,7 +37,7 @@ program linreg
  !
  !     _________     _____________     _____________
  !    |         |   |             |   |             |
- ! m  |   A     |   |     X       |   |      B      | 
+ ! m  |   A     |   |     X       |   |      B      |
  !    |         | * |             | = |             | m
  !    |         |   |_____________|   |             |
  !    |_________|         m           |_____________|
@@ -52,14 +53,14 @@ program linreg
  ! lwork must be at least:
  !                max(1, 3*n+1) ℝ
  !                max(1, n+1)   ℂ
- ! 
+ !
  ! 📤
  ! A
  ! tau is an array of size at least max(1, min(m,n))
  ! jvpt the columns of AP are the columns of A like so:
  !                jvpt(1), ..., jvpt(n)
  ! info is an ℤ. 0 is good, -i the ith param is invalid.
- ! 
+ !
  ! -----------------------------------------------------------------------
  ! lwork = -1 finds the best value for lwork and writes it in work(1).
  ! -----------------------------------------------------------------------
@@ -70,7 +71,7 @@ program linreg
  ! b = [1 ; 2 ; 3];
  ! x = A\b;
  !
- ! x = 
+ ! x =
  ! 0.05
  ! 0.3
  ! 0.05
@@ -98,7 +99,7 @@ program linreg
  implicit none
  include 'mkl.fi'
  ! -----------------------------------------------------------------------
- 
+
  ! --------------------------------------------------------------------------
  !
  !
