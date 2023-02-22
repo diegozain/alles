@@ -10,14 +10,11 @@ REM cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershel
 REM ----------------------------------------------------------------------------
 REM del *.mod *.obj *.exe
 REM ----------------------------------------------------------------------------
-ifort /Qmkl /c "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\include\lapack.f90" linreg.f90
-ifort /Qmkl linreg.obj lapack.obj
+ifort /Qmkl /Qopenmp /c /traceback /heap-arrays "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\include\lapack.f90" linreg.f90 linreg_.f90 parafit.f90
 
-ifort /Qmkl /Qopenmp /c linreg_.f90
-ifort /Qmkl /Qopenmp linreg_.obj lapack.obj
-
-ifort /Qmkl /c parafit.f90
-ifort /Qmkl parafit.obj lapack.obj
+ifort linreg.obj lapack.obj
+ifort linreg_.obj lapack.obj
+ifort parafit.obj lapack.obj
 REM ----------------------------------------------------------------------------
 REM .\linreg.exe
 REM .\linreg_.exe
