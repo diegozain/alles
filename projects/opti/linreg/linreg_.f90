@@ -1,4 +1,4 @@
-program linreg
+program linreg_
  ! ----------------------------------------------------------------------
  ! 🎛️🖥️
  !
@@ -12,20 +12,20 @@ program linreg
  ! ••• compiling in 💩
  !
  ! cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
- ! ifort /Qmkl /c "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\include\lapack.f90" linreg.f90
- ! ifort /Qmkl linreg.obj lapack.obj
- ! .\linreg.exe
+ ! ifort /Qmkl /c "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\include\lapack.f90" linreg_.f90
+ ! ifort /Qmkl linreg_.obj lapack.obj
+ ! .\linreg_.exe
  !
  !
  ! ••• compiling in 🚀
  !
  ! source /opt/intel/oneapi/setvars.sh intel64
  ! rm -f *.o *.mod
- ! ifort -qmkl -c /opt/intel/oneapi/mkl/2023.0.0/include/lapack.f90 linreg.f90
- ! ifort -qmkl linreg.o lapack.o
+ ! ifort -qmkl -c /opt/intel/oneapi/mkl/2023.0.0/include/lapack.f90 linreg_.f90
+ ! ifort -qmkl linreg_.o lapack.o
  ! rm -f *.o *.mod
- ! mv a.out linreg.out
- ! ./linreg.out
+ ! mv a.out linreg_.out
+ ! ./linreg_.out
  ! -----------------------------------------------------------------------
  ! AX = B
  !
@@ -37,14 +37,12 @@ program linreg
  ! page 922, 927, 140 of oneapi-mkl.pdf
  ! -----------------------------------------------------------------------
  !
- !     _________     _____________     _____________
- !    |         |   |             |   |             |
- ! m  |   A     |   |     X       |   |      B      |
- !    |         | * |             | = |             | m
- !    |         |   |_____________|   |             |
- !    |_________|         p           |_____________|
- !         n                                 p
- !
+ !     _________     ____    ____
+ !    |         |   |   |   |   |
+ ! n  |   A     |   | x |   | b |
+ !    |         | * |   | = |   | n
+ !    |_________|   |___|   |___|
+ !         n
  !
  ! ⟶ call dgeqp3(m, n, A, lda, jpvt, tau, work, lwork, info)
  !
@@ -70,75 +68,44 @@ program linreg
  ! -----------------------------------------------------------------------
  ! matlab check
  !
- ! A = magic(3);
- ! [Q,R,P] = qr(A);
- ! b = [28 ; 34 ; 28];
- ! x = A\b;
  !
- ! x =
- ! 1
- ! 2
- ! 3
- !
- ! A =
- !     8     1     6
- !     3     5     7
- !     4     9     2
- !
- ! P =
- ! 0     1     0
- ! 1     0     0
- ! 0     0     1
- !
- ! Q =
- !    -0.0967    0.9912    0.0901
- !    -0.4834    0.0323   -0.8748
- !    -0.8701   -0.1281    0.4760
- !
- ! R =
- !   -10.3441   -5.7037   -5.7037
- !          0    7.5145    5.9176
- !          0         0   -4.6314
  ! -----------------------------------------------------------------------
+ use omp_lib, only : omp_get_wtime
  implicit none
  include 'mkl.fi'
  ! -----------------------------------------------------------------------
- integer, parameter :: n = 3, m = 3, p = 1
+ integer, parameter :: n = 300
+ double precision :: A(n,n), b(n)
+ integer :: ii, jj
+ real :: r
 
- double precision :: A(m,n)
- double precision :: b(m)
- integer :: ii
-
+ ! 🟪🔴 = 🔷🔺
  ! dgeqp3
- integer :: lda
  integer :: jpvt(n)
  double precision, dimension(:), allocatable :: work
- double precision, dimension(:), allocatable :: tau ! size is min(m,n)
+ double precision :: tau(n)
  integer :: lwork, info
-
- ! dormqr
- integer :: ldc
- ! k = "# of elementary reflectors whose product defines the matrix Q." wtf
- integer :: k = m
-
  ! dtrsm
  double precision, parameter :: alph=1
+
+ ! ⌚
+ real :: start_time, end_time
  ! --------------------------------------------------------------------------
- A(1,1) = 8
- A(2,1) = 3
- A(3,1) = 4
-
- A(1,2) = 1
- A(2,2) = 5
- A(3,2) = 9
-
- A(1,3) = 6
- A(2,3) = 7
- A(3,3) = 2
-
- b(1) = 28
- b(2) = 34
- b(3) = 28
+ do ii=1,n
+   do jj=1,n
+     call random_number(r)
+     A(ii,jj) = dble(r)
+   enddo
+   b(ii) = 0
+ enddo
+ b(1) = 1
+ ! --------------------------------------------------------------------------
+ ! print *, ''
+ ! print *, 'A'
+ ! print *, A
+ ! print *, ''
+ ! print *, 'b'
+ ! print *, b
  ! --------------------------------------------------------------------------
  !
  !
@@ -146,55 +113,50 @@ program linreg
  !
  !
  ! ---------------------------------------------------------------------------
- lda = m ! max(m,n)
- if (n>m) then
-   lda=n
- endif
- ldc = m ! max(m,p)
- if (p>m) then
-   ldc=p
- endif
+ ! ⌚
+ start_time = omp_get_wtime()
+ ! 🟪🔴 = 🔷🔺
  do ii=1,n
-   jpvt(ii) = 1
+   jpvt(ii) = 0
  enddo
  lwork = -1
  allocate(work(3*n+1))
- allocate(tau(n))
-
- ! lets factorize A as AP = QR
- ! find the best value for lwork
- call dgeqp3(m, n, A, lda, jpvt, tau, work, lwork, info)
+ ! AP = QR
+ call dgeqp3(n, n, A, n, jpvt, tau, work, lwork, info)
  lwork=work(1)
  deallocate(work)
  allocate(work(lwork))
- ! now run again with optimal size
- call dgeqp3(m, n, A, lda, jpvt, tau, work, lwork, info)
-
- ! now A is factorized (in a weird way)
- ! time to multiply Q'b
- ! but first more optimal shit
+ call dgeqp3(n, n, A, n, jpvt, tau, work, lwork, info)
+ print *,''
+ print *,'QR'
+ ! b ⟵ Q'b
  lwork=-1
- call dormqr('L','T', m, p, k, A, lda, tau, b, ldc, work, lwork, info)
+ call dormqr('L','T', n, 1, n, A, n, tau, b, n, work, lwork, info)
  lwork=work(1)
  deallocate(work)
  allocate(work(lwork))
- call dormqr('L','T', m, p, k, A, lda, tau, b, ldc, work, lwork, info)
-
- ! ok, now the ending:
+ call dormqr('L','T', n, 1, n, A, n, tau, b, n, work, lwork, info)
+ print *,''
+ print *,'Qb'
  ! Rx = Q'b
  ! x  = R \ (Q'b)
- call dtrsm('L', 'U', 'N', 'N', m, p, alph, A, lda, b, ldc)
+ call dtrsm('L', 'U', 'N', 'N', n, 1, alph, A, n, b, n)
+ print *,''
+ print *,'Rx'
  ! ---------------------------------------------------------------------------
  ! 🧼
  ! ---------------------------------------------------------------------------
  deallocate(work)
- deallocate(tau)
  ! ---------------------------------------------------------------------------
+ ! ⌚
+ end_time = omp_get_wtime()
  print *, ''
- print *, ' x'
- do ii=1,n
-   write(*,*) ' ', b(ii)
- enddo
+ print *, 'elapsed time: ', (end_time - start_time), 'seconds'
  print *, ''
  ! ---------------------------------------------------------------------------
-end program linreg
+ ! print *, ''
+ ! print *, 'x'
+ ! print *, b
+ ! print *, ''
+ ! ---------------------------------------------------------------------------
+end program linreg_
