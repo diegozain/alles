@@ -102,6 +102,7 @@ The inversion is done with gradient descent, where the gradient is of the form,
 Again, we do not store large matrices. Rather, we only compute the entries of ∇_ α Θ ⋅ *e*.
 
 **example for the cosine part of (∇_fo Θ)**
+
 ```
 cos( 2*pi*fo*t*h ) · α   ⟶   [-2·pi·t·h · sin(2·pi·fo·t·h)] · α
                         δ_fo

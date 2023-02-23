@@ -1,4 +1,4 @@
-program parafit
+program linefit
  ! ----------------------------------------------------------------------
  ! 🎛️🖥️
  !
@@ -12,43 +12,43 @@ program parafit
  ! ••• compiling in 💩
  !
  ! cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
- ! ifort /Qmkl /c "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\include\lapack.f90" parafit.f90
- ! ifort /Qmkl parafit.obj lapack.obj
- ! .\parafit.exe
+ ! ifort /Qmkl /c "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\include\lapack.f90" linefit.f90
+ ! ifort /Qmkl linefit.obj lapack.obj
+ ! .\linefit.exe
  !
  !
  ! ••• compiling in 🚀
  !
  ! source /opt/intel/oneapi/setvars.sh intel64
  ! rm -f *.o *.mod
- ! ifort -qmkl -c /opt/intel/oneapi/mkl/2023.0.0/include/lapack.f90 parafit.f90
- ! ifort -qmkl parafit.o lapack.o
+ ! ifort -qmkl -c /opt/intel/oneapi/mkl/2023.0.0/include/lapack.f90 linefit.f90
+ ! ifort -qmkl linefit.o lapack.o
  ! rm -f *.o *.mod
- ! mv a.out parafit.out
- ! ./parafit.out
+ ! mv a.out linefit.out
+ ! ./linefit.out
  ! -----------------------------------------------------------------------
  !
- !    fit a parabola to some points.
+ !    fit a line to some points.
  !
  ! -----------------------------------------------------------------------
  ! matlab check
  !
  ! x = [0;1;3;4;5];
  ! y = [5;2;10;20;50];
- !
+ 
  ! nd= numel(x);
- ! P = [x.^2 x ones(nd,1)];
- !
+ ! P = [x ones(nd,1)];
+ 
  ! P'*P
  ! P.'*y
  ! b = (P'*P)\(P.'*y)
- !
+ 
  ! xx=linspace(min(x)*1.1,max(x)*1.1,100);
- ! yy=b(1)*xx.^2 + b(2)*xx + b(3);
- !
+ ! yy=b(1)*xx + b(2);
+ 
  ! figure;
  ! hold on;
- ! plot(xx,yy,'linewidth',3)
+ ! plot(xx,yy,'linewidth',2)
  ! plot(x,y,'.','markersize',20)
  ! hold off;
  ! axis tight;
@@ -59,17 +59,16 @@ program parafit
  ! -----------------------------------------------------------------------
  integer, parameter :: nd=5
 
- double precision :: P(nd,3), x(nd), y(nd)
- double precision :: A(3,3)
- double precision :: b(3)
+ double precision :: P(nd,2), x(nd), y(nd)
+ double precision :: A(2,2)
+ double precision :: b(2)
  integer :: ii
- double precision :: xmin
 
  ! dgeqp3
- integer :: jpvt(3)
- double precision :: b_(3)
+ integer :: jpvt(2)
+ double precision :: b_(2)
  double precision, dimension(:), allocatable :: work
- double precision :: tau(3)
+ double precision :: tau(2)
  integer :: lwork, info
  ! dtrsm & dgemm
  double precision, parameter :: alph=1, beta=0
@@ -97,42 +96,41 @@ program parafit
  ! ---------------------------------------------------------------------------
  ! 👷 P
  do ii=1,nd
-   P(ii,1) = x(ii)**2
-   P(ii,2) = x(ii)
-   P(ii,3) = 1
+   P(ii,1) = x(ii)
+   P(ii,2) = 1
  enddo
  ! 👷 A ⟵ P'P     pg. 119
- call dgemm('T', 'N', 3, 3, nd, alph, P, nd, P, nd, beta, A, 3)
+ call dgemm('T', 'N', 2, 2, nd, alph, P, nd, P, nd, beta, A, 2)
  ! 👷 b ⟵ P'y     pg. 73
- call dgemv('T', nd, 3, alph, P, nd, y, 1, beta, b, 1)
+ call dgemv('T', nd, 2, alph, P, nd, y, 1, beta, b, 1)
  ! ---------------------------------------------------------------------------
  ! 🟪🔴 = 🔷🔺
  ! --------------------------------------------------------------------------
- do ii=1,3
+ do ii=1,2
    jpvt(ii) = 0
  enddo
  lwork = -1
- allocate(work(3*3+1))
+ allocate(work(2*2+1))
  ! AP = QR
- call dgeqp3(3, 3, A, 3, jpvt, tau, work, lwork, info)
+ call dgeqp3(2, 2, A, 2, jpvt, tau, work, lwork, info)
  lwork=work(1)
  deallocate(work)
  allocate(work(lwork))
- call dgeqp3(3, 3, A, 3, jpvt, tau, work, lwork, info)
+ call dgeqp3(2, 2, A, 2, jpvt, tau, work, lwork, info)
  lwork=-1
  ! b ⟵ Q'b
- call dormqr('L','T', 3, 1, 3, A, 3, tau, b, 3, work, lwork, info)
+ call dormqr('L','T', 2, 1, 2, A, 2, tau, b, 2, work, lwork, info)
  lwork=work(1)
  deallocate(work)
  allocate(work(lwork))
- call dormqr('L','T', 3, 1, 3, A, 3, tau, b, 3, work, lwork, info)
+ call dormqr('L','T', 2, 1, 2, A, 2, tau, b, 2, work, lwork, info)
  ! x = R \ Q'b
- call dtrsm('L', 'U', 'N', 'N', 3, 1, alph, A, 3, b, 3)
+ call dtrsm('L', 'U', 'N', 'N', 2, 1, alph, A, 2, b, 2)
  ! x ⟵ Px
- do ii=1,3
+ do ii=1,2
   b_(ii) = b(ii)
  enddo
- do ii=1,3
+ do ii=1,2
   b(jpvt(ii)) = b_(ii)
  enddo
  ! ---------------------------------------------------------------------------
@@ -140,18 +138,11 @@ program parafit
  ! ---------------------------------------------------------------------------
  deallocate(work)
  ! ---------------------------------------------------------------------------
- ! ⭐🌟🌠
- ! ---------------------------------------------------------------------------
- xmin = - b(2) / (2*b(1))
- ! ---------------------------------------------------------------------------
  print *, ''
- print *, ' the parabola ax² + bx + c is given by'
- do ii=1,3
+ print *, ' the line ax + b is given by'
+ do ii=1,2
    write(*,*) ' ', b(ii)
  enddo
  print *, ''
- print *, ' minimum of the parabola is achieved at this x'
- print *, xmin
- print *, ''
  ! ---------------------------------------------------------------------------
-end program parafit
+end program linefit

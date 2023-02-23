@@ -74,7 +74,7 @@ program linreg_
  implicit none
  include 'mkl.fi'
  ! -----------------------------------------------------------------------
- integer, parameter :: n = 300
+ integer, parameter :: n = 1019 ! <1019 ⇒ no bueno.
  double precision :: A(n,n), b(n)
  integer :: ii, jj
  real :: r
@@ -87,6 +87,7 @@ program linreg_
  integer :: lwork, info
  ! dtrsm
  double precision, parameter :: alph=1
+ double precision :: b_(n)
 
  ! ⌚
  real :: start_time, end_time
@@ -113,6 +114,7 @@ program linreg_
  !
  !
  ! ---------------------------------------------------------------------------
+ print *,''
  ! ⌚
  start_time = omp_get_wtime()
  ! 🟪🔴 = 🔷🔺
@@ -127,8 +129,7 @@ program linreg_
  deallocate(work)
  allocate(work(lwork))
  call dgeqp3(n, n, A, n, jpvt, tau, work, lwork, info)
- print *,''
- print *,'QR'
+ print *,'   😃  just did AP = QR'
  ! b ⟵ Q'b
  lwork=-1
  call dormqr('L','T', n, 1, n, A, n, tau, b, n, work, lwork, info)
@@ -136,13 +137,18 @@ program linreg_
  deallocate(work)
  allocate(work(lwork))
  call dormqr('L','T', n, 1, n, A, n, tau, b, n, work, lwork, info)
- print *,''
- print *,'Qb'
+ print *,'   😃  just did b  ⟵   Qᵀb'
  ! Rx = Q'b
  ! x  = R \ (Q'b)
  call dtrsm('L', 'U', 'N', 'N', n, 1, alph, A, n, b, n)
- print *,''
- print *,'Rx'
+ print *,'   😃  just did Rx = Qᵀb'
+ ! x ⟵ Px
+ do ii=1,n
+  b_(ii) = b(ii)
+ enddo
+ do ii=1,n
+  b(jpvt(ii)) = b_(ii)
+ enddo
  ! ---------------------------------------------------------------------------
  ! 🧼
  ! ---------------------------------------------------------------------------

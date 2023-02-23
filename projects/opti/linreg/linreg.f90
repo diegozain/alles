@@ -60,8 +60,8 @@ program linreg
  ! 📤
  ! A
  ! tau is an array (real, double, or cmplx) of size at least max(1, min(m,n))
- ! jvpt the columns of AP are the columns of A like so:
- !                jvpt(1), ..., jvpt(n)
+ ! jpvt the columns of AP are the columns of A like so:
+ !                jpvt(1), ..., jpvt(n)
  ! info is an ℤ. 0 is good, -i the ith param is invalid.
  !
  ! -----------------------------------------------------------------------
@@ -120,6 +120,8 @@ program linreg
  integer :: ldc
  ! k = "# of elementary reflectors whose product defines the matrix Q." wtf
  integer :: k = m
+ double precision :: b_(m)
+
 
  ! dtrsm
  double precision, parameter :: alph=1
@@ -155,7 +157,7 @@ program linreg
    ldc=p
  endif
  do ii=1,n
-   jpvt(ii) = 1
+   jpvt(ii) = 0 ! 1 or 0
  enddo
  lwork = -1
  allocate(work(3*n+1))
@@ -184,6 +186,14 @@ program linreg
  ! Rx = Q'b
  ! x  = R \ (Q'b)
  call dtrsm('L', 'U', 'N', 'N', m, p, alph, A, lda, b, ldc)
+
+ ! now unscramble Px
+ do ii=1,m
+  b_(ii) = b(ii)
+ enddo
+ do ii=1,m
+  b(jpvt(ii)) = b_(ii)
+ enddo
  ! ---------------------------------------------------------------------------
  ! 🧼
  ! ---------------------------------------------------------------------------
@@ -195,6 +205,9 @@ program linreg
  do ii=1,n
    write(*,*) ' ', b(ii)
  enddo
+ print *, ''
+ print *, ' jpvt'
+ print *, jpvt
  print *, ''
  ! ---------------------------------------------------------------------------
 end program linreg
