@@ -1,12 +1,12 @@
 module qrfits
- ! ------------------------------------------------------------------------------
+ ! -----------------------------------------------------------------------------
  ! diego domenzain
  !
  ! 🟪🔴 = 🔷🔺 wrapper of qr routines in lapack-oneapi-mkl
- ! ------------------------------------------------------------------------------
+ ! -----------------------------------------------------------------------------
  include 'mkl.fi'
  contains
- ! ------------------------------------------------------------------------------
+ ! -----------------------------------------------------------------------------
  subroutine linefit(nd,x,y,b)
   integer, intent(in) :: nd
   double precision, intent(in) :: x(nd), y(nd)
@@ -15,15 +15,8 @@ module qrfits
   double precision :: P(nd,2)
   double precision :: A(2,2)
   integer :: ii
-  ! dgeqp3
-  integer :: jpvt(2)
-  double precision :: b_(2)
-  double precision, dimension(:), allocatable :: work
-  double precision :: tau(2)
-  integer :: lwork, info
   ! dtrsm & dgemm
   double precision, parameter :: alph=1, beta=0
-  double precision :: C(1)
 
   ! 👷 P
   do ii=1,nd
@@ -35,43 +28,15 @@ module qrfits
   ! 👷 b ⟵ P'y     pg. 73
   call dgemv('T', nd, 2, alph, P, nd, y, 1, beta, b, 1)
   ! 🟪🔴 = 🔷🔺
-  do ii=1,2
-   jpvt(ii) = 0
-  enddo
-  lwork = -1
-  allocate(work(2*2+1))
-  ! AP = QR
-  call dgeqp3(2, 2, A, 2, jpvt, tau, work, lwork, info)
-  lwork=work(1)
-  deallocate(work)
-  allocate(work(lwork))
-  call dgeqp3(2, 2, A, 2, jpvt, tau, work, lwork, info)
-  lwork=-1
-  ! b ⟵ Q'b
-  call dormqr('L','T', 2, 1, 2, A, 2, tau, b, 2, work, lwork, info)
-  lwork=work(1)
-  deallocate(work)
-  allocate(work(lwork))
-  call dormqr('L','T', 2, 1, 2, A, 2, tau, b, 2, work, lwork, info)
-  ! x = R \ Q'b
-  call dtrsm('L', 'U', 'N', 'N', 2, 1, alph, A, 2, b, 2)
-  ! x ⟵ Px
-  do ii=1,2
-   b_(ii) = b(ii)
-  enddo
-  do ii=1,2
-   b(jpvt(ii)) = b_(ii)
-  enddo
-  ! 🧼
-  deallocate(work)
+  call linreg(2,A,b)
  end subroutine linefit
- ! ------------------------------------------------------------------------------
+ ! -----------------------------------------------------------------------------
  subroutine parafit(nd,x,y,b)
-  ! ---------------------------------------------------------------------------
+  ! --------------------------------------------------------------------------
   ! ⭐🌟🌠
   ! remember that
   !               xmin = - b(2) / (2*b(1))
-  ! ---------------------------------------------------------------------------
+  ! --------------------------------------------------------------------------
   integer, intent(in) :: nd
   double precision, intent(in) :: x(nd), y(nd)
   double precision, intent(in out) :: b(3)
@@ -79,15 +44,8 @@ module qrfits
   double precision :: P(nd,3)
   double precision :: A(3,3)
   integer :: ii
-  ! dgeqp3
-  integer :: jpvt(3)
-  double precision :: b_(3)
-  double precision, dimension(:), allocatable :: work
-  double precision :: tau(3)
-  integer :: lwork, info
   ! dtrsm & dgemm
   double precision, parameter :: alph=1, beta=0
-  double precision :: C(1)
 
   ! 👷 P
   do ii=1,nd
@@ -100,38 +58,72 @@ module qrfits
   ! 👷 b ⟵ P'y     pg. 73
   call dgemv('T', nd, 3, alph, P, nd, y, 1, beta, b, 1)
   ! 🟪🔴 = 🔷🔺
-  do ii=1,3
-   jpvt(ii) = 0
-  enddo
-  lwork = -1
-  allocate(work(3*3+1))
-  ! AP = QR
-  call dgeqp3(3, 3, A, 3, jpvt, tau, work, lwork, info)
-  lwork=work(1)
-  deallocate(work)
-  allocate(work(lwork))
-  call dgeqp3(3, 3, A, 3, jpvt, tau, work, lwork, info)
-  lwork=-1
-  ! b ⟵ Q'b
-  call dormqr('L','T', 3, 1, 3, A, 3, tau, b, 3, work, lwork, info)
-  lwork=work(1)
-  deallocate(work)
-  allocate(work(lwork))
-  call dormqr('L','T', 3, 1, 3, A, 3, tau, b, 3, work, lwork, info)
-  ! x = R \ Q'b
-  call dtrsm('L', 'U', 'N', 'N', 3, 1, alph, A, 3, b, 3)
-  ! x ⟵ Px
-  do ii=1,3
-   b_(ii) = b(ii)
-  enddo
-  do ii=1,3
-   b(jpvt(ii)) = b_(ii)
-  enddo
-  ! 🧼
-  deallocate(work)
+  call linreg(3,A,b)
  end subroutine parafit
- ! ------------------------------------------------------------------------------
- ! subroutine linreg()
+ ! -----------------------------------------------------------------------------
+ subroutine linreg(n,A,b)
+   integer, intent(in) :: n
+   double precision, intent(in) :: A(n,n)
+   double precision, intent(in out) :: b(n)
 
- ! end subroutine linreg
+   ! 🟪🔴 = 🔷🔺
+   ! dgeqp3
+   integer :: jpvt(n)
+   double precision :: b_(n)
+   double precision, dimension(:), allocatable :: work
+   double precision :: tau(n)
+   integer :: lwork, info
+   ! dtrsm
+   double precision, parameter :: alph=1
+
+   ! 🟪🔴 = 🔷🔺
+   do ii=1,n
+     jpvt(ii) = 0
+   enddo
+   lwork = -1
+   allocate(work(3*n+1))
+   ! AP = QR
+   call dgeqp3(n, n, A, n, jpvt, tau, work, lwork, info)
+   lwork=work(1)
+   deallocate(work)
+   allocate(work(lwork))
+   call dgeqp3(n, n, A, n, jpvt, tau, work, lwork, info)
+   ! b ⟵ Q'b
+   lwork=-1
+   call dormqr('L','T', n, 1, n, A, n, tau, b, n, work, lwork, info)
+   lwork=work(1)
+   deallocate(work)
+   allocate(work(lwork))
+   call dormqr('L','T', n, 1, n, A, n, tau, b, n, work, lwork, info)
+   ! Rx = Q'b
+   ! x  = R \ (Q'b)
+   call dtrsm('L', 'U', 'N', 'N', n, 1, alph, A, n, b, n)
+   ! x ⟵ Px
+   do ii=1,n
+    b_(ii) = b(ii)
+   enddo
+   do ii=1,n
+    b(jpvt(ii)) = b_(ii)
+   enddo
+   ! 🧼
+   deallocate(work)
+ end subroutine linreg
+ ! -----------------------------------------------------------------------------
+ subroutine linreg_(m,n,A,b,Ab)
+  integer, intent(in) :: m,n
+  double precision, intent(in) :: A(m,n), b(m)
+  double precision, intent(in out) :: Ab(n)
+
+  ! dgemm & dgemv
+  double precision, parameter :: alph=1, beta=0
+  double precision :: AA(n,n)
+
+  ! 👷 AA ⟵ A'A     pg. 119
+  call dgemm('T', 'N', n, n, m, alph, A, m, A, m, beta, AA, n)
+  ! 👷 Ab ⟵ A'b     pg. 73
+  call dgemv('T', m, n, alph, A, m, b, 1, beta, Ab, 1)
+  ! 🟪🔴 = 🔷🔺
+  call linreg(n,AA,Ab)
+ end subroutine linreg_
+ ! -----------------------------------------------------------------------------
 end module qrfits

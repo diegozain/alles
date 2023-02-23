@@ -30,6 +30,7 @@ If running *Matlab* projects, please set paths first by running the script:
   * Decision trees & Random forests
   * [Bayesian optimization](projects/opti/baye-opti/)
   * [Relative coordinates](projects/opti/rela-coords/)
+  * [QR factorization (lapack)](projects/opti/linreg/)
 
 * Dimensionality reduction
 
