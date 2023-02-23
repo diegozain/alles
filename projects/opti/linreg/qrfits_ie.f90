@@ -77,8 +77,7 @@ program qrfits_ie
  call linefit(nd,x,y,bl)
  call parafit(nd,x,y,bp)
  ! ⭐🌟🌠
- ! remember that
- !               xmin = - bp(2) / (2*bp(1))
+ ! remember that: xmin = - bp(2) / (2*bp(1))
  call linreg(3,A,b)
  call linreg_(4,3,C,d,Cd)
  ! ---------------------------------------------------------------------------
