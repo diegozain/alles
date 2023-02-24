@@ -74,8 +74,9 @@ program linreg_
  implicit none
  include 'mkl.fi'
  ! -----------------------------------------------------------------------
- integer, parameter :: n = 1019 ! <1019 ⇒ no bueno.
- double precision :: A(n,n), b(n)
+ integer, parameter :: n = 15000 !
+ double precision, dimension(:,:), allocatable :: A
+ double precision, dimension(:), allocatable :: b
  integer :: ii, jj
  real :: r
 
@@ -92,11 +93,16 @@ program linreg_
  ! ⌚
  real :: start_time, end_time
  ! --------------------------------------------------------------------------
+ allocate(A(n,n))
+ allocate(b(n))
+ ! --------------------------------------------------------------------------
  do ii=1,n
    do jj=1,n
-     call random_number(r)
-     A(ii,jj) = dble(r)
+     ! call random_number(r)
+     ! A(ii,jj) = dble(r)
+     A(ii,jj) = 1
    enddo
+   A(ii,ii) = 0
    b(ii) = 0
  enddo
  b(1) = 1
@@ -153,6 +159,8 @@ program linreg_
  ! 🧼
  ! ---------------------------------------------------------------------------
  deallocate(work)
+ deallocate(A)
+ deallocate(b)
  ! ---------------------------------------------------------------------------
  ! ⌚
  end_time = omp_get_wtime()
