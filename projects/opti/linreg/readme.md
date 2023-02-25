@@ -6,7 +6,7 @@ Solves ```Ax = b```  by QR magic using the *lapack* in **oneapi-mkl**.
 
 ```
 Ax  = b
-AP  = QR
+A   = QR
 QRx = b
 Rx  = Q'b
 ```
@@ -22,12 +22,35 @@ In general, it solves this scenario:
          n                                 p
 ```
 
+but it is written for ```p=1```.
+
+## ⚠ 
+
+When ```m≠n```  it is not working.  
+
+Not really a problem, just do ```A ⟵ A'A``` & ```b ⟵ A'b``` using ```dtrsm``` & ```dgemm```.
+
 ## 🗃
 
-```linregbuild.[sh & bat]``` compile all examples.
+```linregbuild.[sh, bat]``` compiles all examples.
 
 * ```linreg.f90``` minimal example and well explained.
 * ```linreg_.f90``` huge dense matrix 🤪.
 * ```parafit.f90``` fit a parabola to a set of points.
 * ```linefit.f90``` fit a line to a set of points.
-* ```alles/src/fortran/qrfits.f90``` wrapping module for fitting stuff and shown in ```qrfits_ie.f90```.
+* ```alles/src/fortran/qrfits.f90``` module wrapper for fitting stuff and shown in ```qrfits_ie.f90```.
+
+## 🚀⌚
+
+```fortran
+do ii=1,n
+   do jj=1,n
+     A(ii,jj) = 1
+   enddo
+   A(ii,ii) = 0
+   b(ii) = 0
+ enddo
+ b(1) = 1
+```
+
+[![](../pics/qrtime.png)](./)

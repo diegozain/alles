@@ -66,7 +66,32 @@ program linreg_
  ! 👨🏻‍🏫
  ! lwork = -1 finds the best value for lwork and writes it in work(1).
  ! -----------------------------------------------------------------------
- ! matlab check
+ ! nele=[15000 10000 20000];
+ ! sec = [512 128 1280];
+ ! nele_ = (1000:100:30000).';
+ ! % ------------------------------------------------------------------------------
+ ! nele = log10(nele);
+ ! sec = log10(sec);
+ ! pf = [nele.'  ones(numel(nele),1)] \ sec.';
+ ! % ------------------------------------------------------------------------------
+ ! nele_ = log10(nele_);
+ ! sec_ = pf(1)*nele_ + pf(2);
+ ! figure;
+ ! loglog(10.^nele_,10.^sec_/60,'-','linewidth',4);
+ ! hold on;
+ ! for iexp=1:numel(nele)
+ !  loglog(10.^nele(iexp),10.^sec(iexp)/60,'.','markersize',60);
+ ! end
+ ! hold off;
+ ! axis tight;
+ ! axis square;
+ ! grid on;
+ ! xticks([1e3,1e4]);
+ ! yticks([1e-2,1e-1,1,1e1]);
+ ! xlabel('# of rows & columns')
+ ! ylabel('Time (min)')
+ ! simple_figure()
+ ! % ------------------------------------------------------------------------------
  !
  !
  ! -----------------------------------------------------------------------
@@ -74,7 +99,12 @@ program linreg_
  implicit none
  include 'mkl.fi'
  ! -----------------------------------------------------------------------
- integer, parameter :: n = 15000 !
+ ! 🚀
+ ! n=
+ !    15000 ⟶ 512 sec
+ !    10000 ⟶ 128 sec
+ !    20000 ⟶ 1280 sec
+ integer, parameter :: n = 20000 !
  double precision, dimension(:,:), allocatable :: A
  double precision, dimension(:), allocatable :: b
  integer :: ii, jj
