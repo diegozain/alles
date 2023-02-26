@@ -6,7 +6,7 @@ Solves ```Ax = b```  by QR magic using the *lapack* in **oneapi-mkl**.
 
 ```
 Ax  = b
-A   = QR
+AP  = QR
 QRx = b
 Rx  = Q'b
 ```
