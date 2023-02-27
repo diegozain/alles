@@ -56,6 +56,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Pardiso demo](projects/pdes/pardiso-demo/)
 	* [Helmholtz-Hodge Decomposition](projects/pdes/hhd/)
   * [DC pseudo locations](projects/pdes/dc-xbore-vis/)
+  * [EM wave & diffusion](projects/pdes/em-wavediffu/)
 
 * Squeezing and expanding matrices
 
