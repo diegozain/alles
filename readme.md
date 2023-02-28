@@ -90,6 +90,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Plot output from *Julia*](projects/visualize/see-julia/)
 	* [*Fortran* in *Matlab*](projects/visualize/finmatlab/)
   * [Matrix inception](projects/visualize/matrix-inception/)
+  * [Compile *Matlab* scripts](projects/visualize/minexe/)
 
 * Deep learning
 
