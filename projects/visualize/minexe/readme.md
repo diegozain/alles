@@ -2,12 +2,7 @@
 
 The script ```scripter.m``` is compiled with,
 
-in 💩
-```matlab
->> mcc -r exe/dcip-.ico -d exe -e scripter.m
-```
-
-in 🚀
+in 🚀 & 💩
 ```matlab
 >> mcc -d exe -m scripter.m
 ```
@@ -26,5 +21,19 @@ in 🚀
 ```
 $ ./run_scripter.sh ../../../../../matlabruntime/theruntimeishere/R2022b/
 ```
+## 🧠
+
+if you want the ```.exe``` to read ```.txt``` files,
+
+```matlab
+pwd_=pwd;
+fid = fopen(fullfile(pwd_,'file.txt'));
+... stuff ...
+fclose(fid);
+
+filemat = load(fullfile(pwd_,'file.txt'));
+```
+
+## 🎨
 
 [![](../pics/somepic.png)](./)
