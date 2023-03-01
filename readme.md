@@ -36,14 +36,14 @@ If running *Matlab* projects, please set paths first by running the script:
 
 	* [Self-organizing maps](projects/dim-redu/self-org/)
 	* t-SNE
- * [Density kernel distribution](projects/dim-redu/kernel-density/)
+  * [Density kernel distribution](projects/dim-redu/kernel-density/)
 
 * Graph theory algorithms
 
 	* Spanning trees
 	* [Dijkstra algorithm](projects/graph-alg/dijkstra/)
 	* [Mesher](projects/graph-alg/mesher/)
- * [Graph signal processing](projects/graph-alg/graph-signal/)
+  * [Graph signal processing](projects/graph-alg/graph-signal/)
 
 * Partial differential equations
 
@@ -55,8 +55,8 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Umfpack demo](projects/pdes/umfpack-demo/)
 	* [Pardiso demo](projects/pdes/pardiso-demo/)
 	* [Helmholtz-Hodge Decomposition](projects/pdes/hhd/)
- * [DC pseudo locations](projects/pdes/dc-xbore-vis/)
- * [EM wave & diffusion](projects/pdes/em-wavediffu/)
+  * [DC pseudo locations](projects/pdes/dc-xbore-vis/)
+  * [EM wave & diffusion](projects/pdes/em-wavediffu/)
 
 * Squeezing and expanding matrices
 
@@ -75,7 +75,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* Hyperbolic and linear semblance
 	* [Beamforming](projects/wave-proc/beamforming/) (to find direction of signal)
 	* Seismic beachball
- * [Harmonic denoising](projects/wave-proc/harmonic-denoising/)
+  * [Harmonic denoising](projects/wave-proc/harmonic-denoising/)
 
 * Cloud computing
 
@@ -89,8 +89,8 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Plot output from *Fortran*](projects/visualize/see-fortran/)
 	* [Plot output from *Julia*](projects/visualize/see-julia/)
 	* [*Fortran* in *Matlab*](projects/visualize/finmatlab/)
- * [Matrix inception](projects/visualize/matrix-inception/)
- * [Compile *Matlab* scripts](projects/visualize/minexe/)
+  * [Matrix inception](projects/visualize/matrix-inception/)
+  * [Compile *Matlab* scripts](projects/visualize/minexe/)
 
 * Deep learning
 
