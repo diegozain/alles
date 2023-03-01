@@ -12,14 +12,14 @@ in 🚀
 >> mcc -d exe -m scripter.m
 ```
 
-which saves it in ```exe/```.
+which saves the executable (along with other 🧻) in ```exe/```.
 
 ## 🏃
 
 You are in ```exe/``` now.
 
 in 💩
-* by clicking on ```scripter.exe```, the output is ```../pics/somepic.png```.
+* by clicking ```scripter.exe```, the output is ```../pics/somepic.png```.
 * you can also run it in *Power💩* with ```.\scripter.exe```.
 
 in 🚀
