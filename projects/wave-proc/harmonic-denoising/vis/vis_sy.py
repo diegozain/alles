@@ -2,9 +2,9 @@ import sys
 sys.path.append('../../../../src/python/graphics/fancy_figure/')
 from fancy_figure import fancy_figure
 # ------------------------------------------------------------------------------
-size=[4*2,4]
+size=[6,6]
 guarda_path = ''
-dpi=120
+dpi=350
 # ------------------------------------------------------------------------------
 import numpy as np
 # ------------------------------------------------------------------------------
@@ -48,8 +48,8 @@ ylabel='Amplitude',
 symbol='--',
 # colop=((0.5,0,0)),
 margin=(0.05,0.1),
-# guarda_path=guarda_path,
-# guarda=dpi,
-# fig_name='fortran-1D'
+guarda_path=guarda_path,
+guarda=dpi,
+fig_name='harmodenoi'
 ).plotter()
 # ------------------------------------------------------------------------------

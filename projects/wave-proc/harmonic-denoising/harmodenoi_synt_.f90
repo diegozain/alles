@@ -29,11 +29,11 @@ program harmodenoi_synt
  ! ⌚
  real :: start_time, end_time, rate_time
  ! -----------------------------------------------------------------------------
- path_save = 'bin\'
+ path_save = 'bin/'
  ! -----------------------------------------------------------------------------
  dt = 2.5e-4 ! sec
  fo = 5      ! Hz
- nt = 8000   ! # of samples
+ nt = 8000   ! # of samples 8000
 
  nh = 4
  nb = 1
@@ -102,7 +102,7 @@ program harmodenoi_synt
  hyperparam(5) = 1e-8
  hyperparam(6) = 5e-3
  ! nparabo_fos & nparabo_a & nparabo_b
- hyperparam(7) = 105
+ hyperparam(7) = 405
  hyperparam(8) = 105
  hyperparam(9) = 105
  ! niter_fos & niter_ab
@@ -118,7 +118,7 @@ program harmodenoi_synt
  ! in fact, with EM data i am yet to see a case where nb > 1 gives better
  ! results than nb=1.
  do ib=1,nb
-   fos(ib) = fo
+   fos(ib) = fo+1
  enddo
  ! -----------------------------------------------------------------------------
  !

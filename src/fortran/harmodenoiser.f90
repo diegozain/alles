@@ -664,7 +664,7 @@ subroutine harmodenoi(uo,dt,fo,h,nt,nh)
   hyperparam(5) = 1e-8
   hyperparam(6) = 1e-2
   ! nparabo_fos & nparabo_a & nparabo_b
-  hyperparam(7) = 200
+  hyperparam(7) = 400
   hyperparam(8) = 200
   hyperparam(9) = 200
   ! niter_fos & niter_ab

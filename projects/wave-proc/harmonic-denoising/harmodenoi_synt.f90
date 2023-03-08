@@ -29,11 +29,11 @@ program harmodenoi_synt
  ! ⌚
  real :: start_time, end_time, rate_time
  ! -----------------------------------------------------------------------------
- path_save = 'bin\'
+ path_save = 'bin/'
  ! -----------------------------------------------------------------------------
  dt = 2.5e-4 ! sec
  fo = 5      ! Hz
- nt = 8000   ! # of samples
+ nt = 8000   ! # of samples 8000
 
  nh = 4
  nb = 1

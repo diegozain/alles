@@ -20,8 +20,10 @@ The *Fortran* version is always about **twice or three times faster** than the *
 * ```harmodenoi_synt.f90``` which uses ```harmodenoi ∈ harmodenoiser.f90``` is the practical function to use.
   * It comes with hyper-parameters used for IP data. Assumes 1 block.
 
-In the terminal 💻,
-```
+
+In the terminal 💻+🐍️,
+
+```batch
 cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
 .\harmodenoi_synt.bat
 .\harmodenoi_synt.exe
@@ -29,6 +31,7 @@ cd .\vis\
 python3 .\vis_sy.py
 cd ..
 ```
+
 or if you prefer to read and plot in *Matlab*,
 
 ```matlab
@@ -136,3 +139,5 @@ nt_ →  |    *   | · α    ⟶    |-2·pi·t·h| ⊙ |sin(2·pi·fo·t·h)| ·
 ## Example 🎨
 
 [![](../pics/harmodenoi-synt.png)](./)
+
+[![](vis/harmodenoi.png)](./)
