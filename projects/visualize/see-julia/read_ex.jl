@@ -6,13 +6,23 @@ using ColorSchemes
 # using ElectronDisplay
 # ElectronDisplay.CONFIG.single_window = true;
 # ------------------------------------------------------------------------------
-include("..\\..\\..\\src\\julia\\readwrite\\read_binf64.jl")
-include("..\\..\\..\\src\\julia\\readwrite\\read_bini32.jl")
+if Sys.iswindows()
+ include("..\\..\\..\\src\\julia\\readwrite\\read_binf64.jl")
+ include("..\\..\\..\\src\\julia\\readwrite\\read_bini32.jl")
 
-include("..\\..\\..\\src\\julia\\mesher3d\\get_ixyz.jl")
-include("..\\..\\..\\src\\julia\\mesher3d\\n_g2m_3d_.jl")
-include("..\\..\\..\\src\\julia\\mesher3d\\g2m_m2g_3d.jl")
-include("..\\..\\..\\src\\julia\\mesher3d\\cubify_graph.jl")
+ include("..\\..\\..\\src\\julia\\mesher3d\\get_ixyz.jl")
+ include("..\\..\\..\\src\\julia\\mesher3d\\n_g2m_3d_.jl")
+ include("..\\..\\..\\src\\julia\\mesher3d\\g2m_m2g_3d.jl")
+ include("..\\..\\..\\src\\julia\\mesher3d\\cubify_graph.jl")
+elseif Sys.islinux()
+ include("../../../src/julia/readwrite/read_binf64.jl")
+ include("../../../src/julia/readwrite/read_bini32.jl")
+
+ include("../../../src/julia/mesher3d/get_ixyz.jl")
+ include("../../../src/julia/mesher3d/n_g2m_3d_.jl")
+ include("../../../src/julia/mesher3d/g2m_m2g_3d.jl")
+ include("../../../src/julia/mesher3d/cubify_graph.jl")
+end
 # ------------------------------------------------------------------------------
 #
 #
@@ -20,8 +30,13 @@ include("..\\..\\..\\src\\julia\\mesher3d\\cubify_graph.jl")
 #
 #
 # ------------------------------------------------------------------------------
-path_read="..\\..\\..\\..\\dcip\\field\\ejls\\jan22\\e3\\bin\\";
-path_read_="..\\..\\..\\..\\dcip\\field\\ejls\\mar22\\e5\\bin\\";
+if Sys.iswindows()
+ path_read="..\\..\\..\\..\\dcip\\field\\ejls\\jan22\\e6\\bin\\";
+ path_read_="..\\..\\..\\..\\dcip\\field\\ejls\\mar22\\e20\\bin\\";
+elseif Sys.islinux()
+ path_read="../../../../dcip/field/ejls/jan22/e6/bin/";
+ path_read_="../../../../dcip/field/ejls/mar22/e20/bin/";
+end
 # ------------------------------------------------------------------------------
 nx= read_bini32(string(path_read,"x_size"),[3,1]);
 nx=nx[1];
@@ -69,37 +84,38 @@ z = dropdims(z;dims=2);
 #
 #
 # ------------------------------------------------------------------------------
-fig=heatmap(x,z,sigm_reco2d_,colormap=:Egypt);
-display(fig);
-
-fig=heatmap(x,z,rho_reco2d_,colormap=:Egypt);
-display(fig);
-
-fig = Figure(resolution = (1200, 800))
-ax = Axis(fig[1, 1]; xlabel = "Length (m)", ylabel = "Depth (m)",title="÷");
-ax.yreversed = true;
-hmap=heatmap!(x,z,quot_reco2d_,colormap=:berlin);
-colsize!(fig.layout, 1, Aspect(1, 1.0));
-Colorbar(fig[1, 2], hmap; label = "( -- )", width = 15, ticksize = -10);
-colgap!(fig.layout, 10);
-display(fig);
-# ------------------------------------------------------------------------------
+# fig=heatmap(x,z,sigm_reco2d_,colormap=:Egypt);
+# display(fig);
+# # ------------------------------------------------------------------------------
+# fig=heatmap(x,z,rho_reco2d_,colormap=:Egypt);
+# display(fig);
+# # ------------------------------------------------------------------------------
+# fig = Figure(resolution = (1200, 800))
+# ax = Axis(fig[1, 1]; xlabel = "Length (m)", ylabel = "Depth (m)",title="÷");
+# ax.yreversed = true;
+# hmap=heatmap!(x,z,quot_reco2d_,colormap=:berlin);
+# colsize!(fig.layout, 1, Aspect(1, 1.0));
+# Colorbar(fig[1, 2], hmap; label = "( -- )", width = 15, ticksize = -10);
+# colgap!(fig.layout, 10);
+# display(fig);
+# # ------------------------------------------------------------------------------
 sigm_reco3d_=sigm_reco3d_[:,:,end:-1:1];
 fig = Figure(resolution = (1200, 800))
 ax = Axis3(fig[1, 1]; xlabel = "Width (m)", ylabel = "Length (m)",zlabel="Depth (m)",title="σ",aspect=:data);
-vol = volume!(y,x,z,sigm_reco3d_, colormap = :Egypt, transparency = true);
-# vol = volume!(y,x,z,sigm_reco3d_, colormap = :Egypt, algorithm = :iso, isorange = 0.05, isovalue = 0.01);
+# vol = volume!(y,x,z,sigm_reco3d_, colormap = :Egypt, transparency = true);
+vol = volume!(y,x,z,sigm_reco3d_, colormap = :Egypt, algorithm = :iso, isorange = 0.05, isovalue = 0.01);
 Colorbar(fig[1, 2], vol; label = "( S/m )", width = 15, ticksize = -10);
 colgap!(fig.layout, -100);
-
-fig = volume(y,x,z,rho_reco3d_, colormap = :Egypt, transparency = true, figure = (; resolution = (1200, 800)), axis = (; type = Axis3, perspectiveness = 0.5, azimuth = 2.19, elevation = 0.57, aspect = (1, 1, 1)))
-
-fig = volume(y,x,z,quot_reco3d_, colormap = :Paired_10, transparency = true, figure = (; resolution = (1200, 800)), axis = (; type = Axis3, perspectiveness = 0.5, azimuth = 2.19, elevation = 0.57, aspect = (1, 1, 1)))
-
-quot_reco3d_=quot_reco3d_[:,:,end:-1:1];
-fig = Figure(resolution = (1200, 800))
-ax = Axis3(fig[1, 1]; xlabel = "Width (m)", ylabel = "Length (m)",zlabel="Depth (m)",title="÷",aspect=:data);
-vol = volume!(y,x,z,quot_reco3d_, colormap = :Paired_10, algorithm = :iso, isorange = 0.001, isovalue = 0.5);
-Colorbar(fig[1, 2], vol; label = "( -- )", width = 15, ticksize = -10);
-colgap!(fig.layout, -100);
+display(fig);
+# ------------------------------------------------------------------------------
+# fig = volume(y,x,z,rho_reco3d_, colormap = :Egypt, transparency = true, figure = (; resolution = (1200, 800)), axis = (; type = Axis3, perspectiveness = 0.5, azimuth = 2.19, elevation = 0.57, aspect = (1, 1, 1)))
+# ------------------------------------------------------------------------------
+# fig = volume(y,x,z,quot_reco3d_, colormap = :Paired_10, transparency = true, figure = (; resolution = (1200, 800)), axis = (; type = Axis3, perspectiveness = 0.5, azimuth = 2.19, elevation = 0.57, aspect = (1, 1, 1)))
+# # ------------------------------------------------------------------------------
+# quot_reco3d_=quot_reco3d_[:,:,end:-1:1];
+# fig = Figure(resolution = (1200, 800))
+# ax = Axis3(fig[1, 1]; xlabel = "Width (m)", ylabel = "Length (m)",zlabel="Depth (m)",title="÷",aspect=:data);
+# vol = volume!(y,x,z,quot_reco3d_, colormap = :Paired_10, algorithm = :iso, isorange = 0.001, isovalue = 0.5);
+# Colorbar(fig[1, 2], vol; label = "( -- )", width = 15, ticksize = -10);
+# colgap!(fig.layout, -100);
 # ------------------------------------------------------------------------------
