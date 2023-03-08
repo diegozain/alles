@@ -167,6 +167,10 @@ subroutine hd_nbnt_(nb,nt_,nt__,nt,fo,dt)
   ! ----------------------------------------------------------------------------
   ! number of samples in the over-lapping time
   nt_ = ((nt-nt__) / nb) + nt__
+  ! ----------------------------------------------------------------------------
+  deallocate(fact_combi)
+  deallocate(err_)
+  deallocate(ierr_)
 end subroutine hd_nbnt_
 ! ------------------------------------------------------------------------------
 subroutine hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
@@ -498,7 +502,7 @@ end subroutine hd_hyperparam
 ! ------------------------------------------------------------------------------
 subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
   hyperparam, nhyper)
-  integer, intent(in) :: nt, nb, nh, nt_, nt__, nw
+  integer, intent(in) :: nt, nb, nh, nt_, nt__, nw, nhyper
   double precision, intent(in) :: t(nt), h(nh), hyperparam(nhyper)
   double precision, intent(in out) :: uo(nt),alphas(nh*nb),betas(nh*nb),fos(nb)
 
@@ -524,8 +528,8 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
   ibh=1
   do ib=1,nb
     do ih=1,nh
-      alphas(ibh)= x_ / ih
-      betas(ibh) = x_ / ih
+      alphas(ibh)= x_ / ibh
+      betas(ibh) = x_ / ibh
       ibh = ibh+1
     enddo
   enddo
@@ -625,6 +629,80 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
     uo(it) = uo(it) - uh(it)
   enddo
   call window_mean(uo,nt,nw)
+  ! ----------------------------------------------------------------------------
+  ! 🚿
+  deallocate(fos_niter)
+  deallocate(a_niter)
+  deallocate(b_niter)
+  deallocate(ob_fos)
+  deallocate(ob_ab)
+  deallocate(iob_fos)
+  deallocate(iob_ab)
 end subroutine harmodenoi_
+! ------------------------------------------------------------------------------
+subroutine harmodenoi(uo,dt,fo,h,nt,nh)
+  integer, intent(in) :: nt, nh
+  double precision, intent(in) :: dt, fo, h(nh)
+  double precision, intent(in out) :: uo(nt)
+
+  integer :: nt_, nt__, nw, nb, it
+  double precision :: t(nt)
+  double precision, allocatable :: alphas(:),betas(:),fos(:)
+
+  integer, parameter :: nhyper=11
+  double precision :: hyperparam(nhyper)
+  ! ----------------------------------------------------------------------------
+  !                          📟 hyperparam 📟
+  ! ----------------------------------------------------------------------------
+  ! k_fos_ & k_fos__
+  hyperparam(1) = 1e-9
+  hyperparam(2) = 1e-4
+  ! k_alphas_ & k_alphas__
+  hyperparam(3) = 1e-8
+  hyperparam(4) = 1e-2
+  ! k_betas_ & k_betas__
+  hyperparam(5) = 1e-8
+  hyperparam(6) = 1e-2
+  ! nparabo_fos & nparabo_a & nparabo_b
+  hyperparam(7) = 200
+  hyperparam(8) = 200
+  hyperparam(9) = 200
+  ! niter_fos & niter_ab
+  hyperparam(10) = 6
+  hyperparam(11) = 6
+  ! ----------------------------------------------------------------------------
+  !                            🌼 blocks 🌼
+  ! ----------------------------------------------------------------------------
+  ! input  :: target nb, fo, & dt
+  ! output :: new nb, nt_, & nt__
+  nb=1
+  call hd_nbnt_(nb,nt_,nt__,nt,fo,dt)
+
+  allocate(alphas(nh*nb))
+  allocate(betas(nh*nb))
+  allocate(fos(nb))
+
+  ! window to convolve with
+  nw = ceiling((1/(fo*h(1)))/dt)
+
+  do ib=1,nb
+    fos(ib) = fo
+  enddo
+  ! ----------------------------------------------------------------------------
+  ! build time
+  do it=1,nt
+    t(it) = (it-1)*dt
+  enddo
+  ! ----------------------------------------------------------------------------
+  !                                🎵⛔
+  ! ----------------------------------------------------------------------------
+  call harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
+    hyperparam, nhyper)
+  ! ----------------------------------------------------------------------------
+  ! 🚿
+  deallocate(alphas)
+  deallocate(betas)
+  deallocate(fos)
+end subroutine harmodenoi
 ! ------------------------------------------------------------------------------
 end module harmodenoiser

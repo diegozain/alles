@@ -16,13 +16,17 @@ The main inversion routine is in ```src/hd_inversion.m```
 The *Fortran* version is always about **twice or three times faster** than the *Matlab* version:
 
 * larger signal ⟶ *Fortran* is even faster.
+* ```harmodenoi_synt_.f90``` which uses ```harmodenoi_ ∈ harmodenoiser.f90``` is the hands-on version.
+* ```harmodenoi_synt.f90``` which uses ```harmodenoi ∈ harmodenoiser.f90``` is the practical function to use.
+  * It comes with hyper-parameters used for IP data. Assumes 1 block.
 
 In the terminal 💻,
 ```
 cmd.exe "/K" '"C:\Program Files (x86)\Intel\oneAPI\setvars.bat" && powershell'
 .\harmodenoi_synt.bat
 .\harmodenoi_synt.exe
-python3 .\vis\vis_sy.py
+cd .\vis\
+python3 .\vis_sy.py
 cd ..
 ```
 or if you prefer to read and plot in *Matlab*,

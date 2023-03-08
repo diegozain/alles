@@ -90,6 +90,37 @@ program harmodenoi_synt
  name_ = trim(path_save) // 'uo_sig.bin'
  call save_vec_dbl(us,nt,name_)
  ! -----------------------------------------------------------------------------
+ !                          📟 hyperparam 📟
+ ! -----------------------------------------------------------------------------
+ ! k_fos_ & k_fos__
+ hyperparam(1) = 1e-8
+ hyperparam(2) = 2e-5
+ ! k_alphas_ & k_alphas__
+ hyperparam(3) = 1e-8
+ hyperparam(4) = 1e-3
+ ! k_betas_ & k_betas__
+ hyperparam(5) = 1e-8
+ hyperparam(6) = 5e-3
+ ! nparabo_fos & nparabo_a & nparabo_b
+ hyperparam(7) = 105
+ hyperparam(8) = 105
+ hyperparam(9) = 105
+ ! niter_fos & niter_ab
+ hyperparam(10) = 5
+ hyperparam(11) = 5
+ ! -----------------------------------------------------------------------------
+ !                              fo stuff
+ ! -----------------------------------------------------------------------------
+ ! window to convolve with
+ nw = ceiling((1/(fo*h(1)))/dt)
+
+ ! fo varies very little between blocks.
+ ! in fact, with EM data i am yet to see a case where nb > 1 gives better
+ ! results than nb=1.
+ do ib=1,nb
+   fos(ib) = fo
+ enddo
+ ! -----------------------------------------------------------------------------
  !
  !                                 🎵
  !
@@ -97,14 +128,44 @@ program harmodenoi_synt
  ! ⌚
  start_time = omp_get_wtime()
  ! -----------------------------------------------------------------------------
- call harmodenoi(uo,dt,fo,h,nt,nh)
+ call harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
+   hyperparam, nhyper)
  ! -----------------------------------------------------------------------------
  ! ⌚
  end_time = omp_get_wtime()
  print *, 'elapsed time: ', (end_time - start_time), 'seconds'
  ! -----------------------------------------------------------------------------
+ !👣
  print*,''
- print*,'this is slower wtf???'
+ print*,'--> recovered frequencies per block:'
+ print*,''
+ do ib=1,nb
+   print*,fos(ib),'(Hz)'
+ enddo
+
+ print*,''
+ print*,'--> recovered alphas per block:'
+ print*,''
+ ibh=1
+ do ib=1,nb
+   do ih=1,nh
+     print*,alphas(ibh),'(alpha)'
+     ibh = ibh+1
+   enddo
+   print*,''
+ enddo
+
+ print*,''
+ print*,'--> recovered betas per block:'
+ print*,''
+ ibh=1
+ do ib=1,nb
+   do ih=1,nh
+     print*,betas(ibh),'(beta)'
+     ibh = ibh+1
+   enddo
+   print*,''
+ enddo
  print*,''
  ! -----------------------------------------------------------------------------
  ! 💾 uo & t
