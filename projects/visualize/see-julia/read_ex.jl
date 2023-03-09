@@ -98,13 +98,21 @@ z = dropdims(z;dims=2);
 # Colorbar(fig[1, 2], hmap; label = "( -- )", width = 15, ticksize = -10);
 # colgap!(fig.layout, 10);
 # display(fig);
-# # ------------------------------------------------------------------------------
-sigm_reco3d_=sigm_reco3d_[:,:,end:-1:1];
+# ------------------------------------------------------------------------------
+# sigm_reco3d_=sigm_reco3d_[:,:,end:-1:1];
+# fig = Figure(resolution = (1200, 800))
+# ax = Axis3(fig[1, 1]; xlabel = "Width (m)", ylabel = "Length (m)",zlabel="Depth (m)",title="σ",aspect=:data);
+# # vol = volume!(y,x,z,sigm_reco3d_, colormap = :Egypt, transparency = true);
+# vol = volume!(y,x,z,sigm_reco3d_, colormap = :Egypt, algorithm = :iso, isorange = 0.05, isovalue = 0.01);
+# Colorbar(fig[1, 2], vol; label = "( S/m )", width = 15, ticksize = -10);
+# colgap!(fig.layout, -100);
+# display(fig);
+# ------------------------------------------------------------------------------
+quot_reco3d_=quot_reco3d_[:,:,end:-1:1];
 fig = Figure(resolution = (1200, 800))
-ax = Axis3(fig[1, 1]; xlabel = "Width (m)", ylabel = "Length (m)",zlabel="Depth (m)",title="σ",aspect=:data);
-# vol = volume!(y,x,z,sigm_reco3d_, colormap = :Egypt, transparency = true);
-vol = volume!(y,x,z,sigm_reco3d_, colormap = :Egypt, algorithm = :iso, isorange = 0.05, isovalue = 0.01);
-Colorbar(fig[1, 2], vol; label = "( S/m )", width = 15, ticksize = -10);
+ax = Axis3(fig[1, 1]; xlabel = "Width (m)", ylabel = "Length (m)",zlabel="Depth (m)",title="÷",aspect=:data);
+vol = volume!(y,x,z,quot_reco3d_, colormap = :Egypt, algorithm = :iso, isorange = 0.8, isovalue = 0.01);
+Colorbar(fig[1, 2], vol; label = "( - )", width = 15, ticksize = -10);
 colgap!(fig.layout, -100);
 display(fig);
 # ------------------------------------------------------------------------------
