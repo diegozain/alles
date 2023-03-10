@@ -44,6 +44,15 @@ subroutine read_vec_dbl(mati,nlen,filename)
   close(1)
 end subroutine read_vec_dbl
 ! ------------------------------------------------------------------------------
+subroutine read_dbl(dbl,filename)
+  character(*), intent(in) :: filename
+  double precision, intent(in out) :: dbl
+
+  open(unit=1,file=filename,access='stream',form='unformatted')
+  read(1)dbl
+  close(1)
+end subroutine read_dbl
+! ------------------------------------------------------------------------------
 subroutine read_mat_int(mati,nrows,ncols,filename)
   character(*), intent(in) :: filename
   integer, intent(in) :: nrows,ncols
@@ -64,15 +73,61 @@ subroutine read_vec_int(mati,nlen,filename)
   close(1)
 end subroutine read_vec_int
 ! ------------------------------------------------------------------------------
-subroutine save_vec_dbl(mati,nlen,filename)
+subroutine save_vec_dbl(mati,nlen,filename,id)
   character(*), intent(in) :: filename
-  integer, intent(in) :: nlen
+  integer, intent(in) :: nlen, id
   double precision, intent(in out) :: mati(nlen)
   integer :: imati
 
-  open(unit=1,file=filename,access='stream',form='unformatted')
-  write(1) (mati(imati),imati=1,nlen)
-  close(1)
+  open(unit=id,file=filename,access='stream',form='unformatted')
+  write(id) (mati(imati),imati=1,nlen)
+  close(id)
 end subroutine save_vec_dbl
+! ------------------------------------------------------------------------------
+subroutine save_vec_cmplx(mati,nlen,filename,id)
+  character(*), intent(in) :: filename
+  integer, intent(in) :: nlen, id
+  complex*16, intent(in out) :: mati(nlen)
+  integer :: imati
+
+  open(unit=id,file=filename,access='stream',form='unformatted')
+  write(id) (mati(imati),imati=1,nlen)
+  close(id)
+end subroutine save_vec_cmplx
+! ------------------------------------------------------------------------------
+subroutine read_filey(filey,nlines,filename,id)
+  character(*), intent(in) :: filename
+  integer, intent(in) :: nlines, id
+  character*256, intent(in out) :: filey(nlines)
+
+  character*256 :: chartmp
+  integer :: iline = 0
+
+  open(unit=id,file=filename)
+  do iline = 1, nlines
+    read(id,'(A)') filey(iline)
+  end do
+
+  close(id)
+end subroutine read_filey
+! ------------------------------------------------------------------------------
+subroutine get_nfiley(nlines,filename,id)
+  character(*), intent(in) :: filename
+  integer, intent(in) :: id
+  integer, intent(in out) :: nlines
+
+  character*256 :: chartmp
+  integer :: ierr = 0
+
+  nlines = 0
+  open(unit=id,file=filename)
+  do while (ierr == 0)
+    nlines = nlines + 1
+    read(id,*,iostat=ierr) chartmp
+  end do
+  nlines = nlines - 1
+
+  close(id)
+end subroutine get_nfiley
 ! ------------------------------------------------------------------------------
 end module readfiles
