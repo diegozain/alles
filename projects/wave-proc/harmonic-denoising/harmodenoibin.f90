@@ -81,7 +81,7 @@ program harmodenoibin
  hyperparam(9) = 300
  ! niter_fos & niter_ab
  hyperparam(10) = 6
- hyperparam(11) = 6
+ hyperparam(11) = 7
  ! -----------------------------------------------------------------------------
  dt = 2.5e-4 ! sec
  fo = 9      ! Hz
