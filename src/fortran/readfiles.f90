@@ -53,6 +53,26 @@ subroutine read_dbl(dbl,filename)
   close(1)
 end subroutine read_dbl
 ! ------------------------------------------------------------------------------
+subroutine read_vec_sgl(mati,nlen,filename)
+  character(*), intent(in) :: filename
+  integer, intent(in) :: nlen
+  real, intent(in out) :: mati(nlen)
+
+  open(unit=1,file=filename,access='stream',form='unformatted')
+  read(1)mati
+  close(1)
+end subroutine read_vec_sgl
+! ------------------------------------------------------------------------------
+subroutine read_mat_sgl(mati,nrows,ncols,filename)
+  character(*), intent(in) :: filename
+  integer, intent(in) :: nrows,ncols
+  real, intent(in out) :: mati(nrows,ncols)
+
+  open(unit=1,file=filename,access='stream',form='unformatted')
+  read(1) mati
+  close(1)
+end subroutine read_mat_sgl
+! ------------------------------------------------------------------------------
 subroutine read_mat_int(mati,nrows,ncols,filename)
   character(*), intent(in) :: filename
   integer, intent(in) :: nrows,ncols
@@ -72,6 +92,17 @@ subroutine read_vec_int(mati,nlen,filename)
   read(1)mati
   close(1)
 end subroutine read_vec_int
+! ------------------------------------------------------------------------------
+subroutine save_vec_int(mati,nlen,filename,id)
+  character(*), intent(in) :: filename
+  integer, intent(in) :: nlen, id
+  integer, intent(in out) :: mati(nlen)
+  integer :: imati
+
+  open(unit=id,file=filename,access='stream',form='unformatted')
+  write(id) (mati(imati),imati=1,nlen)
+  close(id)
+end subroutine save_vec_int
 ! ------------------------------------------------------------------------------
 subroutine save_vec_dbl(mati,nlen,filename,id)
   character(*), intent(in) :: filename

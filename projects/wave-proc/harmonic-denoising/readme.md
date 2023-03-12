@@ -19,6 +19,7 @@ The *Fortran* version is always about **twice or three times faster** than the *
 * ```harmodenoi_synt_.f90``` which uses ```harmodenoi_ ∈ harmodenoiser.f90``` is the hands-on version.
 * ```harmodenoi_synt.f90``` which uses ```harmodenoi ∈ harmodenoiser.f90``` is the practical function to use.
   * It comes with hyper-parameters used for IP data. Assumes 1 block.
+* ```harmodenoibin.f90``` processes many time-series using *openMP*.
 
 
 In the terminal 💻+🐍️,
