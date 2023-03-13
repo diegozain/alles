@@ -43,10 +43,12 @@ program harmodenoibin
  ! -----------------------------------------------------------------------------
  call date_and_time(date_time_(1), date_time_(2), date_time_(3), date_time)
  print *,''
+ print *,'                            🎵🎵🎵🎵'
+ print *,''
  print *, '--------------------------------------------------------------------'
+ print *,''
  print '("  ",i2,".",i2,".",i4)',date_time(3),date_time(2),date_time(1)
  print '("  ",i2,":",i2,":",i2)',date_time(5),date_time(6),date_time(7)
- print *,''
  ! -----------------------------------------------------------------------------
  !
  !                                   👁️ 👃 👁️
@@ -95,7 +97,7 @@ program harmodenoibin
  dt = 2.5e-4 ! sec
  fo = 9      ! Hz
 
- nh = 6
+ nh = 20
  nb = 1
  ! -----------------------------------------------------------------------------
  !
@@ -129,13 +131,15 @@ program harmodenoibin
  ! -----------------------------------------------------------------------------
  print*,'----------------------------------------------------------------------'
  print*,'      number of time-series is ',nabmn
- print*,'      each with ',nt,' smaples'
+ print*,'      each with                ',nt,' samples'
  print*,'----------------------------------------------------------------------'
  print*,'      total time     = ',nt*dt,' seconds'
  print*,'      interval time  = ',nt_*dt,' seconds'
  print*,'      overlap time   = ',nt__*dt,' seconds'
  print*,''
  print*,'         # of blocks = ',nb
+ print*,'      # of harmonics = ',nh
+ print*,'            harmonic = ',fo,' Hz'
  print*,'----------------------------------------------------------------------'
  print*,''
  ! -----------------------------------------------------------------------------
@@ -144,7 +148,7 @@ program harmodenoibin
  ! in 💩 & 🚀 uncomment this one, comment next1
  call omp_set_num_threads(nthreads)
 !  nthreads = omp_get_max_threads()
-!  call kmp_set_stacksize_s(5000000) ! 8000000 = 8 Gb
+ call kmp_set_stacksize_s(1000000) ! 8000000 = 8 Gb
  stacksize = kmp_get_stacksize_s()
  print *, '    # of threads is',nthreads
  print *, '    stack size = ',dble(stacksize)/10**6,'Gb'

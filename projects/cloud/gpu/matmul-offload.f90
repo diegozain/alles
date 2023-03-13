@@ -14,6 +14,8 @@
 !
 ! https://enccs.github.io/openmp-gpu/introduction/
 !
+! https://www.intel.com/content/www/us/en/develop/documentation/oneapi-gpu-optimization-guide/top/openmp-offloading-intro.html
+!
 ! =============================================================
 program matrix_multiply
 use omp_lib

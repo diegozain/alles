@@ -10,6 +10,16 @@ nabmn = dataips_size(2);
 dataips = read_bin(strcat(path_read,'/dataips'),[nt,nabmn],'single');
 abmn = read_bin(strcat(path_read,'/abmn'),[nabmn,4],'uint32');
 % ------------------------------------------------------------------------------
+% rschecks = read_bin(strcat(path_read,'/rschecks'),[nabmn,1],'uint32');
+% ikeep=find(rschecks);
+% dataips = dataips(:,ikeep);
+% abmn = abmn(ikeep,:);
+% nabmn = numel(ikeep);
+% dataips_size(2) = nabmn;
+% save_bin(strcat(path_read,'/abmn'),abmn,'uint32');
+% save_bin(strcat(path_read,'/dataips_size'),dataips_size,'uint32');
+% save_bin(strcat(path_read,'/dataips'),dataips,'single');
+% ------------------------------------------------------------------------------
 path_read='../bin/save/';
 
 dataips__size= read_bin(strcat(path_read,'/dataips__size'),[3,1],'uint32');
@@ -60,7 +70,7 @@ simple_figure()
 subplot(1,3,2)
 hold on;
 for iabmn=1:nabmn
-plot(alphas_(:,iabmn),'.-','markersize',25,'colo',rgb(iabmn,:));
+  plot(alphas_(:,iabmn),'.-','markersize',25,'colo',rgb(iabmn,:));
 end
 hold off;
 axis square;
@@ -89,9 +99,9 @@ for iabmn_=1:2
   iabmn=randi(nabmn);
 
   subplot(2,2,ifig)
-  plot(t,1e3*dataips(:,iabmn),'linewidth',2)
+  semilogx(t,1e3*dataips(:,iabmn),'linewidth',2)
   hold on;
-  plot(t_,1e3*dataips_(:,iabmn),'linewidth',2)
+  semilogx(t_,1e3*dataips_(:,iabmn),'linewidth',2)
   hold off;
   axis square;
   axis tight;
@@ -104,9 +114,9 @@ for iabmn_=1:2
   ifig=ifig+1;
 
   subplot(2,2,ifig)
-  plot(t,1e3*dataips(:,iabmn),'linewidth',2)
+  semilogx(t,1e3*dataips(:,iabmn),'linewidth',2)
   hold on;
-  plot(t_,1e3*dataips_(:,iabmn),'linewidth',2)
+  semilogx(t_,1e3*dataips_(:,iabmn),'linewidth',2)
   hold off;
   axis square;
   axis tight;
@@ -120,7 +130,7 @@ for iabmn_=1:2
   ifig=ifig+1;
 end
 % ------------------------------------------------------------------------------
-print(gcf,'noise9hz-3','-dpng','-r350')
+print(gcf,'noise9hz-2','-dpng','-r350')
 % ------------------------------------------------------------------------------
 figure('units','normalized','outerposition',[0 0 0.7 0.7],'visible','off');
 subplot(1,2,1)
@@ -155,7 +165,7 @@ xlabel('Time (sec)')
 ylabel('Voltage (mV)')
 simple_figure()
 % ------------------------------------------------------------------------------
-print(gcf,'noise9hz-4','-dpng','-r350')
+print(gcf,'noise9hz-3','-dpng','-r350')
 % ------------------------------------------------------------------------------
 [dataipspw,f,df] = fourier_rt(dataips,dt);
 dataipspw = abs(dataipspw) / numel(f);
@@ -199,7 +209,7 @@ xlabel('Frequency (Hz)')
 ylabel('Power (V²/Hz)')
 simple_figure()
 % ------------------------------------------------------------------------------
-print(gcf,'noise9hz-5','-dpng','-r350')
+print(gcf,'noise9hz-4','-dpng','-r350')
 % ------------------------------------------------------------------------------
 dataips = dataips - repmat(dataips(1,:),[nt,1]);
 dataips_= dataips_ - repmat(dataips_(1,:),[nt_,1]);
@@ -242,7 +252,7 @@ xlabel('Time (sec)')
 ylabel('Voltage anchored at 0 (mV)')
 simple_figure()
 % ------------------------------------------------------------------------------
-print(gcf,'noise9hz-6','-dpng','-r350')
+print(gcf,'noise9hz-5','-dpng','-r350')
 % ------------------------------------------------------------------------------
 close all;
 clear;
