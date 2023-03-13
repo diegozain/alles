@@ -32,7 +32,7 @@ program harmodenoibin
 
  ! ⬜⬛ openMP
  ! in 💩 & 🚀 uncomment this one, comment next1
- integer, parameter :: nthreads=4
+ integer, parameter :: nthreads=10
  ! integer :: nthreads
  integer :: stacksize
 
@@ -92,12 +92,12 @@ program harmodenoibin
  hyperparam(9) = 300
  ! niter_fos & niter_ab
  hyperparam(10) = 6
- hyperparam(11) = 7
+ hyperparam(11) = 20
  ! -----------------------------------------------------------------------------
  dt = 2.5e-4 ! sec
  fo = 9      ! Hz
 
- nh = 20
+ nh = 6
  nb = 1
  ! -----------------------------------------------------------------------------
  !

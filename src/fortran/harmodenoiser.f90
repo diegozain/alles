@@ -508,7 +508,6 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
 
   integer :: ibh, ib, ih, iter
   double precision :: dt, x_, objfnc_, error_(nt)
-  double precision :: alphaso(nh*nb),betaso(nh*nb)
   
   double precision :: k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__
   integer :: nparabo_fos,nparabo_a,nparabo_b,niter_fos,niter_ab
@@ -531,8 +530,6 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
     do ih=1,nh
       alphas(ibh)= x_ / ibh
       betas(ibh) = x_ / ibh
-      alphaso(ibh)= 0
-      betaso(ibh) = 0
       ibh = ibh+1
     enddo
   enddo
@@ -587,16 +584,7 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
   ! ----------------------------------------------------------------------------
   !                                 α & β
   ! ----------------------------------------------------------------------------
-  ! fwd & obj
-  call hd_fwd(uh,t,alphaso,betaso,fos,h,nt,nb,nh,nt_,nt__)
-  call hd_obj(objfnc_,error_,uh, uo, 0, nt)
-  ! fail-safe
-  ob_ab(1) = objfnc_
-  do ibh=1,nb*nh
-    a_niter(ibh,1) = alphaso(ibh)
-    b_niter(ibh,1) = betaso(ibh)
-  enddo
-  do iter=2,niter_ab
+  do iter=1,niter_ab
     ! fwd & obj
     call hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
     call hd_obj(objfnc_,error_,uh, uo, 0, nt)
