@@ -32,12 +32,21 @@ program harmodenoibin
 
  ! ⬜⬛ openMP
  ! in 💩 & 🚀 uncomment this one, comment next1
- integer, parameter :: nthreads=10
+ integer, parameter :: nthreads=4
  ! integer :: nthreads
  integer :: stacksize
 
  ! ⌚
- real :: start_time, end_time, rate_time
+ real :: start_time, end_time
+ integer :: date_time(8)
+ character*10 date_time_(3)
+ ! -----------------------------------------------------------------------------
+ call date_and_time(date_time_(1), date_time_(2), date_time_(3), date_time)
+ print *,''
+ print *, '--------------------------------------------------------------------'
+ print '("  ",i2,".",i2,".",i4)',date_time(3),date_time(2),date_time(1)
+ print '("  ",i2,":",i2,":",i2)',date_time(5),date_time(6),date_time(7)
+ print *,''
  ! -----------------------------------------------------------------------------
  !
  !                                   👁️ 👃 👁️
@@ -150,8 +159,8 @@ program harmodenoibin
  ! -----------------------------------------------------------------------------
  !$omp parallel private(iabmn,it,ib,ibh) &
  !$omp firstprivate(uo,alphas,betas,fos) &
- !$omp shared(dataips_,alphas_,betas_,fos_) & 
- !$omp shared(dataips,t,h,hyperparam) & 
+ !$omp shared(dataips_,alphas_,betas_,fos_) &
+ !$omp shared(dataips,t,h,hyperparam) &
  !$omp shared(nabmn,nt,nttrim,nb,nh,nt_,nt__,nw)
  allocate(uo(nt))
  allocate(alphas(nb*nh))
