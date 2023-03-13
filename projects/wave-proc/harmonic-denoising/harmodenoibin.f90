@@ -32,7 +32,7 @@ program harmodenoibin
 
  ! ⬜⬛ openMP
  ! in 💩 & 🚀 uncomment this one, comment next1
- integer, parameter :: nthreads=10
+ integer, parameter :: nthreads=8
  ! integer :: nthreads
  integer :: stacksize
 
@@ -64,8 +64,8 @@ program harmodenoibin
  print *,''
  print*,'----------------------------------------------------------------------'
  print *,''
- print *, 'reading from:   ', path_read
- print *, 'saving in:      ', path_save
+ print *, '📝  reading from:   ', path_read
+ print *, '💾  saving in:      ', path_save
  ! -----------------------------------------------------------------------------
  path_read_ = trim(path_read) // 'dataips_size.bin'
  call size_mat(mati_size,dime,path_read_)
@@ -148,7 +148,7 @@ program harmodenoibin
  ! in 💩 & 🚀 uncomment this one, comment next1
  call omp_set_num_threads(nthreads)
 !  nthreads = omp_get_max_threads()
- call kmp_set_stacksize_s(1000000) ! 8000000 = 8 Gb
+ call kmp_set_stacksize_s(1600000) ! 8000000 = 8 Gb
  stacksize = kmp_get_stacksize_s()
  print *, '    # of threads is',nthreads
  print *, '    stack size = ',dble(stacksize)/10**6,'Gb'
