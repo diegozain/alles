@@ -4,39 +4,39 @@ clc
 % ------------------------------------------------------------------------------
 path_read='../bin/read/';
 
-dataips_size= read_bin(strcat(path_read,'/dataips_size'),[3,1],'uint32');
+dataips_size= read_bin(strcat(path_read,'dataips_size'),[3,1],'uint32');
 nt = dataips_size(1);
 nabmn = dataips_size(2);
-dataips = read_bin(strcat(path_read,'/dataips'),[nt,nabmn],'single');
-abmn = read_bin(strcat(path_read,'/abmn'),[nabmn,4],'uint32');
+dataips = read_bin(strcat(path_read,'dataips'),[nt,nabmn],'single');
+abmn = read_bin(strcat(path_read,'abmn'),[nabmn,4],'uint32');
 % ------------------------------------------------------------------------------
-% rschecks = read_bin(strcat(path_read,'/rschecks'),[nabmn,1],'uint32');
+% rschecks = read_bin(strcat(path_read,'rschecks'),[nabmn,1],'uint32');
 % ikeep=find(rschecks);
 % dataips = dataips(:,ikeep);
 % abmn = abmn(ikeep,:);
 % nabmn = numel(ikeep);
 % dataips_size(2) = nabmn;
-% save_bin(strcat(path_read,'/abmn'),abmn,'uint32');
-% save_bin(strcat(path_read,'/dataips_size'),dataips_size,'uint32');
-% save_bin(strcat(path_read,'/dataips'),dataips,'single');
+% save_bin(strcat(path_read,'abmn'),abmn,'uint32');
+% save_bin(strcat(path_read,'dataips_size'),dataips_size,'uint32');
+% save_bin(strcat(path_read,'dataips'),dataips,'single');
 % ------------------------------------------------------------------------------
 path_read='../bin/save/';
 
-dataips__size= read_bin(strcat(path_read,'/dataips__size'),[3,1],'uint32');
+dataips__size= read_bin(strcat(path_read,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
 nabmn = dataips__size(2);
-dataips_ = read_bin(strcat(path_read,'/dataips_'),[nt_*nabmn,1],'single');
+dataips_ = read_bin(strcat(path_read,'dataips_'),[nt_*nabmn,1],'single');
 dataips_ = reshape(dataips_, [nt_,nabmn]);
 
-bafos_size= read_bin(strcat(path_read,'/bafos_size'),[3,1],'uint32');
+bafos_size= read_bin(strcat(path_read,'bafos_size'),[3,1],'uint32');
 nb = bafos_size(1);
 nh = bafos_size(2);
 nabmn = bafos_size(3);
-alphas_ = read_bin(strcat(path_read,'/alphas_'),[nb*nh*nabmn,1],'double');
+alphas_ = read_bin(strcat(path_read,'alphas_'),[nb*nh*nabmn,1],'double');
 alphas_ = reshape(alphas_, [nb*nh,nabmn]);
-betas_ = read_bin(strcat(path_read,'/betas_'),[nb*nh*nabmn,1],'double');
+betas_ = read_bin(strcat(path_read,'betas_'),[nb*nh*nabmn,1],'double');
 betas_ = reshape(betas_, [nb*nh,nabmn]);
-fos_ = read_bin(strcat(path_read,'/fos_'),[nb*nabmn,1],'double');
+fos_ = read_bin(strcat(path_read,'fos_'),[nb*nabmn,1],'double');
 fos_ = reshape(fos_, [nb,nabmn]);
 % ------------------------------------------------------------------------------
 dt=2.5e-4; t=(0:(nt-1))*dt;t=t.';t=t+0.01525;

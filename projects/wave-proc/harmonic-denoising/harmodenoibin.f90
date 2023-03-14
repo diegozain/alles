@@ -18,7 +18,7 @@ program harmodenoibin
  double precision, allocatable :: h(:), alphas(:), betas(:), fos(:), t(:), uo(:)
  real, allocatable :: dataips(:,:)
  double precision, allocatable :: alphas_(:), betas_(:), fos_(:)
- real, allocatable :: dataips_(:)
+ real(kind(1e0)), allocatable :: dataips_(:)
 
  ! 📟
  integer :: it, ih, ib, ibh, iabmn, nn
@@ -182,7 +182,7 @@ program harmodenoibin
    call harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,hyperparam,nhyper)
    ! 🔽🔀
    do it=1,nttrim
-     dataips_(it + (iabmn-1)*nttrim) = real(uo(it))
+     dataips_(it + (iabmn-1)*nttrim) = sngl(uo(it))
    enddo
    do ibh=1,nb*nh
      alphas_(ibh + (iabmn-1)*nb*nh) = alphas(ibh)
