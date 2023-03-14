@@ -25,7 +25,7 @@ path_read='../bin/save/';
 dataips__size= read_bin(strcat(path_read,'/dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
 nabmn = dataips__size(2);
-dataips_ = read_bin(strcat(path_read,'/dataips_'),[nt_*nabmn,1],'double');
+dataips_ = read_bin(strcat(path_read,'/dataips_'),[nt_*nabmn,1],'single');
 dataips_ = reshape(dataips_, [nt_,nabmn]);
 
 bafos_size= read_bin(strcat(path_read,'/bafos_size'),[3,1],'uint32');

@@ -18,7 +18,7 @@ program harmodenoibin
  double precision, allocatable :: h(:), alphas(:), betas(:), fos(:), t(:), uo(:)
  real, allocatable :: dataips(:,:)
  double precision, allocatable :: alphas_(:), betas_(:), fos_(:)
- double precision, allocatable :: dataips_(:)
+ real, allocatable :: dataips_(:)
 
  ! 📟
  integer :: it, ih, ib, ibh, iabmn, nn
@@ -32,7 +32,7 @@ program harmodenoibin
 
  ! ⬜⬛ openMP
  ! in 💩 & 🚀 uncomment this one, comment next1
- integer, parameter :: nthreads=8
+ integer, parameter :: nthreads=10
  ! integer :: nthreads
  integer :: stacksize
 
@@ -87,12 +87,12 @@ program harmodenoibin
  hyperparam(5) = 1e-8
  hyperparam(6) = 1e-2
  ! nparabo_fos & nparabo_a & nparabo_b
- hyperparam(7) = 500
- hyperparam(8) = 300
- hyperparam(9) = 300
+ hyperparam(7) = 20
+ hyperparam(8) = 50
+ hyperparam(9) = 50
  ! niter_fos & niter_ab
  hyperparam(10) = 6
- hyperparam(11) = 20
+ hyperparam(11) = 6
  ! -----------------------------------------------------------------------------
  dt = 2.5e-4 ! sec
  fo = 9      ! Hz
@@ -148,7 +148,7 @@ program harmodenoibin
  ! in 💩 & 🚀 uncomment this one, comment next1
  call omp_set_num_threads(nthreads)
 !  nthreads = omp_get_max_threads()
- call kmp_set_stacksize_s(1600000) ! 8000000 = 8 Gb
+ call kmp_set_stacksize_s(500000) ! 8000000 = 8 Gb
  stacksize = kmp_get_stacksize_s()
  print *, '    # of threads is',nthreads
  print *, '    stack size = ',dble(stacksize)/10**6,'Gb'
@@ -182,7 +182,7 @@ program harmodenoibin
    call harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,hyperparam,nhyper)
    ! 🔽🔀
    do it=1,nttrim
-     dataips_(it + (iabmn-1)*nttrim) = uo(it)
+     dataips_(it + (iabmn-1)*nttrim) = real(uo(it))
    enddo
    do ibh=1,nb*nh
      alphas_(ibh + (iabmn-1)*nb*nh) = alphas(ibh)
@@ -205,7 +205,7 @@ program harmodenoibin
  mati_size(2) = nabmn
  call save_vec_int(mati_size,3,name_,1)
  name_ = trim(path_save) // 'dataips_.bin'
- call save_vec_dbl(dataips_,nttrim*nabmn,name_,1)
+ call save_vec_sgl(dataips_,nttrim*nabmn,name_,1)
  name_ = trim(path_save) // 'bafos_size.bin'
  mati_size(1) = nb
  mati_size(2) = nh

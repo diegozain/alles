@@ -104,6 +104,17 @@ subroutine save_vec_int(mati,nlen,filename,id)
   close(id)
 end subroutine save_vec_int
 ! ------------------------------------------------------------------------------
+subroutine save_vec_sgl(mati,nlen,filename,id)
+  character(*), intent(in) :: filename
+  integer, intent(in) :: nlen, id
+  real, intent(in out) :: mati(nlen)
+  integer :: imati
+
+  open(unit=id,file=filename,access='stream',form='unformatted')
+  write(id) (mati(imati),imati=1,nlen)
+  close(id)
+end subroutine save_vec_sgl
+! ------------------------------------------------------------------------------
 subroutine save_vec_dbl(mati,nlen,filename,id)
   character(*), intent(in) :: filename
   integer, intent(in) :: nlen, id
