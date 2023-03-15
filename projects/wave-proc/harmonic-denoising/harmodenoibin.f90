@@ -32,7 +32,7 @@ program harmodenoibin
 
  ! ⬜⬛ openMP
  ! in 💩 & 🚀 uncomment this one, comment next1
- integer, parameter :: nthreads=10
+ integer, parameter :: nthreads=4 ! 🚀 ⟶ 10 • 💩 ⟶ 4.
  ! integer :: nthreads
  integer :: stacksize
 

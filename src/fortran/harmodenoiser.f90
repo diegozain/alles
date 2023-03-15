@@ -337,9 +337,9 @@ subroutine hd_obj(objfnc_,error_,data_, datao_, OBJ, nd)
   double precision, intent(in out) :: objfnc_, error_(nd)
   ! ----------------------------------------------------------------------------
   ! OBJ =
-  !       0 : sum of squared residuals        Θ = ∑ e
+  !       0 : sum of squared residuals        Θ = ∑ e²
   !       1 : log( sum of squared residuals ) Θ = ∑ log(e)
-  !       2 : entropy                         Θ = - ∑ e^2 ⋅ log( e^2 )
+  !       2 : entropy                         Θ = - ∑ e² ⋅ log( e² )
   ! ----------------------------------------------------------------------------
   objfnc_ = 0
   do id_=1,nd
@@ -508,7 +508,7 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
 
   integer :: ibh, ib, ih, iter
   double precision :: dt, x_, objfnc_, error_(nt)
-  
+
   double precision :: k_fos_,k_fos__,k_alphas_,k_alphas__,k_betas_,k_betas__
   integer :: nparabo_fos,nparabo_a,nparabo_b,niter_fos,niter_ab
 
@@ -517,7 +517,7 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
   integer, allocatable :: iob_fos(:), iob_ab(:)
 
   double precision :: uh(nt), g_alphas(nh*nb), g_betas(nh*nb), g_fos(nb)
-  double precision :: step_alphas, step_betas, step_fos
+  double precision :: step_alphas, step_betas, step_fos, uonorm, uonorm_
   ! ----------------------------------------------------------------------------
   !                    💠 initial guess for α & β & fos 💠
   ! ----------------------------------------------------------------------------
@@ -624,10 +624,19 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
   !                          👉 last pass 👉
   ! ----------------------------------------------------------------------------
   call hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
-  ! overwrite uo with solution
+  ! 😮
+  uonorm =0
+  uonorm_=0
   do it=1,nt
-    uo(it) = uo(it) - uh(it)
+    uonorm = uonorm + uo(it)**2
+    uonorm_= uonorm_ + (uo(it) - uh(it))**2
   enddo
+  if (unorm_ < unorm) then
+    ! overwrite uo with solution
+    do it=1,nt
+      uo(it) = uo(it) - uh(it)
+    enddo
+  endif
   call window_mean(uo,nt,nw)
   ! ----------------------------------------------------------------------------
   ! 🚿
