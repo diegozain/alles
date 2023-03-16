@@ -142,3 +142,5 @@ nt_ →  |    *   | · α    ⟶    |-2·pi·t·h| ⊙ |sin(2·pi·fo·t·h)| ·
 [![](../pics/harmodenoi-synt.png)](./)
 
 [![](vis/harmodenoi.png)](./)
+
+[![](vis/clu16-9hz-alfabetfos.png)](./)

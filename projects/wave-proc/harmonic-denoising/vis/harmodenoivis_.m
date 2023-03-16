@@ -5,7 +5,10 @@ clc
 addpath('../../../pdes/dc-xbore-vis/src/')
 % ------------------------------------------------------------------------------
 path_read='../bin/save/';
-
+path_read='E:/data/foralles/precis-clu16/round1/worse/save/';
+path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
+% path_read='E:/data/foralles/noise-clu16/save/';
+% ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
 nabmn = dataips__size(2);
@@ -23,7 +26,10 @@ fos_ = read_bin(strcat(path_read,'fos_'),[nb*nabmn,1],'double');
 fos_ = reshape(fos_, [nb,nabmn]);
 % ------------------------------------------------------------------------------
 path_read='../bin/read/';
-
+path_read='E:/data/foralles/precis-clu16/round1/worse/read/';
+path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
+% path_read='E:/data/foralles/noise-clu16/read/';
+% ------------------------------------------------------------------------------
 % abmn_bids = read_bin(strcat(path_read,'abmn_bids'),[nabmn,7],'uint32');
 
 abmn = read_bin(strcat(path_read,'abmn'),[nabmn,4],'uint32');
@@ -46,8 +52,17 @@ dataips(:,ibad) = [];
 abmn(ibad,:) = [];
 nabmn=size(abmn,1);
 % ------------------------------------------------------------------------------
+%                                      💾
+% ------------------------------------------------------------------------------
+save('dataips_','dataips_','-v7.3');
+save('dataips','dataips','-v7.3');
+save('alphas_','alphas_');
+save('betas_','betas_');
+save('fos_','fos_');
+save('abmn','abmn');
+% ------------------------------------------------------------------------------
 %                                       tx
-%                                 rx •---∘---• rx                   
+%                                 rx •---∘---• rx
 % ------------------------------------------------------------------------------
 % abmn_bids(ibad,:) = [];
 % iabmnrx_=[];
@@ -61,7 +76,7 @@ nabmn=size(abmn,1);
 %   end
 % end
 % iabmnrx_=unique(iabmnrx_);
-
+%
 % abmn_bids(iabmnrx_,:) = [];
 % fos_(iabmnrx_) = [];
 % alphas_(:,iabmnrx_) = [];
@@ -71,22 +86,22 @@ nabmn=size(abmn,1);
 % abmn(iabmnrx_,:) = [];
 % nabmn=size(abmn,1);
 % ------------------------------------------------------------------------------
-%                                      💾
-% ------------------------------------------------------------------------------
-% save('dataips_','dataips_','-v7.3');
-% save('dataips','dataips','-v7.3');
-% save('alphas_','alphas_');
-% save('betas_','betas_');
-% save('fos_','fos_');
-% save('abmn','abmn');
-% ------------------------------------------------------------------------------
-%                                    α + β
+%                                 α + β , 𝐟ₒ
 % ------------------------------------------------------------------------------
 betas = sum(abs(betas_),1);
 alphas= sum(abs(alphas_),1);
 alfabet = alphas + betas;
 alfabetfos = [alfabet; fos_];
 alfabetfos = alfabetfos.';
+
+[~ , isortab] = sort(alfabetfos(:,1));
+alfabetfos = alfabetfos(isortab,:);
+fos_=fos_(isortab);
+alfabet=alfabet(isortab);
+dataips_ = dataips_(:,isortab);
+dataips = dataips(:,isortab);
+abmn = abmn(isortab,:);
+
 alfabetfos(:,1) = (alfabetfos(:,1) - mean(alfabetfos(:,1))) / std(alfabetfos(:,1));
 alfabetfos(:,2) = (alfabetfos(:,2) - mean(alfabetfos(:,2))) / std(alfabetfos(:,2));
 % ------------------------------------------------------------------------------
@@ -94,12 +109,11 @@ alfabetfos(:,2) = (alfabetfos(:,2) - mean(alfabetfos(:,2))) / std(alfabetfos(:,2
 % ------------------------------------------------------------------------------
 % nrow=1; ncol=5;
 % nrow=5; ncol=10;
-nrow=1; ncol=5;
+nrow=1; ncol=4;
 nclus=nrow*ncol;
 
 [iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
 % [iclus,clusos] = kmeans(fos_.',nclus,'Distance','sqeuclidean');
-
 
 clussizes = zeros(nclus,1);
 for iclu=1:nclus
@@ -178,28 +192,30 @@ for iclu=1:nclus
   ylabel('')
 end
 % ------------------------------------------------------------------------------
+%                                  🕐🔌
+% ------------------------------------------------------------------------------
 dt=2.5e-4;
 t_=(0:(nt_-1))*dt;t_=t_.';t_=t_+0.01525;
 t=(0:(nt-1))*dt;t=t.';t=t+0.01525;
 % ------------------------------------------------------------------------------
-dataips = dataips - repmat(dataips(1,:),[nt,1]);
-dataips_= dataips_ - repmat(dataips_(1,:),[nt_,1]);
+% dataips = dataips - repmat(dataips(1,:),[nt,1]);
+% dataips_= dataips_ - repmat(dataips_(1,:),[nt_,1]);
 % ------------------------------------------------------------------------------
 mini_=min(dataips_(:));
 maxi_=max(dataips_(:));
 % ------------------------------------------------------------------------------
-% figure;
-% for iclu=1:nclus
-%   subplot(nrow,ncol,iclu)
-%   semilogx(t_,dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
-%   ylim([mini_,maxi_])
-%   xlim([1e-2,2]);
-%   xticks([1e-2,1e-1,1])
-%   axis square;
-%   grid on;
-%   xlabel('Time (sec)')
-%   ylabel('')
-%   simple_figure()
-% end
+figure;
+for iclu=1:nclus
+  subplot(nrow,ncol,iclu)
+  semilogx(t_,dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
+  ylim([mini_,maxi_])
+  xlim([1e-2,2]);
+  xticks([1e-2,1e-1,1])
+  axis square;
+  grid on;
+  xlabel('Time (sec)')
+  ylabel('Voltage (V)')
+  simple_figure()
+end
 % ------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------

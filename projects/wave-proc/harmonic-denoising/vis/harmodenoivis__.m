@@ -5,7 +5,9 @@ clc
 addpath('../../../pdes/dc-xbore-vis/src/')
 % ------------------------------------------------------------------------------
 path_read='../bin/save/';
-
+path_read='E:/data/foralles/klus4clara/save/';
+path_read='E:/data/foralles/precis-clu16/round1/src9hz/save/';
+% ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
 nabmn = dataips__size(2);
@@ -23,7 +25,9 @@ fos_ = read_bin(strcat(path_read,'fos_'),[nb*nabmn,1],'double');
 fos_ = reshape(fos_, [nb,nabmn]);
 % ------------------------------------------------------------------------------
 path_read='../bin/read/';
-
+path_read='E:/data/foralles/klus4clara/read/';
+path_read='E:/data/foralles/precis-clu16/round1/src9hz/read/';
+% ------------------------------------------------------------------------------
 dataips_size= read_bin(strcat(path_read,'dataips_size'),[3,1],'uint32');
 nt = dataips_size(1);
 dataips = read_bin(strcat(path_read,'dataips'),[nt*nabmn,1],'single');
@@ -49,13 +53,21 @@ dataips(:,ibad) = [];
 % save('betas_','betas_');
 % save('fos_','fos_');
 % ------------------------------------------------------------------------------
-%                                    α + β
+%                                  α + β , 𝐟ₒ
 % ------------------------------------------------------------------------------
 betas = sum(abs(betas_),1);
 alphas= sum(abs(alphas_),1);
 alfabet = alphas + betas;
 alfabetfos = [alfabet; fos_];
 alfabetfos = alfabetfos.';
+
+[~ , isortab] = sort(alfabetfos(:,1));
+alfabetfos = alfabetfos(isortab,:);
+fos_=fos_(isortab);
+alfabet=alfabet(isortab);
+dataips_ = dataips_(:,isortab);
+dataips = dataips(:,isortab);
+
 alfabetfos(:,1) = (alfabetfos(:,1) - mean(alfabetfos(:,1))) / std(alfabetfos(:,1));
 alfabetfos(:,2) = (alfabetfos(:,2) - mean(alfabetfos(:,2))) / std(alfabetfos(:,2));
 % ------------------------------------------------------------------------------
@@ -63,11 +75,11 @@ alfabetfos(:,2) = (alfabetfos(:,2) - mean(alfabetfos(:,2))) / std(alfabetfos(:,2
 % ------------------------------------------------------------------------------
 % nrow=1; ncol=5;
 % nrow=5; ncol=10;
-nrow=1; ncol=5;
+nrow=1; ncol=3;
 nclus=nrow*ncol;
 
-% [iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
-[iclus,clusos] = kmeans(fos_.',nclus,'Distance','sqeuclidean');
+[iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
+% [iclus,clusos] = kmeans(fos_.',nclus,'Distance','sqeuclidean');
 
 
 clussizes = zeros(nclus,1);
