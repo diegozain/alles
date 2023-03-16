@@ -16,13 +16,14 @@ function simple_figure()
   % % ax.Title.Interpreter = 'latex';
   % --
   % axis stuff
-  ax.TickLength = [0 0];
+  ax.TickDir='out';
+  ax.TickLength = [0.015 0.015]; % [0.015 0.015] [0 0]
   % ax.TitleFontSizeMultiplier = 1.5;
   % % --
   % % save stuff
   % % print( variable, 'name', '-dfileextension', '-rresolution' )
   % % examples:
-  % % print(gcf,'figure-example','-dpng','-r1000')
+  % % print(gcf,'figure-example','-dpng','-r350')
   % % print(gcf,'figure-example','-dpdf')
   % % 
   % % fig = gcf;fig.PaperPositionMode = 'auto';

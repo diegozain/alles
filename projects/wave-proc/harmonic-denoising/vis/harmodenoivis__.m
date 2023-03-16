@@ -24,9 +24,6 @@ fos_ = reshape(fos_, [nb,nabmn]);
 % ------------------------------------------------------------------------------
 path_read='../bin/read/';
 
-% abmn_bids = read_bin(strcat(path_read,'abmn_bids'),[nabmn,7],'uint32');
-
-abmn = read_bin(strcat(path_read,'abmn'),[nabmn,4],'uint32');
 dataips_size= read_bin(strcat(path_read,'dataips_size'),[3,1],'uint32');
 nt = dataips_size(1);
 dataips = read_bin(strcat(path_read,'dataips'),[nt*nabmn,1],'single');
@@ -43,33 +40,6 @@ alphas_(:,ibad) = [];
 betas_(:,ibad) = [];
 dataips_(:,ibad) = [];
 dataips(:,ibad) = [];
-abmn(ibad,:) = [];
-nabmn=size(abmn,1);
-% ------------------------------------------------------------------------------
-%                                       tx
-%                                 rx •---∘---• rx                   
-% ------------------------------------------------------------------------------
-% abmn_bids(ibad,:) = [];
-% iabmnrx_=[];
-% for iabmn=1:nabmn
-%   abid=abmn_bids(iabmn,5);
-%   if (abid==abmn_bids(iabmn,6))
-%     iabmnrx_=[iabmnrx_; iabmn];
-%   end
-%   if (abid==abmn_bids(iabmn,7))
-%     iabmnrx_=[iabmnrx_; iabmn];
-%   end
-% end
-% iabmnrx_=unique(iabmnrx_);
-
-% abmn_bids(iabmnrx_,:) = [];
-% fos_(iabmnrx_) = [];
-% alphas_(:,iabmnrx_) = [];
-% betas_(:,iabmnrx_) = [];
-% dataips_(:,iabmnrx_) = [];
-% dataips(:,iabmnrx_) = [];
-% abmn(iabmnrx_,:) = [];
-% nabmn=size(abmn,1);
 % ------------------------------------------------------------------------------
 %                                      💾
 % ------------------------------------------------------------------------------
@@ -78,7 +48,6 @@ nabmn=size(abmn,1);
 % save('alphas_','alphas_');
 % save('betas_','betas_');
 % save('fos_','fos_');
-% save('abmn','abmn');
 % ------------------------------------------------------------------------------
 %                                    α + β
 % ------------------------------------------------------------------------------
@@ -97,8 +66,8 @@ alfabetfos(:,2) = (alfabetfos(:,2) - mean(alfabetfos(:,2))) / std(alfabetfos(:,2
 nrow=1; ncol=5;
 nclus=nrow*ncol;
 
-[iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
-% [iclus,clusos] = kmeans(fos_.',nclus,'Distance','sqeuclidean');
+% [iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
+[iclus,clusos] = kmeans(fos_.',nclus,'Distance','sqeuclidean');
 
 
 clussizes = zeros(nclus,1);
@@ -125,7 +94,7 @@ hold off;
 axis tight;
 axis square;
 ylabel('Frequency (Hz)')
-xlabel('# of abmn')
+xlabel('# of ab')
 simple_figure()
 
 subplot(2,2,2)
@@ -138,7 +107,7 @@ hold off;
 axis tight;
 axis square;
 ylabel('α + β')
-xlabel('# of abmn')
+xlabel('# of ab')
 simple_figure()
 
 subplot(2,2,3)
@@ -151,7 +120,7 @@ hold off;
 axis tight;
 axis square;
 xlabel('Cluster #')
-ylabel('# of abmn')
+ylabel('# of ab')
 simple_figure()
 
 subplot(2,2,4)
@@ -166,40 +135,27 @@ ylabel('α + β')
 xlabel('Frequency (Hz)')
 simple_figure()
 % ------------------------------------------------------------------------------
-figure;
-for iclu=1:nclus
-  subplot(nrow,ncol,iclu)
-  plot_abmn(abmn(find(iclus==iclu),:))
-  ylim([1 128])
-  set(gca,'xtick',[])
-  set(gca,'ytick',[])
-  axis square;
-  xlabel('')
-  ylabel('')
-end
-% ------------------------------------------------------------------------------
 dt=2.5e-4;
-t_=(0:(nt_-1))*dt;t_=t_.';t_=t_+0.01525;
-t=(0:(nt-1))*dt;t=t.';t=t+0.01525;
+t_=(0:(nt_-1))*dt;t_=t_.';
+t=(0:(nt-1))*dt;t=t.';
 % ------------------------------------------------------------------------------
-dataips = dataips - repmat(dataips(1,:),[nt,1]);
-dataips_= dataips_ - repmat(dataips_(1,:),[nt_,1]);
+% dataips = dataips - repmat(dataips(1,:),[nt,1]);
+% dataips_= dataips_ - repmat(dataips_(1,:),[nt_,1]);
 % ------------------------------------------------------------------------------
 mini_=min(dataips_(:));
 maxi_=max(dataips_(:));
 % ------------------------------------------------------------------------------
-% figure;
-% for iclu=1:nclus
-%   subplot(nrow,ncol,iclu)
-%   semilogx(t_,dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
-%   ylim([mini_,maxi_])
-%   xlim([1e-2,2]);
-%   xticks([1e-2,1e-1,1])
-%   axis square;
-%   grid on;
-%   xlabel('Time (sec)')
-%   ylabel('')
-%   simple_figure()
-% end
+figure;
+for iclu=1:nclus
+  subplot(nrow,ncol,iclu)
+  semilogx(t_,1e3*dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
+  ylim([mini_,maxi_]*1e3)
+  xticks([1e-2,1e-1,1])
+  axis square;
+  grid on;
+  xlabel('Time (sec)')
+  ylabel('')
+  simple_figure()
+end
 % ------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------
