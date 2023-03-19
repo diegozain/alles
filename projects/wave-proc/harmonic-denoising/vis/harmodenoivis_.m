@@ -7,7 +7,7 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 path_read='../bin/save/';
 path_read='E:/data/foralles/precis-clu16/round1/worse/save/';
 path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
-path_read='E:/data/foralles/noise-clu16/save/';
+% path_read='E:/data/foralles/noise-clu16/save/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -28,7 +28,7 @@ fos_ = reshape(fos_, [nb,nabmn]);
 path_read='../bin/read/';
 path_read='E:/data/foralles/precis-clu16/round1/worse/read/';
 path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
-path_read='E:/data/foralles/noise-clu16/read/';
+% path_read='E:/data/foralles/noise-clu16/read/';
 % ------------------------------------------------------------------------------
 % abmn_bids = read_bin(strcat(path_read,'abmn_bids'),[nabmn,7],'uint32');
 
@@ -64,7 +64,18 @@ nabmn=size(abmn,1);
 %                                cable 3 was flipped
 %
 % ------------------------------------------------------------------------------
-
+% 16 10 13 14
+u =((32*2+1):(32*3)).';
+v =flip(u);
+u=(1:32*4).';
+v=[(1:32*2).' ; v ; ((32*3+1):32*4).'];
+f = translate_u2v(u,v);
+for iabmn=1:nabmn
+  abmn(iabmn,1) = f(abmn(iabmn,1));
+  abmn(iabmn,2) = f(abmn(iabmn,2));
+  abmn(iabmn,3) = f(abmn(iabmn,3));
+  abmn(iabmn,4) = f(abmn(iabmn,4));
+end
 % ------------------------------------------------------------------------------
 %                                 α + β , 𝐟ₒ
 % ------------------------------------------------------------------------------
@@ -89,7 +100,7 @@ alfabetfos(:,2) = (alfabetfos(:,2) - mean(alfabetfos(:,2))) / std(alfabetfos(:,2
 % ------------------------------------------------------------------------------
 % nrow=1; ncol=4;
 % nrow=5; ncol=10;
-nrow=5; ncol=10;
+nrow=1; ncol=4;
 nclus=nrow*ncol;
 
 [iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
@@ -196,22 +207,51 @@ t=(0:(nt-1))*dt;t=t.';t=t+0.01525;
 mini_=min(dataips_(:));
 maxi_=max(dataips_(:));
 % ------------------------------------------------------------------------------
-% figure;
-% for iclu=1:nclus
-%   subplot(nrow,ncol,iclu)
-%   semilogx(t_,dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
-%   ylim([mini_,maxi_])
-%   xlim([1e-2,2]);
-%   % xticks([1e-2,1e-1,1])
-%   % axis square;
-%   % grid on;
-%   % xlabel('Time (sec)')
-%   % ylabel('Voltage (V)')
-%   set(gca,'xtick',[])
-%   set(gca,'ytick',[])
-%   xlabel('')
-%   ylabel('')
-%   simple_figure()
-% end
+figure;
+for iclu=1:nclus
+  subplot(nrow,ncol,iclu)
+  semilogx(t_,dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
+  ylim([mini_,maxi_])
+  xlim([1e-2,2]);
+  axis square;
+  % xticks([1e-2,1e-1,1])
+  % xlabel('Time (sec)')
+  % ylabel('Voltage (V)')
+  set(gca,'xtick',[])
+  set(gca,'ytick',[])
+  xlabel('')
+  ylabel('')
+  simple_figure()
+end
 % ------------------------------------------------------------------------------
+%
+%              ▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦
+%              ▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦
+%              ▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦
+%              ▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦
+%              ▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦▦
+%
+% ------------------------------------------------------------------------------
+% addpath('../../../pdes/dc-xbore-vis/src/');
+%
+% electxyzclu_size= read_bin(strcat(path_read,'electxyzclu_size'),[3,1],'uint32');
+% nelect = electxyzclu_size(1);
+% electxyzclu = read_bin(strcat(path_read,'electxyzclu'),[nelect,3],'double');
+%
+% tic;
+% pseud = xbore_pseudo(electxyzclu,abmn);
+% toc;
+%
+% klusdata=zeros(nabmn,1);
+% for iclu=1:nclus
+%   klusdata(find(iclus==iclu)) = iclu;
+% end
+%
+% pseudats_plot3d(electxyzclu,pseud,klusdata,80,'Cluster #');
+% colormap(rgb)
+%
+% pseudats_plot3d(electxyzclu,pseud,alfabet,80,'α + β');
+% rgb_=cytwombly_;
+% rgb_=normalizergb(rgb_,min(alfabet),0.02,max(alfabet));
+% colormap(rgb_)
 % ------------------------------------------------------------------------------

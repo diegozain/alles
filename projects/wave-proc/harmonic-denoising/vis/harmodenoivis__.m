@@ -163,8 +163,9 @@ for iclu=1:nclus
   ylim([mini_,maxi_]*1e3)
   xticks([1e-2,1e-1,1])
   axis square;
-  grid on;
-  xlabel('Time (sec)')
+  set(gca,'xtick',[])
+  set(gca,'ytick',[])
+  xlabel('')
   ylabel('')
   simple_figure()
 end
