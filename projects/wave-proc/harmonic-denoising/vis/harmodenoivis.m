@@ -3,13 +3,14 @@ clear
 clc
 % ------------------------------------------------------------------------------
 path_read='../bin/read/';
+path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
 
 dataips_size= read_bin(strcat(path_read,'dataips_size'),[3,1],'uint32');
 nt = dataips_size(1);
 nabmn = dataips_size(2);
 dataips = read_bin(strcat(path_read,'dataips'),[nt,nabmn],'single');
-abmn = read_bin(strcat(path_read,'abmn'),[nabmn,4],'uint32');
 % ------------------------------------------------------------------------------
+% abmn = read_bin(strcat(path_read,'abmn'),[nabmn,4],'uint32');
 % rschecks = read_bin(strcat(path_read,'rschecks'),[nabmn,1],'uint32');
 % ikeep=find(rschecks);
 % dataips = dataips(:,ikeep);
@@ -21,6 +22,7 @@ abmn = read_bin(strcat(path_read,'abmn'),[nabmn,4],'uint32');
 % save_bin(strcat(path_read,'dataips'),dataips,'single');
 % ------------------------------------------------------------------------------
 path_read='../bin/save/';
+path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
 
 dataips__size= read_bin(strcat(path_read,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
