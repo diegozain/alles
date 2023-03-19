@@ -7,7 +7,7 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 path_read='../bin/save/';
 path_read='E:/data/foralles/precis-clu16/round1/worse/save/';
 path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
-% path_read='E:/data/foralles/noise-clu16/save/';
+path_read='E:/data/foralles/noise-clu16/save/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -28,7 +28,7 @@ fos_ = reshape(fos_, [nb,nabmn]);
 path_read='../bin/read/';
 path_read='E:/data/foralles/precis-clu16/round1/worse/read/';
 path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
-% path_read='E:/data/foralles/noise-clu16/read/';
+path_read='E:/data/foralles/noise-clu16/read/';
 % ------------------------------------------------------------------------------
 % abmn_bids = read_bin(strcat(path_read,'abmn_bids'),[nabmn,7],'uint32');
 
@@ -54,37 +54,17 @@ nabmn=size(abmn,1);
 % ------------------------------------------------------------------------------
 %                                      💾
 % ------------------------------------------------------------------------------
-save('dataips_','dataips_','-v7.3');
-save('dataips','dataips','-v7.3');
-save('alphas_','alphas_');
-save('betas_','betas_');
-save('fos_','fos_');
-save('abmn','abmn');
+% save('dataips_','dataips_','-v7.3');
+% save('dataips','dataips','-v7.3');
+% save('alphas_','alphas_');
+% save('betas_','betas_');
+% save('fos_','fos_');
+% save('abmn','abmn');
 % ------------------------------------------------------------------------------
-%                                       tx
-%                                 rx •---∘---• rx
-% ------------------------------------------------------------------------------
-% abmn_bids(ibad,:) = [];
-% iabmnrx_=[];
-% for iabmn=1:nabmn
-%   abid=abmn_bids(iabmn,5);
-%   if (abid==abmn_bids(iabmn,6))
-%     iabmnrx_=[iabmnrx_; iabmn];
-%   end
-%   if (abid==abmn_bids(iabmn,7))
-%     iabmnrx_=[iabmnrx_; iabmn];
-%   end
-% end
-% iabmnrx_=unique(iabmnrx_);
+%                                cable 3 was flipped
 %
-% abmn_bids(iabmnrx_,:) = [];
-% fos_(iabmnrx_) = [];
-% alphas_(:,iabmnrx_) = [];
-% betas_(:,iabmnrx_) = [];
-% dataips_(:,iabmnrx_) = [];
-% dataips(:,iabmnrx_) = [];
-% abmn(iabmnrx_,:) = [];
-% nabmn=size(abmn,1);
+% ------------------------------------------------------------------------------
+
 % ------------------------------------------------------------------------------
 %                                 α + β , 𝐟ₒ
 % ------------------------------------------------------------------------------
@@ -107,9 +87,9 @@ alfabetfos(:,2) = (alfabetfos(:,2) - mean(alfabetfos(:,2))) / std(alfabetfos(:,2
 % ------------------------------------------------------------------------------
 %                                     🌂
 % ------------------------------------------------------------------------------
-% nrow=1; ncol=5;
+% nrow=1; ncol=4;
 % nrow=5; ncol=10;
-nrow=1; ncol=4;
+nrow=5; ncol=10;
 nclus=nrow*ncol;
 
 [iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
@@ -192,6 +172,18 @@ for iclu=1:nclus
   ylabel('')
 end
 % ------------------------------------------------------------------------------
+figure;
+hold on;
+for iclu=1:nclus
+  plot(iclu,clusos(iclu),'.','markersize',40,'color',rgb(iclu,:))
+end
+axis tight;
+axis square;
+grid on;
+xlabel('Cluster #')
+ylabel('Frequency (Hz)')
+simple_figure()
+% ------------------------------------------------------------------------------
 %                                  🕐🔌
 % ------------------------------------------------------------------------------
 dt=2.5e-4;
@@ -204,18 +196,22 @@ t=(0:(nt-1))*dt;t=t.';t=t+0.01525;
 mini_=min(dataips_(:));
 maxi_=max(dataips_(:));
 % ------------------------------------------------------------------------------
-figure;
-for iclu=1:nclus
-  subplot(nrow,ncol,iclu)
-  semilogx(t_,dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
-  ylim([mini_,maxi_])
-  xlim([1e-2,2]);
-  xticks([1e-2,1e-1,1])
-  axis square;
-  grid on;
-  xlabel('Time (sec)')
-  ylabel('Voltage (V)')
-  simple_figure()
-end
+% figure;
+% for iclu=1:nclus
+%   subplot(nrow,ncol,iclu)
+%   semilogx(t_,dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
+%   ylim([mini_,maxi_])
+%   xlim([1e-2,2]);
+%   % xticks([1e-2,1e-1,1])
+%   % axis square;
+%   % grid on;
+%   % xlabel('Time (sec)')
+%   % ylabel('Voltage (V)')
+%   set(gca,'xtick',[])
+%   set(gca,'ytick',[])
+%   xlabel('')
+%   ylabel('')
+%   simple_figure()
+% end
 % ------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------

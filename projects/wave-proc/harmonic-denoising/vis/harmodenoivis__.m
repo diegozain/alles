@@ -81,7 +81,6 @@ nclus=nrow*ncol;
 [iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
 % [iclus,clusos] = kmeans(fos_.',nclus,'Distance','sqeuclidean');
 
-
 clussizes = zeros(nclus,1);
 for iclu=1:nclus
   clussizes(iclu) = numel(find(iclus==iclu));
