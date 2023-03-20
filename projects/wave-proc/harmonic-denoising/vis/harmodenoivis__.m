@@ -96,10 +96,10 @@ rgb=cuatrocolo(nclus);
 
 figure;
 subplot(2,2,1)
-semilogx(fos_(find(iclus==1)),'.','markersize',5,'color',rgb(1,:))
+semilogx(fos_(find(iclus==1)),'.','markersize',15,'color',rgb(1,:))
 hold on;
 for iclu=2:nclus
-  semilogx(fos_(find(iclus==iclu)),'.','markersize',5,'color',rgb(iclu,:))
+  semilogx(fos_(find(iclus==iclu)),'.','markersize',15,'color',rgb(iclu,:))
 end
 hold off;
 axis tight;
@@ -109,10 +109,10 @@ xlabel('# of ab')
 simple_figure()
 
 subplot(2,2,2)
-semilogx(alfabet(find(iclus==1)),'.','markersize',5,'color',rgb(1,:))
+semilogx(alfabet(find(iclus==1)),'.','markersize',15,'color',rgb(1,:))
 hold on;
 for iclu=2:nclus
-  semilogx(alfabet(find(iclus==iclu)),'.','markersize',5,'color',rgb(iclu,:))
+  semilogx(alfabet(find(iclus==iclu)),'.','markersize',15,'color',rgb(iclu,:))
 end
 hold off;
 axis tight;
@@ -137,7 +137,7 @@ simple_figure()
 subplot(2,2,4)
 hold on;
 for iclu=1:nclus
-  plot(fos_(find(iclus==iclu)),alfabet(find(iclus==iclu)),'.','markersize',10,'color',rgb(iclu,:))
+  plot(fos_(find(iclus==iclu)),alfabet(find(iclus==iclu)),'.','markersize',15,'color',rgb(iclu,:))
 end
 hold off;
 axis tight;

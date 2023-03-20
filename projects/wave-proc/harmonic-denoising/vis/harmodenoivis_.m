@@ -7,7 +7,7 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 path_read='../bin/save/';
 path_read='E:/data/foralles/precis-clu16/round1/worse/save/';
 path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
-% path_read='E:/data/foralles/noise-clu16/save/';
+path_read='E:/data/foralles/noise-clu16/save/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -28,7 +28,7 @@ fos_ = reshape(fos_, [nb,nabmn]);
 path_read='../bin/read/';
 path_read='E:/data/foralles/precis-clu16/round1/worse/read/';
 path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
-% path_read='E:/data/foralles/noise-clu16/read/';
+path_read='E:/data/foralles/noise-clu16/read/';
 % ------------------------------------------------------------------------------
 % abmn_bids = read_bin(strcat(path_read,'abmn_bids'),[nabmn,7],'uint32');
 
@@ -100,11 +100,11 @@ alfabetfos(:,2) = (alfabetfos(:,2) - mean(alfabetfos(:,2))) / std(alfabetfos(:,2
 % ------------------------------------------------------------------------------
 % nrow=1; ncol=4;
 % nrow=5; ncol=10;
-nrow=1; ncol=4;
+nrow=5; ncol=10;
 nclus=nrow*ncol;
 
-[iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
-% [iclus,clusos] = kmeans(fos_.',nclus,'Distance','sqeuclidean');
+% [iclus,clusos] = kmeans(alfabetfos,nclus,'Distance','cosine');
+[iclus,clusos] = kmeans(fos_.',nclus,'Distance','sqeuclidean');
 
 clussizes = zeros(nclus,1);
 for iclu=1:nclus
@@ -198,8 +198,19 @@ simple_figure()
 %                                  🕐🔌
 % ------------------------------------------------------------------------------
 dt=2.5e-4;
-t_=(0:(nt_-1))*dt;t_=t_.';t_=t_+0.01525;
-t=(0:(nt-1))*dt;t=t.';t=t+0.01525;
+t_=(0:(nt_-1))*dt;t_=t_.';
+% t_=t_+0.01525;
+t=(0:(nt-1))*dt;t=t.';
+% t=t+0.01525;
+% ------------------------------------------------------------------------------
+ito=binning(t,2);
+ito_=binning(t_,2);
+t=t(1:ito);
+t_=t_(1:ito_);
+nt=numel(t);
+nt_=numel(t_);
+dataips = dataips(1:ito,:);
+dataips_ = dataips_(1:ito_,:);
 % ------------------------------------------------------------------------------
 % dataips = dataips - repmat(dataips(1,:),[nt,1]);
 % dataips_= dataips_ - repmat(dataips_(1,:),[nt_,1]);
@@ -212,7 +223,8 @@ for iclu=1:nclus
   subplot(nrow,ncol,iclu)
   semilogx(t_,dataips_(:,find(iclus==iclu)),'color',rgb(iclu,:))
   ylim([mini_,maxi_])
-  xlim([1e-2,2]);
+  % xlim([t(1),2]);
+  xlim([dt,2]);
   axis square;
   % xticks([1e-2,1e-1,1])
   % xlabel('Time (sec)')

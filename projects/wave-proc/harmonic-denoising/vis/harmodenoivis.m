@@ -4,6 +4,8 @@ clc
 % ------------------------------------------------------------------------------
 path_read='../bin/read/';
 path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
+% path_read='E:/data/foralles/precis-clu16/round1/src9hz/read/';
+% path_read='E:/data/foralles/noise-clu16/read/';
 
 dataips_size= read_bin(strcat(path_read,'dataips_size'),[3,1],'uint32');
 nt = dataips_size(1);
@@ -23,6 +25,8 @@ dataips = read_bin(strcat(path_read,'dataips'),[nt,nabmn],'single');
 % ------------------------------------------------------------------------------
 path_read='../bin/save/';
 path_read='E:/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
+% path_read='E:/data/foralles/precis-clu16/round1/src9hz/save/';
+% path_read='E:/data/foralles/noise-clu16/save/';
 
 dataips__size= read_bin(strcat(path_read,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -41,8 +45,20 @@ betas_ = reshape(betas_, [nb*nh,nabmn]);
 fos_ = read_bin(strcat(path_read,'fos_'),[nb*nabmn,1],'double');
 fos_ = reshape(fos_, [nb,nabmn]);
 % ------------------------------------------------------------------------------
-dt=2.5e-4; t=(0:(nt-1))*dt;t=t.';t=t+0.01525;
+dt=2.5e-4;
+t=(0:(nt-1))*dt;
+t=t.';
+t=t+0.01525;
 t_=t(1:nt_);
+% ------------------------------------------------------------------------------
+% ito=binning(t,2);
+% ito_=binning(t_,2);
+% t=t(1:ito);
+% t_=t_(1:ito_);
+% nt=numel(t);
+% nt_=numel(t_);
+% dataips = dataips(1:ito,:);
+% dataips_ = dataips_(1:ito_,:);
 % ------------------------------------------------------------------------------
 %
 %                                🎵🎵🎵🎵
@@ -108,25 +124,34 @@ for iabmn_=1:2
   axis square;
   axis tight;
   grid on;
-  xticks([1e-1,1])
+  xlim([dt,2])
+  xticks([1e-3,1e-2,1e-1,1])
+  % xlim([0,2])
+  % xticks([0,1,2])
+  % xlim([0,4])
+  % xticks([1e-3,1e-2,1e-1,1])
   xlabel('Time (sec)')
   ylabel('Voltage (mV)')
+  % ylabel('Ampers (mA)')
   simple_figure()
 
   ifig=ifig+1;
 
   subplot(2,2,ifig)
-  semilogx(t,1e3*dataips(:,iabmn),'linewidth',2)
+  plot(t,1e3*dataips(:,iabmn),'linewidth',2)
   hold on;
-  semilogx(t_,1e3*dataips_(:,iabmn),'linewidth',2)
+  plot(t_,1e3*dataips_(:,iabmn),'linewidth',2)
   hold off;
   axis square;
   axis tight;
   grid on;
-  xlim([1,t(nt)])
-  xticks([1,1.5])
+  xlim([1,2])
+  xticks([1,1.5,2])
+  % xlim([1,4])
+  % xticks([1,2,4])
   xlabel('Time (sec)')
   ylabel('Voltage (mV)')
+  % ylabel('Ampers (mA)')
   simple_figure()
 
   ifig=ifig+1;
@@ -146,9 +171,13 @@ axis square;
 axis tight;
 grid on;
 colormap(rgb);
+xlim([t(1),2])
 xticks([1e-1,1])
+% xlim([0,4])
+% xticks([1e-3,1e-2,1e-1,1])
 xlabel('Time (sec)')
 ylabel('Voltage (mV)')
+% ylabel('Ampers (mA)')
 simple_figure()
 
 subplot(1,2,2)
@@ -162,9 +191,13 @@ axis square;
 axis tight;
 grid on;
 colormap(rgb);
+xlim([t_(1),2])
 xticks([1e-1,1])
+% xlim([0,4])
+% xticks([1e-3,1e-2,1e-1,1])
 xlabel('Time (sec)')
 ylabel('Voltage (mV)')
+% ylabel('Ampers (mA)')
 simple_figure()
 % ------------------------------------------------------------------------------
 print(gcf,'noise9hz-3','-dpng','-r350')
@@ -193,6 +226,7 @@ xticks([1,10,100,1000]);
 ylim([mini,maxi])
 xlabel('Frequency (Hz)')
 ylabel('Power (V²/Hz)')
+% ylabel('Power (A²/Hz)')
 simple_figure()
 
 subplot(1,2,2)
@@ -209,6 +243,7 @@ xticks([1,10,100,1000]);
 ylim([mini,maxi])
 xlabel('Frequency (Hz)')
 ylabel('Power (V²/Hz)')
+% ylabel('Power (A²/Hz)')
 simple_figure()
 % ------------------------------------------------------------------------------
 print(gcf,'noise9hz-4','-dpng','-r350')
@@ -231,10 +266,14 @@ axis square;
 axis tight;
 grid on;
 colormap(rgb);
+xlim([t(1),2])
 xticks([1e-1,1])
+% xlim([0,4])
+% xticks([1e-3,1e-2,1e-1,1])
 ylim([mini,maxi]*1e3)
 xlabel('Time (sec)')
 ylabel('Voltage anchored at 0 (mV)')
+% ylabel('Amperage anchored at 0 (mA)')
 simple_figure()
 
 subplot(1,2,2)
@@ -248,10 +287,14 @@ axis square;
 axis tight;
 grid on;
 colormap(rgb);
+xlim([t(1),2])
 xticks([1e-1,1])
+% xlim([0,4])
+% xticks([1e-3,1e-2,1e-1,1])
 ylim([mini,maxi]*1e3)
 xlabel('Time (sec)')
 ylabel('Voltage anchored at 0 (mV)')
+% ylabel('Amperage anchored at 0 (mA)')
 simple_figure()
 % ------------------------------------------------------------------------------
 print(gcf,'noise9hz-5','-dpng','-r350')
