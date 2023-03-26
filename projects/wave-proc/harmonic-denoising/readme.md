@@ -143,4 +143,14 @@ nt_ →  |    *   | · α    ⟶    |-2·pi·t·h| ⊙ |sin(2·pi·fo·t·h)| ·
 
 [![](vis/harmodenoi.png)](./)
 
-[![](vis/clu16-9hz-alfabetfos.png)](./)
+
+## 🤔️ Is variational mode decomposition (vmd) better? No, it is not.
+
+Below is voltage in time data acquired at an active-source survey.
+
+The vmd clearly underperforms removing 50hz harmonics.
+
+[![](../pics/vmd-hd.png)](./)
+
+
+
