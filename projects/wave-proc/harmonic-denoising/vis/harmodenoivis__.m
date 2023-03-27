@@ -120,7 +120,7 @@ end
 hold off;
 axis tight;
 axis square;
-ylabel('α + β')
+ylabel('|α| + |β|')
 xlabel('# of ab')
 simple_figure()
 
@@ -145,7 +145,7 @@ end
 hold off;
 axis tight;
 axis square;
-ylabel('α + β')
+ylabel('|α| + |β|')
 xlabel('Frequency (Hz)')
 simple_figure()
 % ------------------------------------------------------------------------------

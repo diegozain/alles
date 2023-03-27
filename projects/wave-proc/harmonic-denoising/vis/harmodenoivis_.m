@@ -142,7 +142,7 @@ end
 hold off;
 axis tight;
 axis square;
-ylabel('α + β')
+ylabel('|α| + |β|')
 xlabel('# of abmn')
 simple_figure()
 
@@ -167,7 +167,7 @@ end
 hold off;
 axis tight;
 axis square;
-ylabel('α + β')
+ylabel('|α| + |β|')
 xlabel('Frequency (Hz)')
 simple_figure()
 % ------------------------------------------------------------------------------
@@ -262,7 +262,7 @@ end
 % pseudats_plot3d(electxyzclu,pseud,klusdata,80,'Cluster #');
 % colormap(rgb)
 %
-% pseudats_plot3d(electxyzclu,pseud,alfabet,80,'α + β');
+% pseudats_plot3d(electxyzclu,pseud,alfabet,80,'|α| + |β|');
 % rgb_=cytwombly_;
 % rgb_=normalizergb(rgb_,min(alfabet),0.02,max(alfabet));
 % colormap(rgb_)

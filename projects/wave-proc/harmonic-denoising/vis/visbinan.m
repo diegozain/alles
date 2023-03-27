@@ -5,7 +5,7 @@ clc
 % ambient noise data was recorded with the tx on, but unplugged from the hole.
 % however, the (splitter) cable was still connected to the rx.
 %
-% this means that all data with either m, n, or both m and n in the tx cable were 
+% this means that all data with either m, n, or both m and n in the tx cable were
 % sensitive to ab "injecting" current.
 % Moreover, m and n in the tx cable were in contact with the air.
 %
@@ -14,12 +14,18 @@ clc
 % m, n, or both m and n in the tx cable.
 %
 % some of these abmn have a clear 18hz signal.
-% 
+%
 % ------------------------------------------------------------------------------
 addpath('../../../pdes/dc-xbore-vis/src/')
 % ------------------------------------------------------------------------------
-path_read_='../bin/save/';
-path_read ='../bin/read/';
+% path_read_='../bin/save/';
+% path_read ='../bin/read/';
+
+path_read_='E:data/foralles/noise-clu16/9hz/save/';
+path_read ='E:data/foralles/noise-clu16/9hz/read/';
+
+path_read_='E:data/foralles/noise-clu16/50hz/save/';
+path_read ='E:data/foralles/noise-clu16/50hz/read/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read_,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -84,7 +90,7 @@ dataips(:,ibad) = [];
 abmn(ibad,:) = [];
 nabmn=nabmn-numel(ibad);
 
-ibad=find(fos_< 1e-4);
+ibad=find(fos_< 0.5);
 fos_(ibad) = [];
 alphas_(:,ibad) = [];
 betas_(:,ibad) = [];
@@ -93,7 +99,7 @@ dataips(:,ibad) = [];
 abmn(ibad,:) = [];
 nabmn=nabmn-numel(ibad);
 
-ibad=find(fos_> 100);
+ibad=find(fos_> 2e3-1);
 fos_(ibad) = [];
 alphas_(:,ibad) = [];
 betas_(:,ibad) = [];
@@ -115,9 +121,19 @@ nabmn=nabmn-numel(ibad);
 betas = sum(abs(betas_),1);
 alphas= sum(abs(alphas_),1);
 alfabet = alphas + betas;
-
+% ------------------------------------------------------------------------------
 % alfabet=alfabet ./ abs(dataips(end,:));
 
+% ibad=find(alfabet> 0.1);
+% fos_(ibad) = [];
+% alphas_(:,ibad) = [];
+% betas_(:,ibad) = [];
+% alfabet(ibad) = [];
+% dataips_(:,ibad) = [];
+% dataips(:,ibad) = [];
+% abmn(ibad,:) = [];
+% nabmn=nabmn-numel(ibad);
+% ------------------------------------------------------------------------------
 alfabetfos = [alfabet; fos_];
 alfabetfos = alfabetfos.';
 % ------------------------------------------------------------------------------
@@ -136,12 +152,16 @@ abmn = abmn(isortab,:);
 %
 % ------------------------------------------------------------------------------
 figure;
-plot_abmn(abmn)
+plot_abmn(abmn);
+print(gcf,'anabmn','-dpng','-r350')
+
+mini=min(alfabet);
+maxi=max(alfabet);
 % ------------------------------------------------------------------------------
 rgb=cuatrocolo(nabmn);
 rgb=qualitcolor(nabmn);
 
-figure;
+figure('units','normalized','outerposition',[0 0 1 0.7]);
 subplot(1,3,1)
 iabmn=1;
 loglog(iabmn,fos_(1),'.','markersize',5,'color',rgb(iabmn,:))
@@ -153,6 +173,8 @@ hold off;
 axis tight;
 axis square;
 xticks([1,10,100,1000,10000])
+% yticks([0.1,1,10])
+yticks([0.1,10,100])
 grid on;
 ylabel('Frequency (Hz)')
 xlabel('# of abmn')
@@ -168,9 +190,10 @@ end
 hold off;
 axis tight;
 axis square;
-xticks([1,10,100,1000,10000])
+xticks([1,10,100,1000,10000]);
+ylim([mini,maxi]);
 grid on;
-ylabel('α + β')
+ylabel('|α| + |β|')
 xlabel('# of abmn')
 simple_figure()
 
@@ -184,55 +207,119 @@ end
 hold off;
 axis tight;
 axis square;
+% xticks([0.1,1,10]);
+xticks([0.1,10,100])
+ylim([mini,maxi]);
 grid on;
-ylabel('α + β')
+ylabel('|α| + |β|')
 xlabel('Frequency (Hz)')
 simple_figure()
+% ------------------------------------------------------------------------------
+print(gcf,'analfabetfos','-dpng','-r350')
 % ------------------------------------------------------------------------------
 %                                  🕐🔌
 % ------------------------------------------------------------------------------
 dt=2.5e-4;
 t_=(0:(nt_-1))*dt;t_=t_.';
 t=(0:(nt-1))*dt;t=t.';
+ito=nt; ito_=nt_;
 % ------------------------------------------------------------------------------
-figure;
-semilogx(t,dataips(:,1:100),'k')
+%                                   🔪✂️
+% ------------------------------------------------------------------------------
+ito=binning(t,2);
+ito_=binning(t_,2);
+dataips=dataips(1:ito,:);
+dataips_=dataips_(1:ito_,:);
+% ------------------------------------------------------------------------------
+mini=min([min(dataips(:)) min(dataips_(:))]);
+maxi=max([max(dataips(:)) max(dataips_(:))]);
+% ------------------------------------------------------------------------------
+figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
+subplot(1,2,1)
+iabmn=1;
+semilogx(t(1:ito),dataips(:,iabmn),'color',rgb(iabmn,:))
 hold on;
-for iabmn=1:100
-semilogx(t_,dataips_(:,iabmn),'color',rgb(iabmn,:))
+for iabmn=2:nabmn
+semilogx(t(1:ito),dataips(:,iabmn),'color',rgb(iabmn,:))
 end
 hold off;
+axis tight;
+axis square;
+grid on;
+xticks([1e-4,1e-3,1e-2,1e-1,1]);
+xtickangle(0);
+ylim([mini,maxi])
+xlabel('Time (sec)')
+ylabel('Voltage (V)')
+simple_figure();
+
+subplot(1,2,2)
+iabmn=1;
+semilogx(t_(1:ito_),dataips_(:,iabmn),'color',rgb(iabmn,:))
+hold on;
+for iabmn=2:nabmn
+semilogx(t_(1:ito_),dataips_(:,iabmn),'color',rgb(iabmn,:))
+end
+hold off;
+axis tight;
+axis square;
+grid on;
+xticks([1e-4,1e-3,1e-2,1e-1,1]);
+xtickangle(0);
+ylim([mini,maxi])
+xlabel('Time (sec)')
+ylabel('Voltage (V)')
+simple_figure();
 % ------------------------------------------------------------------------------
-mini_=min(dataips_(:));
-maxi_=max(dataips_(:));
+print(gcf,'antimedat','-dpng','-r350')
 % ------------------------------------------------------------------------------
 %                                    🎼 🎨
 % ------------------------------------------------------------------------------
 [dataipsf,f,df] = fourier_rt(dataips,dt);
 [dataipsf_,f_,df_] = fourier_rt(dataips_,dt);
+
+dataipsf = abs(dataipsf) / numel(f);
+dataipsf_= abs(dataipsf_) / numel(f_);
+
+mini=min([min(dataipsf(:)) min(dataipsf_(:))]);
+maxi=max([max(dataipsf(:)) max(dataipsf_(:))]);
 % ------------------------------------------------------------------------------
-figure;
+figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1);
-loglog(f,abs(dataipsf(:,1:28))/numel(real(dataipsf(:,1:28))),'linewidth',1)%,'color',purpura)
+iabmn=1;
+loglog(f,dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+hold on;
+for iabmn=2:nabmn
+loglog(f,dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+end
+hold off
 axis tight;
 axis square;
 grid on;
 xticks([1,10,100,1000]);
 xtickangle(0);
-yticks([1e-8,1e-7,1e-6,1e-5,1e-4])
+ylim([mini,maxi])
 xlabel('Frequency (Hz)')
 ylabel('Power (V²/Hz)')
 simple_figure();
 
 subplot(1,2,2);
-loglog(f_,abs(dataipsf_(:,1:28))/numel(real(dataipsf_(:,1:28))),'linewidth',1)%,'color',azul)
+iabmn=1;
+loglog(f_,dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+hold on;
+for iabmn=2:nabmn
+loglog(f_,dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+end
+hold off
 axis tight;
 axis square;
 grid on;
 xticks([1,10,100,1000]);
 xtickangle(0);
-yticks([1e-8,1e-7,1e-6,1e-5,1e-4])
+ylim([mini,maxi])
 xlabel('Frequency (Hz)')
 ylabel('Power (V²/Hz)')
 simple_figure();
+% ------------------------------------------------------------------------------
+print(gcf,'anpowspec','-dpng','-r350')
 % ------------------------------------------------------------------------------

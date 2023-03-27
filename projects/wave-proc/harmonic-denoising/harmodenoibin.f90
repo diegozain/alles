@@ -21,9 +21,10 @@ program harmodenoibin
  real(kind(1e0)), allocatable :: dataips_(:)
 
  ! 📟
- integer :: it, ih, ib, ibh, iabmn, nn
+ integer :: it, ih, ib, ibh, iabmn, nn, ihy, istat
  integer, parameter :: nhyper=11
  double precision :: hyperparam(nhyper)
+ character(len=11) :: hyperpch
 
  ! 💾 👓
  character*256, allocatable :: filey(:)
@@ -32,7 +33,7 @@ program harmodenoibin
 
  ! ⬜⬛ openMP
  ! in 💩 & 🚀 uncomment this one, comment next1
- integer, parameter :: nthreads=10 ! 🚀 ⟶ 10 • 💩 ⟶ 4.
+ integer, parameter :: nthreads=4 ! 🚀 ⟶ 10 • 💩 ⟶ 4.
  ! integer :: nthreads
  integer :: stacksize
 
@@ -76,30 +77,53 @@ program harmodenoibin
  path_read_ = trim(path_read) // 'dataips.bin'
  call read_mat_sgl(dataips,nt,nabmn,path_read_)
  ! -----------------------------------------------------------------------------
- !                          📟 hyperparam 📟
- ! -----------------------------------------------------------------------------
+ !
+ !                                 📟 hyperparam 📟
+ !
  ! k_fos_ & k_fos__
- hyperparam(1) = 1e-9
- hyperparam(2) = 1e-4
+ ! hyperparam(1) ⟵ 1e-9
+ ! hyperparam(2) ⟵ 1e-4
  ! k_alphas_ & k_alphas__
- hyperparam(3) = 1e-8
- hyperparam(4) = 1e-2
+ ! hyperparam(3) ⟵ 1e-8
+ ! hyperparam(4) ⟵ 1e-2
  ! k_betas_ & k_betas__
- hyperparam(5) = 1e-8
- hyperparam(6) = 1e-2
+ ! hyperparam(5) ⟵ 1e-8
+ ! hyperparam(6) ⟵ 1e-2
  ! nparabo_fos & nparabo_a & nparabo_b
- hyperparam(7) = 20
- hyperparam(8) = 50
- hyperparam(9) = 50
+ ! hyperparam(7) ⟵ 20
+ ! hyperparam(8) ⟵ 50
+ ! hyperparam(9) ⟵ 50
  ! niter_fos & niter_ab
- hyperparam(10) = 6
- hyperparam(11) = 6
+ ! hyperparam(10) ⟵ 6
+ ! hyperparam(11) ⟵ 6
  ! -----------------------------------------------------------------------------
- dt = 2.5e-4 ! sec
- fo = 9   ! (7.83 14.3 20.8 27.3 33.8) (50 or 60) Hz
-
- nh = 10
- nb = 1
+ allocate(filey(nhyper))
+ call read_filey(filey,nhyper,'hyperparamhd.txt',2)
+ do ihy=1,nhyper
+   hyperpch = filey(ihy)
+   read (hyperpch,"(f15.0)",iostat=istat) hyperparam(ihy)
+ enddo
+ deallocate(filey)
+ ! -----------------------------------------------------------------------------
+ !                        🚇🚇 metaparameters 🚇🚇
+ !
+ ! dt ⟵ 2.5e-4 ! sec
+ ! fo ⟵ 9      ! (7.83 14.3 20.8 27.3 33.8) (50 or 60) Hz
+ !
+ ! nh ⟵ 10
+ ! nb ⟵ 1
+ ! -----------------------------------------------------------------------------
+ allocate(filey(4))
+ call read_filey(filey,4,'metaparamhd.txt',2)
+ hyperpch = filey(1)
+ read (hyperpch,"(f15.0)",iostat=istat) dt
+ hyperpch = filey(2)
+ read (hyperpch,"(f15.0)",iostat=istat) fo
+ hyperpch = filey(3)
+ read (hyperpch,"(i15)",iostat=istat) nh
+ hyperpch = filey(4)
+ read (hyperpch,"(i15)",iostat=istat) nb
+ deallocate(filey)
  ! -----------------------------------------------------------------------------
  !
  !                                   👷👷👷👷
