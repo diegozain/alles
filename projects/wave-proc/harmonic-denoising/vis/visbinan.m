@@ -98,13 +98,13 @@ for iabmn=1:nabmn
   end
 end
 
-fos_ = fos_(ibacab);
-alphas_ = alphas_(:,ibacab);
-betas_ = betas_(:,ibacab);
-dataips_ = dataips_(:,ibacab);
-dataips = dataips(:,ibacab);
-abmn = abmn(ibacab,:);
-nabmn=numel(ibacab);
+fos_ = fos_(iokcabls);
+alphas_ = alphas_(:,iokcabls);
+betas_ = betas_(:,iokcabls);
+dataips_ = dataips_(:,iokcabls);
+dataips = dataips(:,iokcabls);
+abmn = abmn(iokcabls,:);
+nabmn=numel(iokcabls);
 % ------------------------------------------------------------------------------
 %                                 NaN 🙅
 % ------------------------------------------------------------------------------
@@ -209,8 +209,9 @@ hold off;
 axis tight;
 axis square;
 xticks([1,10,100,1000,10000])
-% yticks([0.1,1,10])
-yticks([0.1,10,100])
+% yticks([0.1,10,100])
+ylim([10,100])
+yticks([10,50,100])
 grid on;
 ylabel('Frequency (Hz)')
 xlabel('# of abmn')
@@ -243,8 +244,9 @@ end
 hold off;
 axis tight;
 axis square;
-% xticks([0.1,1,10]);
-xticks([0.1,10,100])
+% xticks([0.1,10,100])
+xlim([10,100])
+xticks([10,50,100])
 ylim([mini,maxi]);
 grid on;
 ylabel('|α| + |β|')
