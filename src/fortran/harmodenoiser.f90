@@ -624,7 +624,7 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
   !                          👉 last pass 👉
   ! ----------------------------------------------------------------------------
   call hd_fwd(uh,t,alphas,betas,fos,h,nt,nb,nh,nt_,nt__)
-  ! 😮
+  ! 🙂
   uonorm =0
   uonorm_=0
   do it=1,nt
@@ -638,6 +638,11 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
       uo(it) = uo(it) - uh(it)
     enddo
   endif
+  ! ! 🙁
+  ! ! overwrite uo with solution
+  ! do it=1,nt
+  !   uo(it) = uo(it) - uh(it)
+  ! enddo
   call window_mean(uo,nt,nw)
   ! ----------------------------------------------------------------------------
   ! 🚿

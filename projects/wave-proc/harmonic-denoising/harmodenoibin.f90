@@ -33,7 +33,7 @@ program harmodenoibin
 
  ! ⬜⬛ openMP
  ! in 💩 & 🚀 uncomment this one, comment next1
- integer, parameter :: nthreads=4 ! 🚀 ⟶ 10 • 💩 ⟶ 4.
+ integer, parameter :: nthreads=10 ! 🚀 ⟶ 10 • 💩 ⟶ 4.
  ! integer :: nthreads
  integer :: stacksize
 
@@ -56,9 +56,9 @@ program harmodenoibin
  !                                   👁️ 👃 👁️
  !
  ! -----------------------------------------------------------------------------
- call get_nfiley(nlines,'paths.txt',2)
+ call get_nfiley(nlines,'pathshd.txt',2)
  allocate(filey(nlines))
- call read_filey(filey,nlines,'paths.txt',2)
+ call read_filey(filey,nlines,'pathshd.txt',2)
  path_save = filey(1)
  path_read = filey(2)
  deallocate(filey)
@@ -110,7 +110,7 @@ program harmodenoibin
  ! dt ⟵ 2.5e-4 ! sec
  ! fo ⟵ 9      ! (7.83 14.3 20.8 27.3 33.8) (50 or 60) Hz
  !
- ! nh ⟵ 10
+ ! nh ⟵ 10     ! 35 for 50hz
  ! nb ⟵ 1
  ! -----------------------------------------------------------------------------
  allocate(filey(4))
