@@ -24,11 +24,8 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 % path_read_='E:data/foralles/noise-clu16/9hz/save/';
 % path_read ='E:data/foralles/noise-clu16/9hz/read/';
 
-% path_read_='E:data/foralles/noise-clu16/50hz/save/';
-% path_read ='E:data/foralles/noise-clu16/50hz/read/';
-
-path_read_='D:data/an50hz/save/';
-path_read ='D:data/an50hz/read/';
+path_read_='E:data/foralles/noise-clu16/an50hz/save/';
+path_read ='E:data/foralles/noise-clu16/an50hz/read/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read_,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -189,7 +186,7 @@ abmn = abmn(isortab,:);
 % ------------------------------------------------------------------------------
 figure;
 plot_abmn(abmn);
-print(gcf,'anabmn','-dpng','-r350')
+% print(gcf,'anabmn','-dpng','-r350')
 
 mini=min(alfabet);
 maxi=max(alfabet);
@@ -253,7 +250,7 @@ ylabel('|α| + |β|')
 xlabel('Frequency (Hz)')
 simple_figure()
 % ------------------------------------------------------------------------------
-print(gcf,'analfabetfos','-dpng','-r350')
+% print(gcf,'analfabetfos','-dpng','-r350')
 % ------------------------------------------------------------------------------
 %
 %                                  🕐🔌
@@ -284,7 +281,7 @@ maxid=max([max(dataips(:)) max(dataips_(:))]);
 
 minif=min([min(dataipsf(:)) min(dataipsf_(:))]);
 maxif=max([max(dataipsf(:)) max(dataipsf_(:))]);
-% %{
+%{
 % ------------------------------------------------------------------------------
 figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1)
@@ -323,15 +320,15 @@ xlabel('Time (sec)')
 ylabel('Voltage (V)')
 simple_figure();
 % ------------------------------------------------------------------------------
-print(gcf,'antimedat','-dpng','-r350')
+% print(gcf,'antimedat','-dpng','-r350')
 % ------------------------------------------------------------------------------
 figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1);
 iabmn=1;
-loglog(f,dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+loglog(f,1./dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
 hold on;
 for iabmn=2:nabmn
-loglog(f,dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+loglog(f,1./dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
 end
 hold off
 axis tight;
@@ -346,10 +343,10 @@ simple_figure();
 
 subplot(1,2,2);
 iabmn=1;
-loglog(f_,dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+loglog(f_,1./dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
 hold on;
 for iabmn=2:nabmn
-loglog(f_,dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+loglog(f_,1./dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
 end
 hold off
 axis tight;
