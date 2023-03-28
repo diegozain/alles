@@ -21,11 +21,14 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 % path_read_='../bin/save/';
 % path_read ='../bin/read/';
 
-path_read_='E:data/foralles/noise-clu16/9hz/save/';
-path_read ='E:data/foralles/noise-clu16/9hz/read/';
+% path_read_='E:data/foralles/noise-clu16/9hz/save/';
+% path_read ='E:data/foralles/noise-clu16/9hz/read/';
 
-path_read_='E:data/foralles/noise-clu16/50hz/save/';
-path_read ='E:data/foralles/noise-clu16/50hz/read/';
+% path_read_='E:data/foralles/noise-clu16/50hz/save/';
+% path_read ='E:data/foralles/noise-clu16/50hz/read/';
+
+path_read_='D:data/an50hz/save/';
+path_read ='D:data/an50hz/read/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read_,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -51,6 +54,8 @@ nt = dataips_size(1);
 dataips = read_bin(strcat(path_read,'dataips'),[nt*nabmn,1],'single');
 dataips = reshape(dataips, [nt,nabmn]);
 
+abmn_bids = read_bin(strcat(path_read,'abmn_bids'),[nabmn,7],'uint32');
+
 dataips_=single(dataips_);
 dataips=single(dataips);
 % ------------------------------------------------------------------------------
@@ -69,6 +74,37 @@ for iabmn=1:nabmn
   abmn(iabmn,3) = f(abmn(iabmn,3));
   abmn(iabmn,4) = f(abmn(iabmn,4));
 end
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------------------------------------------
+iabcab=[];
+ibacabls=[];
+iokcabls=[];
+for iabmn=1:nabmn
+  abid=abmn_bids(iabmn,5);
+  mid=abmn_bids(iabmn,6);
+  nid=abmn_bids(iabmn,7);
+  if (abid==mid && abid==nid)
+    iabcab = [iabcab; iabmn];
+  end
+  if (abid==mid && abid~=nid)
+    ibacabls = [ibacabls; iabmn];
+  end
+  if (abid==nid && abid~=mid)
+    ibacabls = [ibacabls; iabmn];
+  end
+  if (abid~=mid && abid~=nid)
+    iokcabls = [iokcabls; iabmn];
+  end
+end
+
+fos_ = fos_(ibacab);
+alphas_ = alphas_(:,ibacab);
+betas_ = betas_(:,ibacab);
+dataips_ = dataips_(:,ibacab);
+dataips = dataips(:,ibacab);
+abmn = abmn(ibacab,:);
+nabmn=numel(ibacab);
 % ------------------------------------------------------------------------------
 %                                 NaN 🙅
 % ------------------------------------------------------------------------------
@@ -217,7 +253,9 @@ simple_figure()
 % ------------------------------------------------------------------------------
 print(gcf,'analfabetfos','-dpng','-r350')
 % ------------------------------------------------------------------------------
+%
 %                                  🕐🔌
+%
 % ------------------------------------------------------------------------------
 dt=2.5e-4;
 t_=(0:(nt_-1))*dt;t_=t_.';
@@ -226,13 +264,25 @@ ito=nt; ito_=nt_;
 % ------------------------------------------------------------------------------
 %                                   🔪✂️
 % ------------------------------------------------------------------------------
-ito=binning(t,2);
-ito_=binning(t_,2);
-dataips=dataips(1:ito,:);
-dataips_=dataips_(1:ito_,:);
+% ito=binning(t,2);
+% ito_=binning(t_,2);
+% dataips=dataips(1:ito,:);
+% dataips_=dataips_(1:ito_,:);
 % ------------------------------------------------------------------------------
-mini=min([min(dataips(:)) min(dataips_(:))]);
-maxi=max([max(dataips(:)) max(dataips_(:))]);
+%                                    🎼 🎨
+% ------------------------------------------------------------------------------
+[dataipsf,f,df] = fourier_rt(dataips,dt);
+[dataipsf_,f_,df_] = fourier_rt(dataips_,dt);
+
+dataipsf = abs(dataipsf) / numel(f);
+dataipsf_= abs(dataipsf_) / numel(f_);
+% ------------------------------------------------------------------------------
+minid=min([min(dataips(:)) min(dataips_(:))]);
+maxid=max([max(dataips(:)) max(dataips_(:))]);
+
+minif=min([min(dataipsf(:)) min(dataipsf_(:))]);
+maxif=max([max(dataipsf(:)) max(dataipsf_(:))]);
+% %{
 % ------------------------------------------------------------------------------
 figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1)
@@ -248,7 +298,7 @@ axis square;
 grid on;
 xticks([1e-4,1e-3,1e-2,1e-1,1]);
 xtickangle(0);
-ylim([mini,maxi])
+ylim([minid,maxid])
 xlabel('Time (sec)')
 ylabel('Voltage (V)')
 simple_figure();
@@ -266,23 +316,12 @@ axis square;
 grid on;
 xticks([1e-4,1e-3,1e-2,1e-1,1]);
 xtickangle(0);
-ylim([mini,maxi])
+ylim([minid,maxid])
 xlabel('Time (sec)')
 ylabel('Voltage (V)')
 simple_figure();
 % ------------------------------------------------------------------------------
 print(gcf,'antimedat','-dpng','-r350')
-% ------------------------------------------------------------------------------
-%                                    🎼 🎨
-% ------------------------------------------------------------------------------
-[dataipsf,f,df] = fourier_rt(dataips,dt);
-[dataipsf_,f_,df_] = fourier_rt(dataips_,dt);
-
-dataipsf = abs(dataipsf) / numel(f);
-dataipsf_= abs(dataipsf_) / numel(f_);
-
-mini=min([min(dataipsf(:)) min(dataipsf_(:))]);
-maxi=max([max(dataipsf(:)) max(dataipsf_(:))]);
 % ------------------------------------------------------------------------------
 figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1);
@@ -298,7 +337,7 @@ axis square;
 grid on;
 xticks([1,10,100,1000]);
 xtickangle(0);
-ylim([mini,maxi])
+ylim([minif,maxif])
 xlabel('Frequency (Hz)')
 ylabel('Power (V²/Hz)')
 simple_figure();
@@ -316,10 +355,11 @@ axis square;
 grid on;
 xticks([1,10,100,1000]);
 xtickangle(0);
-ylim([mini,maxi])
+ylim([minif,maxif])
 xlabel('Frequency (Hz)')
 ylabel('Power (V²/Hz)')
 simple_figure();
 % ------------------------------------------------------------------------------
 print(gcf,'anpowspec','-dpng','-r350')
 % ------------------------------------------------------------------------------
+%}
