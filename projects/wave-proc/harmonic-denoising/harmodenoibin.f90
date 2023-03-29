@@ -49,6 +49,7 @@ program harmodenoibin
  print *,''
  print *, '--------------------------------------------------------------------'
  print *,''
+ print *,' ⌚'
  print '("  ",i2,".",i2,".",i4)',date_time(3),date_time(2),date_time(1)
  print '("  ",i2,":",i2,":",i2)',date_time(5),date_time(6),date_time(7)
  ! -----------------------------------------------------------------------------
@@ -139,10 +140,17 @@ program harmodenoibin
  do ih=1,nh
    h(ih) = ih
  enddo
+ ! ! schumann resonances (Hz)
+ ! ! f = [7.8 14.3 20.8 27.3 33.8] nh=5 , fo=7.8
+ ! h(1)=1
+ ! h(2)=14.3/fo
+ ! h(3)=20.8/fo
+ ! h(4)=27.3/fo
+ ! h(5)=33.8/fo
  ! 🏠 window to convolve with
  nw = ceiling((1/(fo*h(1)))/dt)
  ! ✂️ ⏰ ✂️
- nttail = ceiling(0.1*nh*(1/fo)/dt)
+ nttail = ceiling(0.2*nh*(1/fo)/dt) ! 0.1
  nttrim = nt-nttail
  ! -----------------------------------------------------------------------------
  ! input  :: target nb, fo, & dt
@@ -257,6 +265,14 @@ program harmodenoibin
  ! ⌚
  end_time = omp_get_wtime()
  print *, 'elapsed time: ', (end_time - start_time), 'seconds'
+ ! -----------------------------------------------------------------------------
+ call date_and_time(date_time_(1), date_time_(2), date_time_(3), date_time)
+ print *,''
+ print *,' ⌚'
+ print '("  ",i2,".",i2,".",i4)',date_time(3),date_time(2),date_time(1)
+ print '("  ",i2,":",i2,":",i2)',date_time(5),date_time(6),date_time(7) 
+ print *,''
+ print *, '--------------------------------------------------------------------'
  ! -----------------------------------------------------------------------------
  !                            😎😎 bye bye ✋✋
  ! -----------------------------------------------------------------------------

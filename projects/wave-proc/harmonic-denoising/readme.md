@@ -9,7 +9,7 @@ July 2021
 * ```harmodenoi_data.m``` example with field data.
 * ```harmodenoi.m``` ready for production.
 
-The main inversion routine is in ```src/hd_inversion.m```
+The main inversion routine in *Matlab* is ```src/hd_inversion.m```
 
 ## Fortran 💪
 
@@ -20,6 +20,35 @@ The *Fortran* version is always about **twice or three times faster** than the *
 * ```harmodenoi_synt.f90``` which uses ```harmodenoi ∈ harmodenoiser.f90``` is the practical function to use.
   * It comes with hyper-parameters used for IP data. Assumes 1 block.
 * ```harmodenoibin.f90``` processes many time-series using *openMP*.
+	* 📝 edit all the ``*hd.txt``,
+		
+		```text
+		pathshd.txt
+
+		bin/save/
+		bin/read/
+
+		metaparamhd.txt
+		
+		2.5e-4 ⟵ Δt (sec)
+		7      ⟵ fₒ  (Hz)
+		42     ⟵ # of harmonics (ℕ)
+		1      ⟵ # of overlaps (ℕ)
+
+		hyperparamhd.txt
+		
+		1e-9  ⟵ kfₒ
+		1e-4  ⟵ kfₒ•
+		1e-8  ⟵ kα
+		1e-2  ⟵ kα•
+		1e-8  ⟵ kβ
+		1e-2  ⟵ kβ•
+		20    ⟵ nparabo fₒ
+		50    ⟵ nparabo α
+		50    ⟵ nparabo β
+		6     ⟵ niter fₒ
+		6     ⟵ niter α & β
+		```
 
 
 In the terminal 💻+🐍️,

@@ -21,11 +21,14 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 % path_read_='../bin/save/';
 % path_read ='../bin/read/';
 
+path_read_='../bin/save/';
+path_read ='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
+
 % path_read_='E:data/foralles/noise-clu16/9hz/save/';
 % path_read ='E:data/foralles/noise-clu16/9hz/read/';
 
-path_read_='E:data/foralles/noise-clu16/an50hz/save/';
-path_read ='E:data/foralles/noise-clu16/an50hz/read/';
+% path_read_='E:data/foralles/noise-clu16/an50hz/save/';
+% path_read ='E:data/foralles/noise-clu16/an50hz/read/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read_,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -207,7 +210,7 @@ axis tight;
 axis square;
 xticks([1,10,100,1000,10000])
 % yticks([0.1,10,100])
-ylim([10,100])
+% ylim([10,100])
 yticks([10,50,100])
 grid on;
 ylabel('Frequency (Hz)')
@@ -242,7 +245,7 @@ hold off;
 axis tight;
 axis square;
 % xticks([0.1,10,100])
-xlim([10,100])
+% xlim([10,100])
 xticks([10,50,100])
 ylim([mini,maxi]);
 grid on;
@@ -281,6 +284,32 @@ maxid=max([max(dataips(:)) max(dataips_(:))]);
 
 minif=min([min(dataipsf(:)) min(dataipsf_(:))]);
 maxif=max([max(dataipsf(:)) max(dataipsf_(:))]);
+% ------------------------------------------------------------------------------
+iabmn=100;
+figure('units','normalized','outerposition',[0 0 0.7 0.7]);
+subplot(1,2,1)
+semilogx(t,dataips(:,iabmn),'color','k')
+hold on;
+semilogx(t_,dataips_(:,iabmn),'color',rgb(iabmn,:))
+hold off;
+axis tight;
+axis square;
+grid on;
+xlabel('Time (sec)')
+ylabel('Voltage (V)')
+simple_figure();
+
+subplot(1,2,2)
+loglog(f,dataipsf(:,iabmn),'color','k')
+hold on;
+loglog(f_,dataipsf_(:,iabmn),'color',rgb(iabmn,:))
+hold off;
+axis tight;
+axis square;
+grid on;
+xlabel('Frequency (Hz)')
+ylabel('Power (V²/Hz)')
+simple_figure();
 %{
 % ------------------------------------------------------------------------------
 figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
@@ -320,15 +349,15 @@ xlabel('Time (sec)')
 ylabel('Voltage (V)')
 simple_figure();
 % ------------------------------------------------------------------------------
-% print(gcf,'antimedat','-dpng','-r350')
+print(gcf,'antimedat','-dpng','-r350')
 % ------------------------------------------------------------------------------
 figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1);
 iabmn=1;
-loglog(f,1./dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+loglog(f,dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
 hold on;
 for iabmn=2:nabmn
-loglog(f,1./dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+loglog(f,dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
 end
 hold off
 axis tight;
@@ -343,10 +372,10 @@ simple_figure();
 
 subplot(1,2,2);
 iabmn=1;
-loglog(f_,1./dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+loglog(f_,dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
 hold on;
 for iabmn=2:nabmn
-loglog(f_,1./dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+loglog(f_,dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
 end
 hold off
 axis tight;

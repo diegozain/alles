@@ -631,7 +631,7 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
     uonorm = uonorm + uo(it)**2
     uonorm_= uonorm_ + (uo(it) - uh(it))**2
   enddo
-  if (uonorm_ < uonorm) then
+  if (uonorm_ .lt. uonorm) then
     ! if its worth it,
     ! overwrite uo with solution
     do it=1,nt
