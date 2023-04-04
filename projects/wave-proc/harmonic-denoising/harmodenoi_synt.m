@@ -25,7 +25,7 @@ uo_h = 2*cos(2*pi*fo*t) + cos(2*pi*fo*3*t) + cos(2*pi*fo*5*t) + cos(2*pi*fo*11*t
 % actual signal
 % uo_s = zeros(nt,1);
 % uo_s = t.^2;
-uo_s = exp(-t.^2);
+uo_s = exp(-t.^2) + 5;
 % uo_s = cos(2*pi*fo*3.5*t);
 % ------------------------------------------------------------------------------
 % observed signal
@@ -120,14 +120,17 @@ nh= numel(h);
 % alphas = ones(nb*nh,1) * alpha_;
 % betas  = ones(nb*nh,1) * beta_;
 % fos    = ones(nb,1) * fo;
+foi = fo;
+% foi = fo*0.99;
+% h=[1 3];nh=2;
 % ------------------------------------------------------------------------------
 % initial guess for α & β
 alpha_ = 1*std(uo);
 beta_  = 1*std(uo);
 % ----------------------------------------------------------------------------
-alphas = ones(nb*nh,1) * alpha_ ./ (1:nb*nh).';
-betas  = ones(nb*nh,1) * beta_  ./ (1:nb*nh).';
-fos    = ones(nb,1) * fo;
+alphas = 1*ones(nb*nh,1) * alpha_ ./ (1:nb*nh).';
+betas  = 1*ones(nb*nh,1) * beta_  ./ (1:nb*nh).';
+fos    = ones(nb,1) * foi;
 % ------------------------------------------------------------------------------
 fprintf('\n total time    = %2.2f (s)',nt*dt)
 fprintf('\n interval time = %2.2f (s)',nt_*dt)
@@ -145,44 +148,42 @@ fprintf('--> this is how long it took me to complete\n    the forward model.\n')
 [uo_,f,df] = fourier_rt(uo,dt);
 [uh_,f,df] = fourier_rt(uh,dt);
 % ------------------------------------------------------------------------------
+rgb=qualitcolor(4);
+
 figure;
 
 subplot(1,2,1)
 hold on;
-plot(t,uh,'k-','linewidth',2);
-plot(t,uo,'y-');
+plot(t,uh,'linewidth',2,'color',rgb(1,:));
+plot(t,uo,'color',rgb(2,:));
 hold off;
 xlabel('Time (s)')
 ylabel('Voltage (V)')
-legend({'initial','observed'})
+legend({'initial harmonic','observed data'})
 axis tight;
+axis square;
 simple_figure()
 
 subplot(1,2,2)
-loglog(f,abs(uh_),'k-','linewidth',2)
+loglog(f,abs(uh_),'linewidth',2,'color',rgb(1,:))
 hold on;
-loglog(f,abs(uo_),'y-')
+loglog(f,abs(uo_),'color',rgb(2,:))
 hold off;
 xlabel('Frequency (Hz)')
 ylabel('Power')
 axis tight;
+axis square;
+xticks([1,10,100,1000])
+yticks([1,10,100,1000])
+grid on;
 simple_figure()
 % ------------------------------------------------------------------------------
 %
-% inversion
+% 👈 inversion
 %
 % ------------------------------------------------------------------------------
 % -- # of iterations
 niter=5;
-% -- memory over iterations
-% fo
-ob_fos   =zeros(niter,1);
-fos_niter=zeros(nb,niter);
-% α & β
-ob_alphas=zeros(niter,1);
-alphas_niter=zeros(nb*nh,niter);
-ob_betas=zeros(niter,1);
-betas_niter=zeros(nb*nh,niter);
 % ------------------------------------------------------------------------------
 fprintf('\n\n     Ok Mr User. I will now begin the inversion,');
 fprintf('\n        it will go for %i iterations.\n\n', niter);
@@ -199,86 +200,105 @@ uh = hd_fwd(t,alphas,betas,fos,h,nt_,nt__);
 % signal (without window mean, i.e. without makeup)
 us = uo-uh;
 % ------------------------------------------------------------------------------
+% 
+%                                   🖌️🎨
+% 
+% ------------------------------------------------------------------------------
 figure;
 
 subplot(1,2,1)
 hold on;
-plot(t,uh,'k-','linewidth',2);
-plot(t,uo,'y-');
+plot(t,uh,'linewidth',2,'color',rgb(1,:));
+plot(t,uo,'color',rgb(2,:));
 hold off;
 xlabel('Time (s)')
 ylabel('Voltage (V)')
-legend({'recovered','observed'})
+legend({'recovered harmonic','observed data'})
 axis tight;
+axis square;
 simple_figure()
 
 subplot(1,2,2)
-loglog(f,abs(uh_),'k-','linewidth',2)
+loglog(f,abs(uh_),'linewidth',2,'color',rgb(1,:))
 hold on;
-loglog(f,abs(uo_),'y-')
+loglog(f,abs(uo_),'color',rgb(2,:))
 hold off;
 xlabel('Frequency (Hz)')
 ylabel('Power')
 axis tight;
+axis square;
+xticks([1,10,100,1000])
+yticks([1,10,100,1000])
+grid on;
 simple_figure()
 % ------------------------------------------------------------------------------
 figure;
 subplot(1,2,1)
 hold on;
-plot(t,uo_s,'r','linewidth',4);
-plot(t,us,'k','linewidth',2);
-plot(t,uo,'y');
+plot(t,uo_s,'linewidth',4,'color',rgb(1,:));
+plot(t,us,'linewidth',2,'color',rgb(2,:));
+plot(t,uo,'color',rgb(3,:));
 hold off;
 xlabel('Time (s)')
 ylabel('Voltage (V)')
-legend({'true signal','recovered signal','observed'})
+legend({'true signal','recovered data','observed data'})
 axis tight;
+axis square;
 simple_figure()
 
 [uo_s_,f,df]= fourier_rt(uo_s,dt);
 [uh_,f,df] = fourier_rt(us,dt);
 
 subplot(1,2,2)
-loglog(f,abs(uo_s_),'r-','linewidth',4)
+loglog(f,abs(uo_s_),'linewidth',4,'color',rgb(1,:))
 hold on;
-loglog(f,abs(uh_),'k-','linewidth',2)
-plot(f,abs(uo_),'y-')
+loglog(f,abs(uh_),'linewidth',2,'color',rgb(2,:))
+plot(f,abs(uo_),'color',rgb(3,:))
 hold off;
 xlabel('Frequency (Hz)')
 ylabel('Power')
 axis tight;
+axis square;
+xticks([1,10,100,1000])
+yticks([1,10,100,1000])
+grid on;
 simple_figure()
 % ------------------------------------------------------------------------------
 % window mean width = (1/smallest harmonic) / dt
-us_ = window_mean_(us,800);
+us_ = window_mean_(us,ceil(1/min(fos)/dt));
 % ------------------------------------------------------------------------------
 figure;
 
 subplot(1,2,1)
 hold on;
-plot(t,uo_s,'r-','linewidth',4);
-plot(t,us,'b-','linewidth',2);
-plot(t,us_,'k--','linewidth',2);
-plot(t,uo,'y-','linewidth',1);
+plot(t,uo_s,'linewidth',4,'color',rgb(1,:));
+plot(t,us,'linewidth',2,'color',rgb(2,:));
+plot(t,us_,'--','linewidth',2,'color',rgb(3,:));
+plot(t,uo,'linewidth',1,'color',rgb(4,:));
 hold off;
 xlabel('Time (s)')
 ylabel('Voltage (V)')
 axis tight;
+axis square;
 simple_figure()
 
 [us__,f,df]= fourier_rt(us_,dt);
 
 subplot(1,2,2)
-loglog(f,abs(uo_s_),'r-','linewidth',4)
+loglog(f,abs(uo_s_),'linewidth',4,'color',rgb(1,:))
 hold on;
-loglog(f,abs(uh_),'b-','linewidth',2)
-loglog(f,abs(us__),'k--','linewidth',2)
-loglog(f,abs(uo_),'y-')
+loglog(f,abs(uh_),'linewidth',2,'color',rgb(2,:))
+loglog(f,abs(us__),'--','linewidth',2,'color',rgb(3,:))
+loglog(f,abs(uo_),'color',rgb(4,:))
 hold off;
 xlabel('Frequency (Hz)')
 ylabel('Power')
-legend({'true signal','recovered signal','convolved rec. signal','observed'})
+legend({'true signal','recovered data','conv. rec. data','observed data'})
 axis tight;
+axis square;
+xticks([1,10,100,1000])
+yticks([1,10,100,1000])
+grid on;
 simple_figure()
 % ------------------------------------------------------------------------------
 %}

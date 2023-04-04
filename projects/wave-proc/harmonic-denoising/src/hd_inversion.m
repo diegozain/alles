@@ -78,6 +78,12 @@ end
 [~,iiter] = min(ob_fos);
 fos = fos_niter(:,iiter);
 
+figure;
+subplot(2,2,1);
+plot(ob_fos,'.-','markersize',20)
+subplot(2,2,2);
+plot(fos_niter,'.','markersize',20)
+
 for iiter=1:niter
   % type of objective function.
   % 'sse'   = sum of squared errors
@@ -116,4 +122,31 @@ end
 alphas = alphas_niter(:,iiter);
 [~,iiter] = min(ob_betas);
 betas = betas_niter(:,iiter);
+
+subplot(2,2,3)
+hold on
+plot(ob_alphas,'.-','markersize',25)
+plot(ob_betas,'.-','markersize',20)
+hold off
+subplot(2,2,4)
+hold on;
+plot(alphas,'.-','markersize',20)
+plot(betas,'.-','markersize',20)
+hold off;
+
+% ------------------------------------------------------------------------------
+% get alfabet by inverting a matrix (in the easy case where nb=1)
+% not as good as you might think!
+% its actually pretty shit
+% ------------------------------------------------------------------------------
+% nt=numel(uo);
+% cossin=zeros(nt,2*nh);
+% for ih=1:nh
+%   cossin(:,ih)=cos(2*pi*fos(1)*h(ih)*t);
+%   cossin(:,nh+ih)=cos(2*pi*fos(1)*h(ih)*t);
+% end
+% cossin_=cossin.'*cossin;
+% alfabet=(cossin_+1e-5*eye(2*nh))\(cossin.'*uo);
+% alphas=alfabet(1:nh);
+% betas=alfabet(nh+1:2*nh);
 end
