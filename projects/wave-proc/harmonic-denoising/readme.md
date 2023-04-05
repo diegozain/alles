@@ -23,19 +23,19 @@ The *Fortran* version is always about **twice or three times faster** than the *
 	* 📝 edit all the ``*hd.txt``,
 		
 		```text
-		pathshd.txt
+		🗃️ pathshd.txt
 
 		bin/save/
 		bin/read/
 
-		metaparamhd.txt
+		🤟️ metaparamhd.txt
 		
 		2.5e-4 ⟵ Δt (sec)
 		7      ⟵ fₒ  (Hz)
 		42     ⟵ # of harmonics (ℕ)
 		1      ⟵ # of overlaps (ℕ)
 
-		hyperparamhd.txt
+		📟️ hyperparamhd.txt
 		
 		1e-9  ⟵ kfₒ
 		1e-4  ⟵ kfₒ•

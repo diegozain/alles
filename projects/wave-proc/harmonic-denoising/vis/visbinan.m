@@ -21,14 +21,14 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 % path_read_='../bin/save/';
 % path_read ='../bin/read/';
 
-path_read_='../bin/save/';
-path_read ='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
+% path_read_='../bin/save/';
+% path_read ='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
 
 % path_read_='E:data/foralles/noise-clu16/9hz/save/';
 % path_read ='E:data/foralles/noise-clu16/9hz/read/';
 
-% path_read_='E:data/foralles/noise-clu16/an50hz/save/';
-% path_read ='E:data/foralles/noise-clu16/an50hz/read/';
+path_read_='/media/diegox/7F3D-E672/data/foralles/noise-clu16/an50hz/save/';
+path_read ='/media/diegox/7F3D-E672/data/foralles/noise-clu16/an50hz/read/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read_,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -273,9 +273,23 @@ ito=nt; ito_=nt_;
 % ------------------------------------------------------------------------------
 %                                    🎼 🎨
 % ------------------------------------------------------------------------------
-[dataipsf,f,df] = fourier_rt(dataips,dt);
-[dataipsf_,f_,df_] = fourier_rt(dataips_,dt);
+% [dataipsf,f,df] = fourier_rt(dataips,dt);
+% [dataipsf_,f_,df_] = fourier_rt(dataips_,dt);
+% ------------------------------------------------------------------------------
+f_d_f = fft(dataips,[],1);
+df = 1/dt/nt;
+f = (-nt/2:nt/2-1)*df;
+dataipsf = fftshift(f_d_f,1);
+dataipsf = dataipsf( ceil(nt/2)+1:nt-1, : );
+f = f( ceil(nt/2)+1:nt-1 );
 
+f_d_f = fft(dataips_,[],1);
+df = 1/dt/nt_;
+f_ = (-nt_/2:nt_/2-1)*df;
+dataipsf_ = fftshift(f_d_f,1);
+dataipsf_ = dataipsf_( ceil(nt_/2)+1:nt_-1, : );
+f_ = f_( ceil(nt_/2)+1:nt_-1 );
+% ------------------------------------------------------------------------------
 dataipsf = abs(dataipsf) / numel(f);
 dataipsf_= abs(dataipsf_) / numel(f_);
 % ------------------------------------------------------------------------------
@@ -351,6 +365,8 @@ simple_figure();
 % ------------------------------------------------------------------------------
 print(gcf,'antimedat','-dpng','-r350')
 % ------------------------------------------------------------------------------
+%}
+
 figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1);
 iabmn=1;

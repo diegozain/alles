@@ -6,6 +6,9 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 % ------------------------------------------------------------------------------
 path_read_='../bin/save/';
 path_read ='../bin/read/';
+
+path_read_='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
+path_read ='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read_,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -75,7 +78,6 @@ alfabetfos = alfabetfos.';
 %
 % ------------------------------------------------------------------------------
 rgb=cuatrocolo(nabmn);
-
 % ------------------------------------------------------------------------------
 %                                  🕐🔌
 % ------------------------------------------------------------------------------
@@ -85,47 +87,81 @@ t_=t_+0.01525;
 t=(0:(nt-1))*dt;t=t.';
 t=t+0.01525;
 % ------------------------------------------------------------------------------
-mini_=min(dataips_(:));
-maxi_=max(dataips_(:));
-% ------------------------------------------------------------------------------
 %                                    🎼 🎨
 % ------------------------------------------------------------------------------
-% because my fft pads the signal with zeros at the end,
-% the fft on heaveside breaks if nt>2^(some power).
-ntpw2=2^nextpow2(nt);
-ntoff = ntpw2-nt;
-dataipsf = [dataips; repmat(dataips(nt,:),[ntoff,1])];
-dataipsf=dataips;
-[dataipsf,f,df] = fourier_rt(dataips,dt);
+% % because my fft pads the signal with zeros at the end,
+% % the fft on heaveside breaks if nt>2^(some power).
+% ntpw2=2^nextpow2(nt);
+% ntoff = ntpw2-nt;
+% dataipsf = [dataips; repmat(dataips(nt,:),[ntoff,1])];
+% dataipsf=dataips;
+% [dataipsf,f,df] = fourier_rt(dataips,dt);
 
-ntpw2_=2^nextpow2(nt_);
-ntoff_ = ntpw2_-nt_;
-dataipsf_ = [dataips_; repmat(dataips_(nt_,:),[ntoff_,1])];
-dataipsf_=dataips_;
-[dataipsf_,f_,df_] = fourier_rt(dataips_,dt);
+% ntpw2_=2^nextpow2(nt_);
+% ntoff_ = ntpw2_-nt_;
+% dataipsf_ = [dataips_; repmat(dataips_(nt_,:),[ntoff_,1])];
+% dataipsf_=dataips_;
+% [dataipsf_,f_,df_] = fourier_rt(dataips_,dt);
 % ------------------------------------------------------------------------------
-figure;
+f_d_f = fft(dataips,[],1);
+df = 1/dt/nt;
+f = (-nt/2:nt/2-1)*df;
+dataipsf = fftshift(f_d_f,1);
+dataipsf = dataipsf( ceil(nt/2)+1:nt-1, : );
+f = f( ceil(nt/2)+1:nt-1 );
+
+f_d_f = fft(dataips_,[],1);
+df = 1/dt/nt_;
+f_ = (-nt_/2:nt_/2-1)*df;
+dataipsf_ = fftshift(f_d_f,1);
+dataipsf_ = dataipsf_( ceil(nt_/2)+1:nt_-1, : );
+f_ = f_( ceil(nt_/2)+1:nt_-1 );
+% ------------------------------------------------------------------------------
+dataipsf = abs(dataipsf) / numel(f);
+dataipsf_= abs(dataipsf_) / numel(f_);
+% ------------------------------------------------------------------------------
+minid=min([min(dataips(:)) min(dataips_(:))]);
+maxid=max([max(dataips(:)) max(dataips_(:))]);
+
+minif=min([min(dataipsf(:)) min(dataipsf_(:))]);
+maxif=max([max(dataipsf(:)) max(dataipsf_(:))]);
+% ------------------------------------------------------------------------------
+figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1);
-loglog(f,abs(dataipsf(:,1:100))/numel(real(dataipsf(:,1:100))),'linewidth',1)%,'color',purpura)
+iabmn=1;
+loglog(f,dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+hold on;
+for iabmn=2:nabmn
+loglog(f,dataipsf(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+end
+hold off
 axis tight;
 axis square;
 grid on;
 xticks([1,10,100,1000]);
 xtickangle(0);
-yticks([1e-8,1e-7,1e-6,1e-5,1e-4])
+ylim([minif,maxif])
 xlabel('Frequency (Hz)')
-ylabel('Power (A²/Hz)')
+ylabel('Power (V²/Hz)')
 simple_figure();
 
 subplot(1,2,2);
-loglog(f_,abs(dataipsf_(:,1:100))/numel(real(dataipsf_(:,1:100))),'linewidth',1)%,'color',azul)
+iabmn=1;
+loglog(f_,dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+hold on;
+for iabmn=2:nabmn
+loglog(f_,dataipsf_(:,iabmn),'linewidth',1,'color',rgb(iabmn,:))
+end
+hold off
 axis tight;
 axis square;
 grid on;
 xticks([1,10,100,1000]);
 xtickangle(0);
-yticks([1e-8,1e-7,1e-6,1e-5,1e-4])
+ylim([minif,maxif])
 xlabel('Frequency (Hz)')
-ylabel('Power (A²/Hz)')
+ylabel('Power (V²/Hz)')
 simple_figure();
+% ------------------------------------------------------------------------------
+print(gcf,'aspowspec','-dpng','-r350')
 % ------------------------------------------------------------------------------

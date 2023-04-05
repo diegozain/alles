@@ -91,6 +91,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [*Fortran* in *Matlab*](projects/visualize/finmatlab/)
   * [Matrix inception](projects/visualize/matrix-inception/)
   * [Compile *Matlab* scripts](projects/visualize/minexe/)
+  * [Plot in gnuplot](projects/visualize/see-gnuplot/)
 
 * Deep learning
 
