@@ -150,7 +150,7 @@ program harmodenoibin
  ! 🏠 window to convolve with
  nw = ceiling((1/(fo*h(1)))/dt)
  ! ✂️ ⏰ ✂️
- nttail = ceiling(0.2*nh*(1/fo)/dt) ! 0.1
+ nttail = ceiling(0.5*nh*(1/fo)/dt) ! 0.1 0.2
  nttrim = nt-nttail
  ! -----------------------------------------------------------------------------
  ! input  :: target nb, fo, & dt

@@ -637,6 +637,12 @@ subroutine harmodenoi_(uo,t,h,alphas,betas,fos,nt,nb,nh,nt_,nt__,nw,&
     do it=1,nt
       uo(it) = uo(it) - uh(it)
     enddo
+  else
+    ! if not, keep a record
+    do ibh=1,nh*nb
+      alphas(ibh) = 0
+      betas(ibh) = 0
+    enddo
   endif
   ! ! 🙁
   ! ! overwrite uo with solution

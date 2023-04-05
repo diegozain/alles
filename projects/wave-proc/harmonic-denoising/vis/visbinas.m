@@ -7,8 +7,8 @@ addpath('../../../pdes/dc-xbore-vis/src/')
 path_read_='../bin/save/';
 path_read ='../bin/read/';
 
-path_read_='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
-path_read ='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
+% path_read_='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/save/';
+% path_read ='/media/diegox/7F3D-E672/data/foralles/precis-clu16/round1/rscheckkdensity/read/';
 % ------------------------------------------------------------------------------
 dataips__size= read_bin(strcat(path_read_,'dataips__size'),[3,1],'uint32');
 nt_ = dataips__size(1);
@@ -126,6 +126,59 @@ maxid=max([max(dataips(:)) max(dataips_(:))]);
 minif=min([min(dataipsf(:)) min(dataipsf_(:))]);
 maxif=max([max(dataipsf(:)) max(dataipsf_(:))]);
 % ------------------------------------------------------------------------------
+iabmn=45;
+% ------------------------------------------------------------------------------
+figure('units','normalized','outerposition',[0 0 0.7 0.5]);
+subplot(1,3,1)
+semilogx(t,dataips(:,iabmn),'color','k','linewidth',2)
+hold on;
+semilogx(t_,dataips_(:,iabmn),'color',rgb(iabmn,:),'linewidth',2)
+hold off;
+axis tight;
+axis square;
+grid on;
+xticks([1e-1,1])
+xlabel('Time (sec)')
+ylabel('Voltage (V)')
+simple_figure();
+
+subplot(1,3,2)
+loglog(f,dataipsf(:,iabmn),'color','k','linewidth',2)
+hold on;
+loglog(f_,dataipsf_(:,iabmn),'color',rgb(iabmn,:),'linewidth',2)
+hold off;
+axis tight;
+axis square;
+grid on;
+xticks([1 1e1 1e2 1e3])
+xlabel('Frequency (Hz)')
+ylabel('Power (V²/Hz)')
+simple_figure();
+
+coss=zeros(nt,nh);
+sinn=zeros(nt,nh);
+th=t-t(1);
+for ih=1:nh
+ coss(:,ih)=cos(2*pi*fos_(iabmn)*ih*th);
+ sinn(:,ih)=cos(2*pi*fos_(iabmn)*ih*th);
+end
+uh=coss*alphas_(:,iabmn) + sinn*betas_(:,iabmn);
+% uh=1e-3*uh/max(abs(uh));
+
+subplot(1,3,3);
+semilogx(t,uh+dataips(:,iabmn),'color','r','linewidth',2);
+hold on;
+semilogx(t,dataips(:,iabmn),'color',rgb(iabmn,:),'linewidth',2);
+hold off;
+axis tight;
+axis square;
+grid on;
+xticks([1e-1,1])
+xlabel('Time (sec)')
+ylabel('Voltage (V)')
+simple_figure();
+% ------------------------------------------------------------------------------
+%{
 figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
 subplot(1,2,1);
 iabmn=1;
@@ -165,3 +218,4 @@ simple_figure();
 % ------------------------------------------------------------------------------
 print(gcf,'aspowspec','-dpng','-r350')
 % ------------------------------------------------------------------------------
+%}
