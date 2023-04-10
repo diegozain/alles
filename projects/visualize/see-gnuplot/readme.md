@@ -9,14 +9,36 @@ diego domenzain
 
 Plot things in **``gnuplot``**.
 
-* ``viridis_colormap.gnu`` ⟶ ``imagesc(test_colormap.txt)``
-* ``binplot.gnu`` ⟶  ``plot`` from binary file **written a la C!!**
-* ``binimagesc.gnu`` ⟶  ``imagesc`` from binary file **with a weird format & float**
-
 🏃️
 
 ```shell
 gnuplot filename.gnu
+```
+
+* ``viridis_colormap.gnu`` ⟶ ``imagesc(test_colormap.txt)``
+* ``binplot.gnu`` ⟶  ``plot`` from binary file **written a la C!!**
+* ``binimagesc.gnu`` ⟶  ``imagesc`` from binary file **with a weird format & float**
+* ``binsubplot.gnu`` ⟶  ``subplot``
+
+```text
+a la C
+ ____________
+|            | ⟵ t
+|____________| ⟵ s(t)
+
+
+
+weird format & float (single precision)
+   
+ nx    M(ny,nx)
+ ↓
+ _______________
+|_|_____________| ⟵ y
+| |             |
+| |             | ⟵ Mᵀ
+|_|_____________|
+ ↑
+ x
 ```
 
 ---
