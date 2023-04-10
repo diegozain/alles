@@ -1,15 +1,17 @@
+
 # 👁️ 📊️
 
 diego domenzain
 
-2022
+2023
 
 ---
 
 Plot things in **``gnuplot``**.
 
 * ``viridis_colormap.gnu`` ⟶ ``imagesc(test_colormap.txt)``
-* bla bla
+* ``binplot.gnu`` ⟶  ``plot`` from binary file **written a la C!!**
+* ``binimagesc.gnu`` ⟶  ``imagesc`` from binary file **with a weird format & float**
 
 🏃️
 
@@ -17,7 +19,9 @@ Plot things in **``gnuplot``**.
 gnuplot filename.gnu
 ```
 
-## 📚️
+---
+
+## 📚️ manuals
 
 * 🧑‍🏫️ 
  * https://gnuplot.sourceforge.net/demo_5.4/
@@ -29,4 +33,8 @@ gnuplot filename.gnu
 * ◼️🟪️🟥️ colormaps
   * https://github.com/Gnuplotting/gnuplot-palettes
 
-## 🎨️
+## 🎨️ art
+
+![adaptworkflow](../pics/binplot.png)
+
+![adaptworkflow](../pics/binimagesc.png)

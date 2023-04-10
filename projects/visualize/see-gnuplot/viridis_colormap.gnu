@@ -24,12 +24,12 @@ set tics nomirror out scale 0.75
 # disable colorbar tics
 set cbtics scale 0
 # viridis palette colors
-load 'viridis.pal'
+load 'srcgnuplot/viridis.pal'
 
 set xrange [0:59]
 set yrange [0:59]
 set xlabel 'x (µm)'
 set ylabel 'y (µm)'
 
-plot 'test_colormap.txt' u ($1/3.0):($2/3.0):($3/1000.0) matrix with image
+plot 'srcgnuplot/test_colormap.txt' u ($1/3.0):($2/3.0):($3/1000.0) matrix with image
 
