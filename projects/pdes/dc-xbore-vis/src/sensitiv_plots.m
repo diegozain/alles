@@ -16,8 +16,8 @@ function sensitiv_plots(electrodes,s_i_r_d_std,pseud,nrows,ncols,prct)
 % # of rows and columns of the final plot
 % percentage of colormap to plot
 % ------------------------------------------------------------------------------
-nx = 6e2;
-nz = 6e2;
+nx = 1e3;
+nz = 1e3;
 
 nsources = size(s_i_r_d_std,2);
 

@@ -108,8 +108,8 @@ nsources = size(s_i_r_d_std,2);
 fprintf(' -- just finished bundling abmn -- \n');
 fprintf('     there are %i different ab\n\n',nsources);
 % ------------------------------------------------------------------------------
-nrows=2;
-ncols=2;
+nrows=1;
+ncols=1;
 prct=9e-4;
 sensitiv_plots(electrodes,s_i_r_d_std,pseud,nrows,ncols,prct);
 % ------------------------------------------------------------------------------
