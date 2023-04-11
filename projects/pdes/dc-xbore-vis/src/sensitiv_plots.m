@@ -3,9 +3,9 @@ function sensitiv_plots(electrodes,s_i_r_d_std,pseud,nrows,ncols,prct)
 % julio 2021
 % Aarhus Uni
 % ------------------------------------------------------------------------------
-% 
+%
 % sensitiv_plots.m
-% 
+%
 % plots random examples of some of the abmn sensitivities...
 %                                              !! for all mn with a common ab !!
 % good for getting an idea of what the survey looks like.
@@ -59,21 +59,26 @@ for iexample=1:(nrows*ncols)
   srcs=repmat(src,size(recs,1),1);
   pseud_ = geom_median([electrodes(srcs(:,1),:); electrodes(srcs(:,2),:); electrodes(recs(:,1),:); electrodes(recs(:,2),:)]);
   % ----------------------------------------------------------------------------
-  % subplot(2,6,iexample)
-  % subplot(3,4,iexample)
-  subplot(1,2,iexample)
+  subplot(nrows,ncols,iexample)
   fancy_imagesc(psi_,x,z)
-  colormap(rainbow2_cb(1))
-  % caxis(7e-2*[-1 1])
-  caxis(1e-4*[-max(psi_(:)) max(psi_(:))])
-  % caxis(5e-1*[-max(psi_(:)) max(psi_(:))])
+  % rgb=berlin();
+  % rgb=crazy_mellow();
+  % rgb=crazymellow();
+  % rgb=cuatrocolo();
+  % rgb=qualitcolor();
+  % rgb=rojonegro();
+  rgb=cytwombly();
+
+  colormap(rgb);
+  caxis(prct*[-max(psi_(:)) max(psi_(:))])
   colorbar('off')
-  hold on;
-  plot(pseud_(1),pseud_(2),'.','markersize',40,'color',[0.1529,0.7686,0.0980])
-  plot(pseud_(1),pseud_(2),'w.','markersize',20)
-  hold off;
+  % hold on;
+  % plot(pseud_(1),pseud_(2),'.','markersize',40,'color',[0.1529,0.7686,0.0980])
+  % plot(pseud_(1),pseud_(2),'w.','markersize',20)
+  % hold off;
   set(gca,'xtick',[])
   set(gca,'ytick',[])
+  set(gca,'visible','off')
   simple_figure()
 end
 simple_figure()
