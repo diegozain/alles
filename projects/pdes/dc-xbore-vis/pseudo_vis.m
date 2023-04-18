@@ -5,7 +5,7 @@ clc
 addpath('src');
 % ------------------------------------------------------------------------------
 % total number of electrodes
-nelectrodes=14; % 32; 
+nelectrodes=14; % 32;
 % ------------------------------------------------------------------------------
 % declare all electrode positions
 % ------------------------------------------------------------------------------
@@ -17,17 +17,17 @@ xmax=max(electrodes(:,1));
 zmin=min(electrodes(:,2));
 zmax=max(electrodes(:,2));
 % ------------------------------------------------------------------------------
-% % awesome version for random shit
-% xmin=1;
-% xmax=2;
-% zmin=1;
-% zmax=2;
-% 
-% electrodes=[xmin+(xmax-xmin)*rand(nelectrodes/2,1) zmin+(zmax-zmin)*rand(nelectrodes/2,1); xmin+(xmax-xmin)*rand(nelectrodes/2,1) zmin+(zmax-zmin)*rand(nelectrodes/2,1)];
+% awesome version for random shit
+xmin=1;
+xmax=2;
+zmin=1;
+zmax=2;
+
+electrodes=[xmin+(xmax-xmin)*rand(nelectrodes/2,1)*2 zmin+(zmax-zmin)*rand(nelectrodes/2,1)*2; xmin+(xmax-xmin)*rand(nelectrodes/2,1)*2 zmin+(zmax-zmin)*rand(nelectrodes/2,1)*2];
 % ------------------------------------------------------------------------------
 % % horizontal borehole
 % electrodes=[(linspace(1,nelectrodes*0.5,nelectrodes/2)).' 1*ones(nelectrodes/2,1); (linspace(1,nelectrodes*0.5,nelectrodes/2)).' 4*ones(nelectrodes/2,1) ];
-% 
+%
 % xmin=min(electrodes(:,1));
 % xmax=max(electrodes(:,1));
 % zmin=min(electrodes(:,2));
@@ -58,11 +58,11 @@ pseud = pseud(ipermu,:);
 % 2. count # of clusters,
 % 3. keep track of what clusters are,
 % 4. build clusters.
-% 
-% #3 proceeds to make a vector 'klusters' where entries are how many elements 
+%
+% #3 proceeds to make a vector 'klusters' where entries are how many elements
 % repeated elements belong to a cluster (they are ordered that way).
 % example (not real example):
-% 
+%
 % repeated    = [2; 4; 6; 10; 11; 15]
 % if clusters = [2 4] , [6 10 11 15], then
 % klusters    = [2; 4]
@@ -96,9 +96,9 @@ ncols=6;
 prct=3e-4;
 sensitiv_plot(electrodes,abmn,pseud,nrows,ncols,prct);
 % ------------------------------------------------------------------------------
-% 
-% visualize all mn with one common ab 
-% 
+%
+% visualize all mn with one common ab
+%
 % ------------------------------------------------------------------------------
 tic;
 s_i_r_d_std = dc_bundle( abmn(:,1:2),ones(nabmn,1),abmn(:,3:4),ones(nabmn,1),zeros(nabmn,1) );
@@ -109,7 +109,7 @@ fprintf(' -- just finished bundling abmn -- \n');
 fprintf('     there are %i different ab\n\n',nsources);
 % ------------------------------------------------------------------------------
 nrows=1;
-ncols=2;
-prct=5e-4;
+ncols=1;
+prct=9e-4;
 sensitiv_plots(electrodes,s_i_r_d_std,pseud,nrows,ncols,prct);
 % ------------------------------------------------------------------------------

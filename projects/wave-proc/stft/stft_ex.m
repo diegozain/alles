@@ -30,7 +30,7 @@ wvlet = wvlet__(to,wo,bo,co) + wvlet__(2.5*to,2*wo,bo,co) + wvlet__(4*to,4*wo,bo
 max_=max(wvlet);
 min_=min(wvlet);
 % ..............................................................................
-[stft_, f, gau_] = stft(wvlet, dt, t, 6, 2);
+[stft_, gau_, fspect, tspect] = stft(wvlet, dt, t, 6, 2);
 stft_=normali(stft_);
 % ..............................................................................
 figure('Renderer', 'painters', 'Position', [10 10 600 500]);
@@ -41,8 +41,8 @@ set(gca,'yticklabel',[])
 title('Data and STFT')
 simple_figure()
 subplot(2,1,2)
-% fancy_imagesc(abs(stft_),t,f);
-fancy_imagesc(abs(stft_(1:binning(f,9),:)),t,f(1:binning(f,9)));
+% fancy_imagesc(abs(stft_),t,fspect);
+fancy_imagesc(abs(stft_(1:binning(fspect,9),:)),t,fspect(1:binning(fspect,9)));
 colormap(rainbow2(1))
 colorbar('off')
 axis xy
