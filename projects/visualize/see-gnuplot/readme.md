@@ -12,7 +12,7 @@ Plot things in **``gnuplot``**.
 🏃️
 
 ```shell
-gnuplot filename.gnu
+$> gnuplot filename.gnu
 ```
 
 * ``viridis_colormap.gnu`` ⟶ ``imagesc(test_colormap.txt)``
@@ -21,12 +21,13 @@ gnuplot filename.gnu
 * ``binsubplot.gnu`` ⟶  ``subplot``
 
 ```text
-a la C
+a la C (double or single)
  ____________
 |            | ⟵ t
 |____________| ⟵ s(t)
 
 
+---
 
 weird format & float (single precision)
    
@@ -60,3 +61,5 @@ weird format & float (single precision)
 ![adaptworkflow](../pics/binplot.png)
 
 ![adaptworkflow](../pics/binimagesc.png)
+
+![adaptworkflow](../pics/binsubplot.png)
