@@ -53,6 +53,7 @@ class fancy_figure():
         self.y_ticklabels = kwargs.get('y_ticklabels','on')
         self.ax_accu = kwargs.get('ax_accu',"%g")
         self.symbol = kwargs.get('symbol','.-')
+        self.fillstyle = kwargs.get('fillstyle','full')
         self.colorbaron = kwargs.get('colorbaron','on')
         self.aspect = kwargs.get('aspect',None)
         self.ydir = kwargs.get('ydir','upright')
@@ -74,6 +75,7 @@ class fancy_figure():
         self.colo = kwargs.get('colo','ybwrk_colorblind')
         self.colop = kwargs.get('colop',None)
         self.scatter_colo = kwargs.get('scatter_colo',None)
+        self.scatter_size = kwargs.get('scatter_size',None)
         self.cololabel    = kwargs.get('cololabel',10)
         self.alpha = kwargs.get('alpha',None)
         # ......
@@ -419,6 +421,7 @@ class fancy_figure():
     # --------------------------------------------------------------------------
     def scatterer(self):
         from mpl_toolkits.axes_grid1 import make_axes_locatable
+        from matplotlib.markers import MarkerStyle
         '''
         -----------------------------
         plot a scatterer
@@ -451,8 +454,8 @@ class fancy_figure():
         # .................
         # scatter
         # .................
-        im=ax.scatter(self.x,self.curve,marker=self.symbol,c=self.scatter_colo,
-        cmap=colo,norm=norm,edgecolor='k')
+        im=ax.scatter(self.x,self.curve,s=self.scatter_size,c=self.scatter_colo,
+        cmap=colo,norm=norm,edgecolor='None',marker=MarkerStyle(self.symbol, fillstyle=self.fillstyle))
         if self.xdir == 'reverse':
             ax.invert_xaxis()
         if self.ydir == 'reverse':
@@ -761,13 +764,6 @@ class fancy_figure():
             colo = colo(np.linspace(0, 1, 256))
             colo = ListedColormap(colo)
         # -------------------------
-        if self.colo == 'plasma':
-            from matplotlib import cm
-            from matplotlib.colors import ListedColormap
-            colo = cm.get_cmap('plasma', 256)
-            colo = colo(np.linspace(0, 1, 256))
-            colo = ListedColormap(colo)
-        # -------------------------
         if self.colo == 'Dark2':
             from matplotlib import cm
             from matplotlib.colors import ListedColormap
@@ -988,6 +984,16 @@ class fancy_figure():
             colo  = [(0.9412,0.8941,0.2588),(0.0471,0.4824,0.8627)]
             colo_ = [(0.865,0.865,0.865), (0.8627,0.1961,0.1255),(0,0,0)]
             colo = colo + colo_
+            colo  = LinearSegmentedColormap.from_list('name',colors=colo,N=256)
+        # -------------------------
+        if self.colo == 'qualitcolor':
+            from matplotlib.colors import LinearSegmentedColormap
+            colo  = [(0,0.4470,0.7410),(0.8500,0.3250,0.0980),(0.9290,0.6940,0.1250),(0.4940,0.1840,0.5560),(0.4660,0.6740,0.1880),(0.3010,0.7450,0.933),(0.6350,0.0780,0.1840)]
+            colo  = LinearSegmentedColormap.from_list('name',colors=colo,N=256)
+        # -------------------------
+        if self.colo == 'cuatrocolo':
+            from matplotlib.colors import LinearSegmentedColormap
+            colo  = [(1.0000,0.8706,0.0824),(0.9451,0.3490,0.1647),(0.9294,0.1059,0.1412),(0.6275,0.1216,0.3843),(0.3961,0.1765,0.5725),(0.1294,0.2431,0.6039),(0.0471,0.6275,0.2902)]
             colo  = LinearSegmentedColormap.from_list('name',colors=colo,N=256)
         # -------------------------
         if self.colo == 'tepoz':
