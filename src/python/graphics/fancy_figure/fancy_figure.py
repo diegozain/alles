@@ -996,6 +996,11 @@ class fancy_figure():
             colo  = [(1.0000,0.8706,0.0824),(0.9451,0.3490,0.1647),(0.9294,0.1059,0.1412),(0.6275,0.1216,0.3843),(0.3961,0.1765,0.5725),(0.1294,0.2431,0.6039),(0.0471,0.6275,0.2902)]
             colo  = LinearSegmentedColormap.from_list('name',colors=colo,N=256)
         # -------------------------
+        if self.colo == 'abn':
+            from matplotlib.colors import LinearSegmentedColormap
+            colo  = [(0.6667,0.8196,0.9294),(0.865,0.865,0.865),(0,0,0)]
+            colo  = LinearSegmentedColormap.from_list('name',colors=colo,N=256)
+        # -------------------------
         if self.colo == 'tepoz':
             from matplotlib.colors import LinearSegmentedColormap
             # tierra hojas cielo rojo piedra

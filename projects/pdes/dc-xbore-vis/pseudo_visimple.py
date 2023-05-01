@@ -17,7 +17,7 @@ dpi=400
 # cytwombly_ , groundwater_colorblind_ , contaminant , crazy_mellow , turbo
 # tabber , glacier_, gnuplot, batlow, berlin, plasma, prism nipy_spectral
 # tokyo, bam, cork, broc roma hawaii lisbon Greys kkrr y-b
-colo='Greys'
+colo='abn'
 colo_='cuatrocolo' # cuatrocolo qualitcolor
 
 colo_txt = (0,0,0)
@@ -167,27 +167,36 @@ holdon='on'
 # ------------------------------------------------------------------------------
 ax0.annotate("slice in width",xy=(2.6,5.9),fontsize=fontsize_,color=colo_txt,ha='left')
 # ------------------------------------------------------------------------------
-#  pseudoloc
+#  𝐦 pseudo
 fancy_figure(
 ax_=ax0,
 curve=pseud[iabmn1-1,1],
 x=pseud[iabmn1-1,0],
-ax_accu="%.0f",
-symbol='.',
-markersize=25,
-colop=((0,0,0)),
+symbol='o',
+scatter_colo=abmn[iabmn[2]-1,2],
+scatter_size=90,
+fillstyle='top',
+vmin=iabmnmin,
+vmax=iabmnmax,
+colop=colo_,
+colorbaron='off',
 holdon='on'
-).plotter()
+).scatterer()
+#  𝐧 pseudo
 fancy_figure(
 ax_=ax0,
 curve=pseud[iabmn1-1,1],
 x=pseud[iabmn1-1,0],
-ax_accu="%.0f",
-symbol='.',
-markersize=15,
-colop=((0.9290,0.6940,0.1250)),
+symbol='o',
+scatter_colo=abmn[iabmn[2]-1,3],
+scatter_size=90,
+fillstyle='bottom',
+vmin=iabmnmin,
+vmax=iabmnmax,
+colop=colo_,
+colorbaron='off',
 holdon='on'
-).plotter()
+).scatterer()
 # ------------------------------------------------------------------------------
 #                                   🐘 electrxyz 🐘
 # ------------------------------------------------------------------------------
@@ -198,8 +207,8 @@ curve=electrxyz[1,src[0]-1],
 x=electrxyz[0,src[0]-1],
 ax_accu="%.0f",
 symbol='s',
-markersize=5,
-colop=((0,1,1)),
+markersize=6,
+colop=((1,1,1)),
 holdon='on'
 ).plotter()
 # 𝐛
@@ -209,34 +218,42 @@ curve=electrxyz[1,src[1]-1],
 x=electrxyz[0,src[1]-1],
 ax_accu="%.0f",
 symbol='s',
-markersize=5,
-colop=((0,1,1)),
+markersize=6,
+colop=((1,1,1)),
 holdon='on'
 ).plotter()
-# 𝐦
+#  𝐦
 fancy_figure(
 ax_=ax0,
 curve=electrxyz[1,recs[0,0]-1],
 x=electrxyz[0,recs[0,0]-1],
-ax_accu="%.0f",
 symbol='s',
-markersize=5,
-colop=((0.84,0.05,0.26)),
+scatter_colo=abmn[iabmn[2]-1,2],
+scatter_size=80,
+# fillstyle='top',
+vmin=iabmnmin,
+vmax=iabmnmax,
+colo=colo_,
+colorbaron='off',
 holdon='on'
-).plotter()
-# 𝐧
+).scatterer()
+#  𝐧
 fancy_figure(
 ax_=ax0,
 curve=electrxyz[1,recs[1,0]-1],
 x=electrxyz[0,recs[1,0]-1],
-ax_accu="%.0f",
 symbol='s',
-markersize=5,
-colop=((0.84,0.05,0.26)),
+scatter_colo=abmn[iabmn[2]-1,3],
+scatter_size=80,
+# fillstyle='bottom',
+vmin=iabmnmin,
+vmax=iabmnmax,
+colop=colo_,
+colorbaron='off',
 xlabel='Length',
 ylabel='Depth',
 holdon='on'
-).plotter()
+).scatterer()
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -266,8 +283,8 @@ curve=electrxyzk[1,srck[0]-1],
 x=electrxyzk[0,srck[0]-1],
 ax_accu="%.0f",
 symbol='s',
-markersize=5,
-colop=((0,1,1)),
+markersize=6,
+colop=((1,1,1)),
 holdon='on'
 ).plotter()
 # 𝐛
@@ -277,8 +294,8 @@ curve=electrxyzk[1,srck[1]-1],
 x=electrxyzk[0,srck[1]-1],
 ax_accu="%.0f",
 symbol='s',
-markersize=5,
-colop=((0,1,1)),
+markersize=6,
+colop=((1,1,1)),
 holdon='on'
 ).plotter()
 #  𝐦
@@ -372,8 +389,8 @@ curve=electrxyz[1,src[0]-1],
 x=electrxyz[0,src[0]-1],
 ax_accu="%.0f",
 symbol='s',
-markersize=5,
-colop=((0,1,1)),
+markersize=6,
+colop=((1,1,1)),
 holdon='on'
 ).plotter()
 # 𝐛
@@ -383,8 +400,8 @@ curve=electrxyz[1,src[1]-1],
 x=electrxyz[0,src[1]-1],
 ax_accu="%.0f",
 symbol='s',
-markersize=5,
-colop=((0,1,1)),
+markersize=6,
+colop=((1,1,1)),
 holdon='on'
 ).plotter()
 #  𝐦
@@ -395,7 +412,7 @@ x=electrxyz[0,recs[0,:]-1],
 symbol='s',
 scatter_colo=recs[0,:],
 scatter_size=80*np.ones(iabmn.shape[0]),
-fillstyle='left',
+# fillstyle='top',
 vmin=iabmnmin,
 vmax=iabmnmax,
 colo=colo_,
@@ -410,7 +427,7 @@ x=electrxyz[0,recs[1,:]-1],
 symbol='s',
 scatter_colo=recs[1,:],
 scatter_size=80*np.ones(iabmn.shape[0]),
-fillstyle='right',
+# fillstyle='bottom',
 vmin=iabmnmin,
 vmax=iabmnmax,
 colo=colo_,
@@ -426,7 +443,7 @@ x=pseud[iabmn-1,0],
 symbol='o',
 scatter_colo=abmn[iabmn-1,2],
 scatter_size=90*np.ones(iabmn.shape[0]),
-fillstyle='left',
+fillstyle='top',
 vmin=iabmnmin,
 vmax=iabmnmax,
 colo=colo_,
@@ -441,7 +458,7 @@ x=pseud[iabmn-1,0],
 symbol='o',
 scatter_colo=abmn[iabmn-1,3],
 scatter_size=90*np.ones(iabmn.shape[0]),
-fillstyle='right',
+fillstyle='bottom',
 vmin=iabmnmin,
 vmax=iabmnmax,
 colo=colo_,
