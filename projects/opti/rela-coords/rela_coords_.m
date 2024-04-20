@@ -55,9 +55,10 @@ neigh(5,1:4) = [1, 3, 4, 6];
 neigh(6,1:2) = [1, 5];
 
 xy = zeros(np*2,1);
+radii=6;
 for ixy=1:np
-xy(ixy) = 6*cos(ixy*(2*pi/np));
-xy(np+ixy) = 6*sin(ixy*(2*pi/np));
+xy(ixy) = radii*cos(ixy*(2*pi/np));
+xy(np+ixy) = radii*sin(ixy*(2*pi/np));
 end
 distao = [7.66; 8.57; 3.69; 2.99; 1.7; 7.1; 7.1; 4.815; 1.26];
 % ------------------------------------------------------------------------------
@@ -139,8 +140,8 @@ ylabel({'Warehouse';'Width (m)'})
 simple_figure()
 
 figure;
-loglog(objfnc,'r.-','markersize',20)
-% plot(objfnc,'r.-','markersize',20)
+% loglog(objfnc,'r.-','markersize',20)
+semilogy(10.^objfnc,'r.-','markersize',20)
 axis tight;
 xlabel('Iteration #')
 ylabel('Objective function')
