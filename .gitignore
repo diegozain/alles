@@ -28,6 +28,7 @@ fort.*
 *.obj
 *.mod
 *.exe
+*.so
 
 fortran_supplement_ver_1.1.pdf
 
