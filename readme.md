@@ -91,12 +91,12 @@ If running *Matlab* projects, please set paths first by running the script:
   * [Matrix inception](projects/visualize/matrix-inception/)
   * [Compile *Matlab* scripts](projects/visualize/minexe/)
   * [Plot in gnuplot](projects/visualize/see-gnuplot/)
-	* [*Fortran* in *Matlab*](projects/visualize/finmatlab/)
-	* [*Fortran* in *Python*](projects/visualize/finpy/)
-	* [*Fortran* in *C*](projects/visualize/fincc/)
-	* [*Fortran* in *C++*](projects/visualize/fincc/)
-	* [*C* in *Python*](projects/visualize/cinpy/)
-	* [*C++* in *Python*](projects/visualize/ccinpy/)
+  * [*Fortran* in *Matlab*](projects/visualize/finmatlab/)
+  * [*Fortran* in *Python*](projects/visualize/finpy/)
+  * [*Fortran* in *C*](projects/visualize/fincc/)
+  * [*Fortran* in *C++*](projects/visualize/fincc/)
+  * [*C* in *Python*](projects/visualize/cinpy/)
+  * [*C++* in *Python*](projects/visualize/ccinpy/)
 
 * Deep learning
 
