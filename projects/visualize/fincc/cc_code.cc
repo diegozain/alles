@@ -1,6 +1,6 @@
 #include <iostream>
-#include <cstdlib> // For exit()
-#include <dlfcn.h> // For dynamic loading
+#include <cstdlib>
+#include <dlfcn.h>
 
 typedef void (*add_numbers_t)(double*, double*, double*);
 
