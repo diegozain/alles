@@ -44,6 +44,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Dijkstra algorithm](projects/graph-alg/dijkstra/)
 	* [Mesher](projects/graph-alg/mesher/)
   * [Graph signal processing](projects/graph-alg/graph-signal/)
+	* [Error correcting codes](projects/graph-alg/codes/)
 
 * Partial differential equations
 
@@ -97,6 +98,8 @@ If running *Matlab* projects, please set paths first by running the script:
   * [*Fortran* in *C++*](projects/visualize/fincc/)
   * [*C* in *Python*](projects/visualize/cinpy/)
   * [*C++* in *Python*](projects/visualize/ccinpy/)
+	* [Animation in the command line *C*](projects/visualize/animac/)
+	* [Click points and do stuff with that](projects/visualize/pointsclic/)
 
 * Deep learning
 

@@ -3,6 +3,7 @@
 
 // gcc -o animac animac.c
 // https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences
+// printf("\033[H\033[J"); // clear the screen
 
 int main() {
   while (1) {
@@ -14,7 +15,6 @@ int main() {
     printf("\033[0m"); // normal color font
     fflush(stdout);
     sleep(1); // seconds
-    // printf("\033[H\033[J"); // clear the screen
 
     printf("\r");     // move to begining of line
     printf("\033[A"); // go up one line
@@ -30,7 +30,6 @@ int main() {
     printf("       _/   \\_\n");
     fflush(stdout);
     sleep(1); // seconds
-    // printf("\033[H\033[J"); // clear the screen
 
     printf("\r");     // move to begining of line
     printf("\033[A"); // go up one line
