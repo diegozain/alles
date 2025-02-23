@@ -2,39 +2,63 @@ import pyvista as pv
 import numpy as np
 import sys
 # --------------------------------------------------------------------
-# Define the callback function to handle picking events
 def pointclic(mesh, picked_point):
-  print(f" ⦿ ⦿ .. {picked_point.GetPointId()}")
+  pointclicked = picked_point.GetPointId()
+  print(f" ⦿ ⦿ .. {pointclicked:d}")
+  
+  global aii
+  plotter.remove_actor(aii)
+  
+  # ▢
+  aii=plotter.add_points(
+  points[pointclicked,:],
+  style="points_gaussian",
+  # render_points_as_spheres=True,
+  point_size=30,
+  color="black"
+  )
 
 def closeclic(flag):
   print("⛔ bye bye")
   sys.exit(0)
 
-textplot = " click on a point and\n see its index in the console.\n click the red button to exit."
+instructxt = " click on a point and see its index in the console\n click the red square to exit"
 # --------------------------------------------------------------------
 # 10⁶ points makes the plot go 🐌 in my laptop
 # 10⁵ points works 🚀 in my laptop
-num_points = 500000
+num_points = 10
 
 np.random.seed(42)
 points = np.random.random((num_points, 3))
 # --------------------------------------------------------------------
 point_cloud = pv.PolyData(points)
 # --------------------------------------------------------------------
-# add point indices as scalars for easy identification (??)
+# add point indices as scalars
 point_cloud["index"] = np.arange(num_points)
-# Initialize global variable to store clicked point index
-selected_index = None
+# initialize global variable to store clicked point index (??)
+pointclicked = 0
 # --------------------------------------------------------------------
 # 📊
 plotter = pv.Plotter()
 
-plotter.add_text(
-  textplot,
-  font_size=12,
-  position="upper_left"
+# ▢
+aii = plotter.add_points(
+points[pointclicked,:],
+style="points_gaussian",
+# render_points_as_spheres=True,
+point_size=30,
+color="black"
 )
 
+# ⦿
+plotter.enable_point_picking(
+  callback=pointclic,
+  show_message=False,
+  use_picker=True,
+)
+
+# ····..
+# ····..
 plotter.add_mesh(
   point_cloud,
   render_points_as_spheres=True,
@@ -44,11 +68,11 @@ plotter.add_mesh(
   pickable=True
 )
 
-# ⦿
-plotter.enable_point_picking(
-  callback=pointclic,
-  show_message=False,
-  use_picker=True,
+# 📔
+plotter.add_text(
+  instructxt,
+  font_size=12,
+  position="upper_left"
 )
 
 # ⛔
@@ -70,3 +94,5 @@ plotter.show()
 
 # picked_point
 # ['AddObserver', 'AddPickList', 'BreakOnError', 'DebugOff', 'DebugOn', 'DeletePickList', 'FastDelete', 'GetActor', 'GetActor2D', 'GetActors', 'GetAddressAsString', 'GetAssembly', 'GetClassName', 'GetCommand', 'GetCompositeDataSet', 'GetDataSet', 'GetDebug', 'GetFlatBlockIndex', 'GetGlobalWarningDisplay', 'GetIsInMemkind', 'GetMTime', 'GetMapper', 'GetMapperPosition', 'GetNumberOfGenerationsFromBase', 'GetNumberOfGenerationsFromBaseType', 'GetObjectDescription', 'GetObjectName', 'GetPath', 'GetPickFromList', 'GetPickList', 'GetPickPosition', 'GetPickedPositions', 'GetPointId', 'GetProp3D', 'GetProp3Ds', 'GetPropAssembly', 'GetReferenceCount', 'GetRenderer', 'GetSelectionPoint', 'GetTolerance', 'GetUseCells', 'GetUsingMemkind', 'GetViewProp', 'GetVolume', 'GlobalWarningDisplayOff', 'GlobalWarningDisplayOn', 'HasObserver', 'InitializeObjectBase', 'InitializePickList', 'InvokeEvent', 'IsA', 'IsTypeOf', 'Modified', 'NewInstance', 'Pick', 'Pick3DPoint', 'Pick3DRay', 'PickFromListOff', 'PickFromListOn', 'Register', 'RemoveAllObservers', 'RemoveObserver', 'RemoveObservers', 'SafeDownCast', 'SetDebug', 'SetGlobalWarningDisplay', 'SetMemkindDirectory', 'SetObjectName', 'SetPath', 'SetPickFromList', 'SetReferenceCount', 'SetTolerance', 'SetUseCells', 'UnRegister', 'UseCellsOff', 'UseCellsOn', 'UsesGarbageCollector', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__this__', '__vtkname__', 'override']
+
+# ['AddConsumer', 'AddEstimatedRenderTime', 'AddObserver', 'AddOrientation', 'AddPosition', 'ApplyProperties', 'BreakOnError', 'BuildPaths', 'ComputeMatrix', 'CoordinateSystems', 'DEVICE', 'DebugOff', 'DebugOn', 'DragableOff', 'DragableOn', 'FastDelete', 'ForceOpaqueOff', 'ForceOpaqueOn', 'ForceTranslucentOff', 'ForceTranslucentOn', 'GeneralTextureTransform', 'GeneralTextureUnit', 'GetActors', 'GetActors2D', 'GetAddressAsString', 'GetAllocatedRenderTime', 'GetBackfaceProperty', 'GetBounds', 'GetCenter', 'GetClassName', 'GetCommand', 'GetConsumer', 'GetCoordinateSystem', 'GetCoordinateSystemAsString', 'GetCoordinateSystemDevice', 'GetCoordinateSystemRenderer', 'GetDebug', 'GetDragable', 'GetEstimatedRenderTime', 'GetForceOpaque', 'GetForceTranslucent', 'GetGlobalWarningDisplay', 'GetIsIdentity', 'GetIsInMemkind', 'GetLength', 'GetMTime', 'GetMapper', 'GetMatrix', 'GetModelToWorldMatrix', 'GetNextPath', 'GetNumberOfConsumers', 'GetNumberOfGenerationsFromBase', 'GetNumberOfGenerationsFromBaseType', 'GetNumberOfPaths', 'GetObjectDescription', 'GetObjectName', 'GetOrientation', 'GetOrientationWXYZ', 'GetOrigin', 'GetPickable', 'GetPosition', 'GetProperty', 'GetPropertyKeys', 'GetRedrawMTime', 'GetReferenceCount', 'GetRenderTimeMultiplier', 'GetScale', 'GetShaderProperty', 'GetSupportsSelection', 'GetTexture', 'GetUseBounds', 'GetUserMatrix', 'GetUserTransform', 'GetUserTransformMatrixMTime', 'GetUsingMemkind', 'GetVisibility', 'GetVolumes', 'GetXRange', 'GetYRange', 'GetZRange', 'GlobalWarningDisplayOff', 'GlobalWarningDisplayOn', 'HasKeys', 'HasObserver', 'HasOpaqueGeometry', 'HasTranslucentPolygonalGeometry', 'InitPathTraversal', 'InitializeObjectBase', 'InvokeEvent', 'IsA', 'IsConsumer', 'IsRenderingTranslucentPolygonalGeometry', 'IsTypeOf', 'MakeProperty', 'Modified', 'NewInstance', 'PHYSICAL', 'Pick', 'PickableOff', 'PickableOn', 'PokeMatrix', 'ProcessSelectorPixelBuffers', 'Register', 'ReleaseGraphicsResources', 'RemoveAllObservers', 'RemoveConsumer', 'RemoveObserver', 'RemoveObservers', 'Render', 'RenderFilteredOpaqueGeometry', 'RenderFilteredOverlay', 'RenderFilteredTranslucentPolygonalGeometry', 'RenderFilteredVolumetricGeometry', 'RenderOpaqueGeometry', 'RenderOverlay', 'RenderTranslucentPolygonalGeometry', 'RenderVolumetricGeometry', 'RestoreEstimatedRenderTime', 'RotateWXYZ', 'RotateX', 'RotateY', 'RotateZ', 'SafeDownCast', 'SetAllocatedRenderTime', 'SetBackfaceProperty', 'SetCoordinateSystem', 'SetCoordinateSystemDevice', 'SetCoordinateSystemRenderer', 'SetCoordinateSystemToDevice', 'SetCoordinateSystemToPhysical', 'SetCoordinateSystemToWorld', 'SetDebug', 'SetDragable', 'SetEstimatedRenderTime', 'SetForceOpaque', 'SetForceTranslucent', 'SetGlobalWarningDisplay', 'SetIsRenderingTranslucentPolygonalGeometry', 'SetMapper', 'SetMemkindDirectory', 'SetObjectName', 'SetOrientation', 'SetOrigin', 'SetPickable', 'SetPosition', 'SetPropertiesFromModelToWorldMatrix', 'SetProperty', 'SetPropertyKeys', 'SetReferenceCount', 'SetRenderTimeMultiplier', 'SetScale', 'SetShaderProperty', 'SetTexture', 'SetUseBounds', 'SetUserMatrix', 'SetUserTransform', 'SetVisibility', 'ShallowCopy', 'UnRegister', 'UseBoundsOff', 'UseBoundsOn', 'UsesGarbageCollector', 'VisibilityOff', 'VisibilityOn', 'WORLD', '__annotations__', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__this__', '__vtkname__', '_name', '_new_attr_exceptions', 'backface_prop', 'bounds', 'center', 'copy', 'length', 'mapper', 'memory_address', 'name', 'orientation', 'origin', 'override', 'pickable', 'plot', 'position', 'prop', 'rotate_x', 'rotate_y', 'rotate_z', 'scale', 'texture', 'user_matrix', 'visibility']
