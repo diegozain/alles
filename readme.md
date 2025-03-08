@@ -98,8 +98,8 @@ If running *Matlab* projects, please set paths first by running the script:
   * [*Fortran* in *C++*](projects/visualize/fincc/)
   * [*C* in *Python*](projects/visualize/cinpy/)
   * [*C++* in *Python*](projects/visualize/ccinpy/)
-	* [Animation in the command line *C*](projects/visualize/animac/)
-	* [Click points and do stuff with that](projects/visualize/pointsclic/)
+  * [Animation in the command line *C*](projects/visualize/animac/)
+  * [Click points and do stuff with that](projects/visualize/pointsclic/)
 
 * Deep learning
 

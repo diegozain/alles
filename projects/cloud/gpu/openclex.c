@@ -6,10 +6,17 @@
 // ---------------------------------------------------------------------
 // sudo apt update
 // sudo apt install ocl-icd-opencl-dev opencl-headers clinfo
+// sudo apt install intel-gpu-tools
 // 
 // clinfo | grep 'Device Name'
 // ---------------------------------------------------------------------
-// gcc opencex.c -o opencex -lOpenCL
+// gcc openclex.c -o openclex -lOpenCL
+// 
+// check 🦠:
+//   sudo intel_gpu_top
+// ---------------------------------------------------------------------
+// benchmark 🦠:
+//   glmark2
 // ---------------------------------------------------------------------
 #define ARRAY_SIZE 5
 
