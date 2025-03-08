@@ -2,6 +2,14 @@ import pyvista as pv
 import numpy as np
 import sys
 # --------------------------------------------------------------------
+# $ python3 pointclic.py
+# --------------------------------------------------------------------
+# 
+# 
+#    callback functions
+# 
+# 
+# --------------------------------------------------------------------
 def pointclic(mesh, picked_point):
   pointclicked = picked_point.GetPointId()
   print(f" ⦿ ⦿ .. {pointclicked:d}")
@@ -17,16 +25,20 @@ def pointclic(mesh, picked_point):
   point_size=30,
   color="black"
   )
-
+# --------------------------------------------------------------------
+def savefig(mesh):
+  plotter.save_graphic("../pics/pointclic.svg")
+  print(" 💾 figure saved")
+# --------------------------------------------------------------------
 def closeclic(flag):
-  print("⛔ bye bye")
+  print(" ⛔ bye bye")
   sys.exit(0)
-
-instructxt = " click on a point and see its index in the console\n click the red square to exit"
+# --------------------------------------------------------------------
+instructxt = "\n click on a point and see its index in the console\n click the white square to save picture\n\n click the red square to exit"
 # --------------------------------------------------------------------
 # 10⁶ points makes the plot go 🐌 in my laptop
 # 10⁵ points works 🚀 in my laptop
-num_points = 10
+num_points = 1000
 
 np.random.seed(42)
 points = np.random.random((num_points, 3))
@@ -75,6 +87,17 @@ plotter.add_text(
   position="upper_left"
 )
 
+# 💾
+plotter.add_checkbox_button_widget(
+  callback=savefig,
+  value=False,
+  color_on="white",
+  color_off="white",
+  background_color="black",
+  size=40,
+  position=(10.0,10.0)
+)
+
 # ⛔
 plotter.add_checkbox_button_widget(
   callback=closeclic,
@@ -83,7 +106,7 @@ plotter.add_checkbox_button_widget(
   color_off="red",
   background_color="black",
   size=40,
-  position=(10.0,10.0)
+  position=(60.0,10.0)
 )
 
 plotter.show()

@@ -44,7 +44,7 @@ If running *Matlab* projects, please set paths first by running the script:
 	* [Dijkstra algorithm](projects/graph-alg/dijkstra/)
 	* [Mesher](projects/graph-alg/mesher/)
   * [Graph signal processing](projects/graph-alg/graph-signal/)
-	* [Error correcting codes](projects/graph-alg/codes/)
+  * [Error correcting codes](projects/graph-alg/codes/)
 
 * Partial differential equations
 

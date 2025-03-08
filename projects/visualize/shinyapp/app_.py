@@ -1,3 +1,7 @@
+# --------------------------------------------------------------------
+# 🏃 in terminal:
+#    shiny run app_.py
+# --------------------------------------------------------------------
 from shiny import reactive, render
 from shiny.express import input, ui
 

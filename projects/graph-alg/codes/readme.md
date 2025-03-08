@@ -50,4 +50,4 @@ diego domenzain
   c[j] = c[j] + 1 ........ c gets corrected at position j.
 ```
 
-[![](projects/graph-alg/pics/hamming74.png)](ipynb/lincodes.ipynb)
+[![](../pics/hamming74.png)](ipynb/lincodes.ipynb)
