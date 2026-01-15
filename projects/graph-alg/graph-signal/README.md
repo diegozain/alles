@@ -35,5 +35,7 @@ That's it. It's brilliant.
 
 [![](../pics/graph-filtered.png)](./)
 
+[![](../pics/graph-laplacian.png)](./)
+
 [![](../pics/cyclic-signal.png)](./)
 

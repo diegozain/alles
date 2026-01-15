@@ -19,13 +19,17 @@
 // 🔵🔵 windows 🔵🔵
 // nvcc -o Axb.exe Axb.cu -I. -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\include" -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6\lib\x64" -lcudart -lcublas --gpu-architecture=sm_75 --expt-relaxed-constexpr -O3 -dlto -use_fast_math
 // --------------------------------------------------------------------
-void Axbsolver(int32_t n, int32_t m, double* As, double* bs, double* xs) {
+// 🔴🔴 linux 🔴🔴
+// nvcc -o Axb Axb.cu -I/usr/local/cuda/include -L/usr/local/cuda/lib64 -lcudart -lcublas --gpu-architecture=sm_75 --expt-relaxed-constexpr -O3 -dlto -use_fast_math
+// --------------------------------------------------------------------
+void Axbsolver(int32_t n, int32_t m, double* As, double* bs, double* xs)
+{
   // ⌚
   cudaEvent_t start, stop;
   cudaEventCreate(&start);
   cudaEventCreate(&stop);
   cudaEventRecord(start, 0);
-  // --------------------------------------------------------------------
+  // ------------------------------------------------------------------
   // 🐦‍⬛🧠
   cublasHandle_t handle_;
   cublasCreate(&handle_);
@@ -41,35 +45,36 @@ void Axbsolver(int32_t n, int32_t m, double* As, double* bs, double* xs) {
   cudaMalloc(&bs_array_, m * sizeof(double*));
   cudaMalloc(&info_, m * sizeof(int32_t));
   cudaMalloc(&pivots_, m * n * sizeof(int32_t));
-  // --------------------------------------------------------------------
+  // ------------------------------------------------------------------
   // 🦠💻🧠 pinned memory
   double **As_array, **bs_array;
   cudaMallocHost(&As_array, m * sizeof(double*));
   cudaMallocHost(&bs_array, m * sizeof(double*));
   int32_t *info; // for cublasDgetrsBatched
   cudaMallocHost(&info, m * sizeof(int32_t*));
-  // --------------------------------------------------------------------
+  // ------------------------------------------------------------------
   // 🦠 ⟵ 💻
   cudaMemcpy(As_, As, m * n * n * sizeof(double), cudaMemcpyHostToDevice);
   cudaMemcpy(bs_, bs, m * n * sizeof(double), cudaMemcpyHostToDevice);
 
-  // 🐦‍⬛ ⟵ 💻
-  for (int32_t i = 0; i < m; i++) {
+  // 🐦‍⬛ ⟵ 🦠💻
+  for (int32_t i = 0; i < m; i++)
+  {
     As_array[i] = As_ + i * n * n;
     bs_array[i] = bs_ + i * n;
   }
   cudaMemcpy(As_array_, As_array, m * sizeof(double*), cudaMemcpyHostToDevice);
   cudaMemcpy(bs_array_, bs_array, m * sizeof(double*), cudaMemcpyHostToDevice);
-  // --------------------------------------------------------------------
+  // ------------------------------------------------------------------
   // 🚀🐦‍⬛
   
   // ∘∘ LU ∘∘
   cublasDgetrfBatched(handle_, n, As_array_, n, pivots_, info_, m);
   cublasDgetrsBatched(handle_, CUBLAS_OP_N, n, 1, As_array_, n, pivots_, bs_array_, n, info, m);
-  // --------------------------------------------------------------------
+  // ------------------------------------------------------------------
   // 💻 ⟵ 🐦‍⬛
   cudaMemcpy(xs, bs_, m * n * sizeof(double), cudaMemcpyDeviceToHost);
-  // --------------------------------------------------------------------
+  // ------------------------------------------------------------------
   // 🚿🦠🐦‍⬛
   cublasDestroy(handle_);
   
@@ -90,7 +95,7 @@ void Axbsolver(int32_t n, int32_t m, double* As, double* bs, double* xs) {
   cudaFreeHost(As_array);
   cudaFreeHost(bs_array);
   cudaFreeHost(info);
-  // --------------------------------------------------------------------
+  // ------------------------------------------------------------------
   // ⌚
   cudaEventRecord(stop, 0);
   cudaEventSynchronize(stop);
@@ -102,7 +107,8 @@ void Axbsolver(int32_t n, int32_t m, double* As, double* bs, double* xs) {
   std::cout << "  Axbsolver elapsed time: " << elapsedTime/1e3 << " seconds" << "\n";
 }
 // --------------------------------------------------------------------
-int32_t main() {
+int32_t main()
+{
   // 🧠
   int32_t n = 5;
   int32_t m = 3;
@@ -116,10 +122,12 @@ int32_t main() {
   // 🖊️
   double* As_data = (double*)malloc(m * n * n *  sizeof(double));
   double* bs_data = (double*)malloc(m * n *  sizeof(double));
-  for (int32_t i = 0; i < m * n * n; i++) {
+  for (int32_t i = 0; i < m * n * n; i++)
+  {
     As_data[i] = static_cast<double>(rand() % 10);
   }
-  for (int32_t i = 0; i < m * n; i++) {
+  for (int32_t i = 0; i < m * n; i++)
+  {
     bs_data[i] = static_cast<double>(rand() % 10);
   }
 
@@ -128,19 +136,24 @@ int32_t main() {
 
   // 🖨️
   std::cout << "\n\n ::: solving now :::" << "\n\n";
-  for (int32_t j = 0; j < m; j++) {
+  for (int32_t j = 0; j < m; j++)
+  {
     std::cout << "A" << j + 1 << ": \n";
-    for (int32_t ii = 0; ii < n; ii++) {
-      for (int32_t i = 0; i < n; i++) {
+    for (int32_t ii = 0; ii < n; ii++)
+    {
+      for (int32_t i = 0; i < n; i++)
+      {
         std::cout << As[j*n*n + ii * n + i] << " ";
       }
       std::cout << "\n";
     }
     std::cout << "\n";
   }
-  for (int32_t i = 0; i < m; i++) {
+  for (int32_t i = 0; i < m; i++)
+  {
     std::cout << "bs" << i + 1 << ": ";
-    for (int32_t j = 0; j < n; j++) {
+    for (int32_t j = 0; j < n; j++)
+    {
       std::cout << bs[i * n + j] << " ";
     }
     std::cout << "\n";
@@ -152,9 +165,11 @@ int32_t main() {
 
   // 🖨️
   std::cout << "\n\n ::: result :::" << "\n\n";
-  for (int32_t i = 0; i < m; i++) {
+  for (int32_t i = 0; i < m; i++)
+  {
     std::cout << "xs" << i + 1 << ": ";
-    for (int32_t j = 0; j < n; j++) {
+    for (int32_t j = 0; j < n; j++)
+    {
       std::cout << xs[i * n + j] << " ";
     }
     std::cout << "\n";
